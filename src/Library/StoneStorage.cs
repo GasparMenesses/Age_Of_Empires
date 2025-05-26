@@ -11,7 +11,7 @@ public class StoneStorage
 
     public void AddStone(int stone)
     {
-        Stone = Stone + stone;
+        Stone += stone;
     }
 
 }

@@ -11,6 +11,6 @@ public class GoldStorage
 
     public void AddGold(int gold)
     {
-        Gold = Gold + gold;
+        Gold += gold;
     }
 }

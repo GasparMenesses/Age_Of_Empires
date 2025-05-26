@@ -11,7 +11,7 @@ public class WoodStorage
 
     public void AddGold(int wood)
     {
-        Wood = Wood + wood;
+        Wood += wood;
     }
 
 }

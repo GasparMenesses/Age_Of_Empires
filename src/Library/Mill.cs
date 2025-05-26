@@ -11,6 +11,6 @@ public class Mill
 
     public void AddFood(int food)
     {
-        Food = Food + food;
+        Food += food;
     }
 }
