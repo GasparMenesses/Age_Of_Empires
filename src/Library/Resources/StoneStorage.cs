@@ -6,7 +6,7 @@ public class StoneStorage
     public int Capacity { get; set; }
     public StoneStorage()
     {
-        Stone = 0;
+        Stone = 100;
         Capacity = 1000;
     }
 
