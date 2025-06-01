@@ -19,6 +19,9 @@ public class Fachada
 
     public void CreateNewGame()
     {
-        
+        Map Mapa = new Map();
+        Console.WriteLine("Ingrese su nombre: ");
+        string Nombre = Console.ReadLine();
+        new Player(Nombre);
     }
 }
