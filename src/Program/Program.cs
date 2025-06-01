@@ -6,6 +6,6 @@ class Program
     static void Main(string[] args)
     {
         Console.WriteLine("Hello, World!");
-        new Map();
+        new MapPrinter(new Map());
     }
 }

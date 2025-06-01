@@ -15,4 +15,10 @@ public class Fachada
     // Coordina llamadas entre distintos sistemas del juego.
     // Reduce el acoplamiento entre el código del "jugador" y las clases internas.
     // Hace que el código sea más limpio, fácil de mantener y de testear.
+
+
+    public void CreateNewGame()
+    {
+        
+    }
 }
