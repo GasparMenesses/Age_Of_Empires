@@ -1,5 +1,5 @@
 namespace Library.Interfaces;
-
+using Library;
 public interface IConstruction
 {
     public int ConstructionTime { get;  }

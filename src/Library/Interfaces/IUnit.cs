@@ -1,5 +1,5 @@
 namespace Library.Interfaces;
-
+using Library;
 public interface IUnit
 {
     public int TimeTraining { get; }
