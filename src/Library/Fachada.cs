@@ -1,5 +1,4 @@
 ﻿namespace Library;
-using Library.Core;
 public class Fachada
 {
     // La fachada es la clase que se encarga de la creacion de una nueva partida,
@@ -20,8 +19,5 @@ public class Fachada
     public void CreateNewGame()
     {
         Map Mapa = new Map();
-        Console.WriteLine("Ingrese su nombre: ");
-        string Nombre = Console.ReadLine();
-        new Player(Nombre);
     }
 }
