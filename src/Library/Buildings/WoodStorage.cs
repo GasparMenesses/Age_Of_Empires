@@ -1,5 +1,8 @@
-﻿namespace Library.Buildings;
+﻿using Library.Interfaces;
+
+namespace Library.Buildings;
 using Core;
+
 public class WoodStorage
 {
     public int Wood { get; set; }
