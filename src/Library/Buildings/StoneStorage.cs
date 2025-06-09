@@ -1,27 +1,11 @@
 ﻿namespace Library.Buildings;
 using Core;
-public class StoneStorage
+public class StoneStorage : CivicCenter
 {
-    public int Stone { get; set; }
-    public int Capacity { get; set; }
-    private Resources resources;
-    public StoneStorage(Player player)
+    public StoneStorage(Player player) : base(player) //base le pasa a CC el  player
     {
-        Stone = 0;
-        Capacity = 1000;
-        resources = player.Resources;
-        resources.AddLimitResources(stone:true);
+        
     }
 
-    public void AddStone(int stone)
-    {
-        if ((Stone + stone) > Capacity)
-        {
-            stone = Capacity - Stone;
-            Stone = Capacity;
-        }
-        else
-            Stone += stone;
-        resources.AddResources(stone: stone);
-    }
+   
 }

@@ -1,30 +1,15 @@
-﻿using Library.Interfaces;
+﻿using System.Net.Sockets;
+using System.Xml;
+using Library.Interfaces;
 
 namespace Library.Buildings;
 using Core;
 
-public class WoodStorage
+public class WoodStorage : CivicCenter
 {
-    public int Wood { get; set; }
-    public int Capacity { get; set; }
-    private Resources resources;
-    public WoodStorage(Player player)
+    public WoodStorage(Player player) : base(player) //base le pasa a CC el  player
     {
-        Wood = 0;
-        Capacity = 1000;
-        resources = player.Resources;
-        resources.AddLimitResources(wood:true);
+        
     }
 
-    public void AddWood(int wood)
-    {
-        if ((Wood + wood) > Capacity)
-        {
-            wood = Capacity - Wood;
-            Wood = Capacity;
-        }
-        else
-            Wood += wood;
-        resources.AddResources(wood: wood);
-    }
 }
