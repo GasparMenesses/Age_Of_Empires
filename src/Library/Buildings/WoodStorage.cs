@@ -9,7 +9,8 @@ public class WoodStorage : CivicCenter
 {
     public WoodStorage(Player player) : base(player) //base le pasa a CC el  player
     {
-        
+        Wood=0 ;
+         
     }
 
 }
