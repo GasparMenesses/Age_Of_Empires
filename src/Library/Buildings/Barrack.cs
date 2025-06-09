@@ -9,7 +9,7 @@ public class Barrack
     public Barrack()
     {
         CreationTime = 1.2; 
-            CreationCostStone = 500;
+        CreationCostStone = 500;
         CreationCostWood = 300;
     }
 
