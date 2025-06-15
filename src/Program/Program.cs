@@ -1,5 +1,7 @@
-﻿namespace Program;
-using Library;
+﻿using Library.Buildings;
+
+namespace Program;
+using System.Timers;
 using Library.Core;
 
 class Program
@@ -8,6 +10,16 @@ class Program
     {
         Console.WriteLine("Ingrese su nombre: ");
         string Nombre = Console.ReadLine();
-        new Player(Nombre);
+        Player jugador= new  Player(Nombre);
+        Mill mill = new Mill(jugador);
+        Farm farm = new Farm(mill);
+        farm.GeneraciondeComida += cantidad =>
+        {
+            Console.WriteLine($"[Farm] Se generaron {cantidad} unidades de comida.");
+            Console.WriteLine($"[Mill] Total almacenado: {mill.AlmacenComida}");
+        };
+        Console.WriteLine("Presioná Enter para finalizar.");
+        Console.ReadLine();
+    
     }
 }
