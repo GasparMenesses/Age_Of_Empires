@@ -1,8 +1,9 @@
-﻿public class Map
+﻿using Library;
+
+public class Map
 {
     public string[,] Board;
-    
-    public Map()
+    public  Map()
     {
         Board = new string[100, 100];
         for (int i = 0; i < 100; i++)
