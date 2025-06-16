@@ -2,11 +2,11 @@ namespace Library;
 
 public class Villager
 {
-    public int Village { get; set; }
+    public int Villages { get; set; }
 
-    public Villager()
+    public Villager( int cantidad)
     {
-        Village = 3;
+        Villages = cantidad;
     }
     
 }
