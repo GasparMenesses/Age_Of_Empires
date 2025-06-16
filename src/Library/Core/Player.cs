@@ -9,7 +9,7 @@ public class Player
      public string Nombre { get; set; }
      public Resources Resources { get; }
      public List<Building> Buildings { get; }
-     public Player(string nombre)
+     public Player(string nombre  , string civilization)
      {
          this.Nombre = nombre;
          this.Buildings = new List<Building>();
