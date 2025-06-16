@@ -18,7 +18,7 @@ public class Farm : Building
     public Farm(Mill mill, Resources resources): base(resources,200,120,180) // este constructor configura la granja con el mill
     {
         _mill = mill;
-        _timer = new Timer(10000); // crea un temporizador que cada 30s genera comida (se puede cambiar el intervalo)
+        _timer = new Timer(30000); // crea un temporizador que cada 30s genera comida (se puede cambiar el intervalo)
         _timer.Elapsed += GenerateFood;
         _timer.AutoReset = true; // esto hace que el temporizador se repita indefinidamente (durante toda la partida)
         _timer.Enabled = true;
