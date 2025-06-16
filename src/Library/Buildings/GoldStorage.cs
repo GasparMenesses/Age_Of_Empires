@@ -1,13 +1,31 @@
+using System.Data.SqlTypes;
+
 namespace Library.Buildings;
 using Core;
-public class GoldStorage : CivicCenter
-{
-    
-    public GoldStorage(Player player) : base(player) //base le pasa a CC el  player
-    {
-        Gold=0 ;
-        
-    }
-    
-}
 
+public class GoldStorage : Building //herdea de la clase building
+{
+    public int AlmacenaOro { get; set; }
+
+
+
+    public GoldStorage(Resources resources) :
+        base(resources, woodCost:25, stoneCost:55,constructionTime:30) //constructor que define los costos de construccion del almacén, gastando piedra y madera.
+                                                                    //Tambien define el tiempo que demora
+    {
+        AlmacenaOro = 0;
+        
+
+    }
+
+    public void AlmacenarOro(int cantidad)
+    {
+        if (!IsBuilt)
+            throw new InvalidOperationException(
+                "El almacén aún no está construido."); // esto se hace por si el jugador quiere 
+        // guardar recursos antes de que finalice la construccion del almacén
+
+        AlmacenaOro += cantidad;
+    }
+}
+   
