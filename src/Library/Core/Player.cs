@@ -13,6 +13,6 @@ public class Player
      {
          this.Nombre = nombre;
          this.Buildings = new List<Building>();
-         this.Resources = new Resources(); //hola
+         this.Resources = new Resources(); 
      }
 }
