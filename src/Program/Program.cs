@@ -47,4 +47,3 @@ class Program
         Player Jugador_1 = new Player(Nombre1, civilization);
     }
 }
-

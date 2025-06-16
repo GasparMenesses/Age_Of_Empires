@@ -16,7 +16,7 @@ public class Mill : Building
     : base(resources, woodCost: 150, stoneCost: 50, constructionTime: 20)
     
     {
-        AlmacenaComida = 0; // Inicializa la comida del CivicCenter (heredado) en 0
+        AlmacenaComida = 0; 
     }
 
     // Método que suma la cantidad de comida generada al almacenamiento

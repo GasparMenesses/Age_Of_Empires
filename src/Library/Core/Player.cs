@@ -1,4 +1,5 @@
-﻿using Library.Interfaces;
+﻿using Library.Buildings;
+using Library.Interfaces;
 
 namespace Library.Core;
 using Library;
@@ -7,10 +8,11 @@ public class Player
 {
      public string Nombre { get; set; }
      public Resources Resources { get; }
-     public List<IConstruction> Buildings { get; }
+     public List<Building> Buildings { get; }
      public Civilization Civilization { get; }
      private Civilization society;
-     public Player(string nombre, string civilization)
+     
+     public Player(string nombre  , string civilization)
      {
          switch (civilization)
          {
@@ -25,7 +27,7 @@ public class Player
                  break;
          }
          this.Nombre = nombre;
-         this.Buildings = new List<IConstruction>();
+         this.Buildings = new List<Building>();
          this.Resources = new Resources();
          this.Civilization = society;
      }

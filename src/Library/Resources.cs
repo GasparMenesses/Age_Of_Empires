@@ -1,4 +1,6 @@
-﻿namespace Library;
+﻿using Library.Core;
+
+namespace Library;
 
 public class Resources
 {
@@ -59,5 +61,11 @@ public class Resources
             Gold[1] += 1000;
         if (food)
             Food[1] += 1000;
+    }
+
+    public Resources ShowResources(Player player)
+    {
+        return player.Resources;
+        
     }
 }
