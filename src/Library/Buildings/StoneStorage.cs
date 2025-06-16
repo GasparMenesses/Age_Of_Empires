@@ -4,7 +4,7 @@ public class StoneStorage : Building
 {
     public int AlmacenaPiedra { get; set; }
    
-    public StoneStorage(Resources resources) : base(resources,woodCost:50,stoneCost:100,60) //base le pasa a CC el  player
+    public StoneStorage(Resources resources) : base(resources,woodCost:50,stoneCost:100,60) 
     {
         AlmacenaPiedra=0 ;
         
