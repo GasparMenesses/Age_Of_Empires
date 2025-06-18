@@ -1,8 +1,8 @@
-﻿using Library;
+﻿namespace Library.Core;
 
 public class Map
 {
-    public string[,] Board;
+    public static string[,] Board;
     public Map()
     {
         Board = new string[100, 100];
@@ -11,7 +11,7 @@ public class Map
                      Board[i, j] = ".";
     }
 
-    public string CheckMap(int x, int y)
+    public static string CheckMap(int x, int y)
     {
         return Board[x, y];
     }
