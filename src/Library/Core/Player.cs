@@ -10,25 +10,29 @@ public class Player
      public Resources Resources { get; }
      public List<Building> Buildings { get; }
      public Civilization Civilization { get; }
-     private Civilization society;
+     public List<IUnit> Units { get; set; }
+     private Civilization _society;
      
      public Player(string nombre  , string civilization)
      {
          switch (civilization)
          {
              case "Cordobeses":
-                 society = new Cordobeses();
+                 _society = new Cordobeses();
                  break;
              case "Romanos":
-                 society = new Romanos();
+                 _society = new Romanos();
                  break;
              case "Vikingos":
-                 society = new Vikingos();
+                 _society = new Vikingos();
                  break;
+             default:
+                 throw new Exception("Civilización desconocida");
          }
          this.Nombre = nombre;
          this.Buildings = new List<Building>();
          this.Resources = new Resources();
-         this.Civilization = society;
+         this.Civilization = _society;
+         this.Units = new List<IUnit>();
      }
 }
