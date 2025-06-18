@@ -4,13 +4,19 @@ namespace Library.Actions;
 using Interfaces;
 public class Actions
 {
-    public void Move(List<IUnit> unit, (int x, int y) position)
+    public void Move(Player player, List<IUnit> units, (int x, int y) position)
     {
-        if ((position.x > 100) || (position.x < 0) || (position.y > 100) || (position.y < 0))
-            return;
-        for (int i = 0; i < unit.Count; i++)
+        bool playerHas = true;
+        foreach (IUnit unit in units)
         {
-            IUnit actualUnit = unit[i];
+            if (!player.Units.Contains(unit))
+                playerHas = false;
+        }
+        if (position.x > 100 || position.x < 0 || position.y > 100 || position.y < 0 || Map.CheckMap(position.x, position.y) != "." || playerHas == false)
+            return;
+        for (int i = 0; i < units.Count; i++)
+        {
+            IUnit actualUnit = units[i];
             actualUnit.Position[0] = position.x;
             actualUnit.Position[1] = position.y;
         }
