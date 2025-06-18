@@ -1,27 +1,17 @@
-﻿//
-// namespace Library
-//
-// {
-//     public class MapPrinter
-//     {
-//         private Map _map;
-//     
-//         // Constructor: recibe la instancia de Map que necesita imprimir.
-//         public MapPrinter(Map map)
-//         {
-//             _map = map;
-//             int filas = _map.Board.GetLength(0);
-//             int columnas = _map.Board.GetLength(1);
-//     
-//             for (int i = 0; i < filas; i++)
-//             {
-//                 for (int j = 0; j < columnas; j++)
-//                 {
-//                     Console.Write(_map.Board[i, j] + " ");
-//                 }
-//                 Console.WriteLine();
-//             }
-//         }
-//         
-//     }
-// }
+﻿using Library.Core;
+
+// Cumple con SRP porque este codigo se encarga de imprimir el mapa en la consola
+public static class MapPrinter
+{
+    public static void PrintMap() // Este metodo imprime el mapa en la consola
+    {
+        for (int i = 0; i < Map.Board.GetLength(0); i++) // Recorre las filas del mapa
+        {
+            for (int j = 0; j < Map.Board.GetLength(1); j++) // Recorre las columnas del mapa
+            {
+                Console.Write(Map.Board[i, j] + " "); // Imprime el simbolo del mapa en la posicion actual
+            }
+            Console.WriteLine();    // Imprime un salto de linea al final de cada fila
+        }
+    }
+}

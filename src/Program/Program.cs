@@ -9,9 +9,6 @@ class Program
     static void Main(string[] args)
     {
         
-        
-        
-        
         Console.WriteLine("Bienvenido a AGE OF EMPIRES");
         Console.WriteLine("Vamos a configurar la partida");
         
@@ -103,5 +100,9 @@ class Program
         }
         
         Player Jugador_2 = new Player(Nombre_2, civilization_2);
+        
+        Console.WriteLine("\n\nLos jugadores han sido creados correctamente");
+        Console.WriteLine("creando entorno de juego...");
+        Fachada.CreateNewGame();
     }
 }
