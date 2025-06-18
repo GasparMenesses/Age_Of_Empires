@@ -1,4 +1,5 @@
-﻿using Library.Interfaces;
+﻿using Library.Buildings;
+using Library.Interfaces;
 
 namespace Library.Core;
 using Library;
@@ -7,15 +8,31 @@ public class Player
 {
      public string Nombre { get; set; }
      public Resources Resources { get; }
-     public List<IConstruction> Buildings { get; }
-     
+     public List<Building> Buildings { get; }
      public Civilization Civilization { get; }
+     public List<IUnit> Units { get; set; }
+     private Civilization _society;
      
-     
-     public Player(string nombre, string civilization)
+     public Player(string nombre  , string civilization)
      {
+         switch (civilization)
+         {
+             case "Cordobeses":
+                 _society = new Cordobeses();
+                 break;
+             case "Romanos":
+                 _society = new Romanos();
+                 break;
+             case "Vikingos":
+                 _society = new Vikingos();
+                 break;
+             default:
+                 throw new Exception("Civilización desconocida");
+         }
          this.Nombre = nombre;
-         this.Buildings = new List<IConstruction>();
+         this.Buildings = new List<Building>();
          this.Resources = new Resources();
+         this.Civilization = _society;
+         this.Units = new List<IUnit>();
      }
 }

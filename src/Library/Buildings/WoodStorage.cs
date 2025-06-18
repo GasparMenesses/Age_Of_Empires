@@ -10,7 +10,7 @@ public class WoodStorage : Building
     public int AlmacenaMadera { get; set; }
     
 
-public WoodStorage(Resources resources) : base(resources,120,75,60) //base le pasa a CC el  player
+public WoodStorage(Resources resources,(int x, int y)posicion) : base(resources,120,75,60,posicion) 
     {
         AlmacenaMadera=0 ;
          
@@ -24,5 +24,4 @@ public WoodStorage(Resources resources) : base(resources,120,75,60) //base le pa
         // guardar recursos antes de que finalice la construccion del almacén
         AlmacenaMadera += cantidad;
     }
-
 }

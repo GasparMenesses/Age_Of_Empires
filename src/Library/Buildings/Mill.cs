@@ -12,11 +12,11 @@ public class Mill : Building
 
     // Constructor: inicializa el molino con un jugador y pone la comida en 0.
     // Usa 'base(player)' para pasar el jugador al constructor de CivicCenter
-    public Mill(Resources resources)
-    : base(resources, woodCost: 150, stoneCost: 50, constructionTime: 20)
+    public Mill(Resources resources,(int x, int y)posicion)
+    : base(resources, woodCost: 150, stoneCost: 50, constructionTime: 20,posicion)
     
     {
-        AlmacenaComida = 0; // Inicializa la comida del CivicCenter (heredado) en 0
+        AlmacenaComida = 0; 
     }
 
     // Método que suma la cantidad de comida generada al almacenamiento
@@ -28,4 +28,5 @@ public class Mill : Building
         // guardar recursos antes de que finalice la construccion del almacén
         AlmacenaComida += cantidad;
     }
+   
 }

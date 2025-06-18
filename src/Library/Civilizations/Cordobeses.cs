@@ -2,7 +2,9 @@
 
 public class Cordobeses : Civilization
 {
-    public Cordobeses(string nombre, string tipoDeUnidadUnica, string bonificacion) : base(nombre, tipoDeUnidadUnica, bonificacion) 
+    public Cordobeses()
     {
+        TipoDeUnidadUnica = "Borracho";
+        Bonificacion = "X";
     }
 }

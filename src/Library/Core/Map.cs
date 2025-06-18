@@ -1,16 +1,22 @@
-﻿using Library;
+﻿namespace Library.Core;
 
 public class Map
 {
-    public string[,] Board;
-    
 
+    public static string[,] Board;
     public Map()
     {
-        Board = new string[100, 100];
-        for (int i = 0; i < 100; i++)
-             for (int j = 0; j < 100; j++)
-                     Board[i, j] = "_";
-        
+        if (Board == null)
+        {
+            Board = new string[100, 100];
+            for (int i = 0; i < 100; i++)
+            for (int j = 0; j < 100; j++)
+                Board[i, j] = ".";
+        }
+    }
+
+    public static string CheckMap(int x, int y)
+    {
+        return Board[x, y];
     }
 }

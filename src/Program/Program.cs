@@ -8,9 +8,6 @@ class Program
     
     static void Main(string[] args)
     {
-
-        Map x = new Map();
-        MapPrinter xy = new MapPrinter(x);
         
         
         
@@ -108,4 +105,3 @@ class Program
         Player Jugador_2 = new Player(Nombre_2, civilization_2);
     }
 }
-
