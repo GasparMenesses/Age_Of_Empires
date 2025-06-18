@@ -1,6 +1,8 @@
+using Library.Interfaces;
+
 namespace Library.Farming;
 
-public  abstract class Recolection
+public  abstract class Recolection : IRecolection
 {
     public (int x, int y )Posicion { get; }
     public int CantidadRecursoDisponible { get; set; }
