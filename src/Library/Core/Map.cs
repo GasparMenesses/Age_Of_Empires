@@ -1,8 +1,12 @@
 ﻿namespace Library.Core;
 
+using Library.Interfaces;
+
+
 public class Map
 {
     public static string[,] Board;
+
     public Map()
     {
         if (Board == null)
@@ -13,12 +17,26 @@ public class Map
                     Board[i, j] = ".";
         }
     }
+    
+    public static void PlaceBuildings(int cantidad, string simbolo)
+    {
+        var rand = new Random();
+        int colocados = 0;
+
+        while (colocados < cantidad)
+        {
+            int x = rand.Next(Board.GetLength(0));
+            int y = rand.Next(Board.GetLength(1));
+            if (Board[x, y] == ".")
+            {
+                Board[x, y] = simbolo;
+                colocados++;
+            }
+        }
+    }
+
     public static string CheckMap(int x, int y)
     {
         return Board[x, y];
-    }
-    public static void ChangeMap(int x, int y, string change)
-    {
-        Board[x, y] = change;
     }
 }

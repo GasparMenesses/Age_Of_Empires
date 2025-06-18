@@ -1,7 +1,10 @@
-﻿namespace Library;
+﻿using Library.Buildings;
+
+namespace Library;
 using Library.Core;
-public class Fachada
+public static class Fachada
 {
+    private static Map mapa;
     // La fachada es la clase que se encarga de la creacion de una nueva partida,
     // llama todas las funciones necesarias para la creacion de un entorno
     // verificando por ejemplo, al momento de crear algo, que no haya ya algo en ese punto del mapa
@@ -17,8 +20,16 @@ public class Fachada
     // Hace que el código sea más limpio, fácil de mantener y de testear.
 
 
-    public void CreateNewGame()
+    public static void CreateNewGame()
     {
+
         new Map();
+        
+        // Colocamos los edificios en el mapa
+        Map.PlaceBuildings( 2, CivicCenter.Symbol); // Civic Center
+        
+        
+        MapPrinter.PrintMap();
+        
     }
 }
