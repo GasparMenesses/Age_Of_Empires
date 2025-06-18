@@ -12,7 +12,7 @@ public class Actions
             if (!player.Units.Contains(unit))
                 playerHas = false;
         }
-        if (position.x > 100 || position.x < 0 || position.y > 100 || position.y < 0 || Map.CheckMap(position.x, position.y) != "." || playerHas == false)
+        if (position.x >= 100 || position.x < 0 || position.y >= 100 || position.y < 0 || Map.CheckMap(position.x, position.y) != "." || playerHas == false)
             return;
         for (int i = 0; i < units.Count; i++)
         {
