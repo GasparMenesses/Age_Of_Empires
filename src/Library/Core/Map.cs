@@ -13,9 +13,12 @@ public class Map
                     Board[i, j] = ".";
         }
     }
-
     public static string CheckMap(int x, int y)
     {
         return Board[x, y];
+    }
+    public static void ChangeMap(int x, int y, string change)
+    {
+        Board[x, y] = change;
     }
 }
