@@ -2,16 +2,16 @@
 
 public class Map
 {
-
     public static string[,] Board;
+
     public Map()
     {
         if (Board == null)
         {
             Board = new string[100, 100];
             for (int i = 0; i < 100; i++)
-            for (int j = 0; j < 100; j++)
-                Board[i, j] = ".";
+                for (int j = 0; j < 100; j++)
+                    Board[i, j] = ".";
         }
     }
 
