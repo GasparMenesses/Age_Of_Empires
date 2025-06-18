@@ -10,14 +10,18 @@ public abstract class Building : IConstructionInfo,IBuildable
     public int TimeElapsed { get; private set; }
     public bool IsBuilt => TimeElapsed >= ConstructionTime;
     private readonly Resources _resources;
+    public (int x, int y) Posicion { get; set; }
+    public int Limite { get; }
 
-    protected Building( Resources resources, int woodCost, int stoneCost, int constructionTime)
+    protected Building( Resources resources, int woodCost, int stoneCost, int constructionTime,(int x, int y)posicion)
     {
         WoodCost = woodCost;
         StoneCost = stoneCost;
         ConstructionTime = constructionTime;
         TimeElapsed = 0;
         _resources = resources;
+        Limite = 1000;
+        Posicion = posicion;
 
     }
 
@@ -46,6 +50,7 @@ public abstract class Building : IConstructionInfo,IBuildable
     
         return _resources.RemoveResources(wood: WoodCost, stone: StoneCost);
     }
+    
 }   
 
 

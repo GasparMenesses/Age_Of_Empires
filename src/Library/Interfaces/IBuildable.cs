@@ -6,4 +6,5 @@ public interface IBuildable
         bool CanBuild();
         bool Build();
         void Construyendo(int time);
+        int Limite { get; }
 }
