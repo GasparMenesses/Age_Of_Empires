@@ -11,7 +11,7 @@ public abstract class Building : IConstructionInfo,IBuildable
     public bool IsBuilt => TimeElapsed >= ConstructionTime;
     private readonly Resources _resources;
     public (int x, int y) Posicion { get; set; }
-    public int Limite { get; }
+    
 
     protected Building( Resources resources, int woodCost, int stoneCost, int constructionTime,(int x, int y)posicion)
     {
@@ -20,7 +20,6 @@ public abstract class Building : IConstructionInfo,IBuildable
         ConstructionTime = constructionTime;
         TimeElapsed = 0;
         _resources = resources;
-        Limite = 1000;
         Posicion = posicion;
 
     }
