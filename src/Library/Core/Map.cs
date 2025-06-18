@@ -3,7 +3,6 @@
 public class Map
 {
     public static string[,] Board;
-
     public Map()
     {
         if (Board == null)
