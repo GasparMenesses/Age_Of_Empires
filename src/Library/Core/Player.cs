@@ -1,6 +1,5 @@
 ﻿using Library.Buildings;
 using Library.Interfaces;
-
 namespace Library.Core;
 using Library;
  
@@ -9,7 +8,7 @@ public class Player
      public string Nombre { get; set; }
      public Resources Resources { get; }
      public List<Building> Buildings { get; }
-     public Civilization Civilization { get; }
+     public Civilization Civilization { get; set; }
      public List<IUnit> Units { get; set; }
      private Civilization _society;
      
