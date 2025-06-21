@@ -5,6 +5,8 @@ using Core;
 
 public class Mill : Building 
 {
+    public static string Symbol => "Ml";
+    
     // Cantidad total de comida almacenada en el molino
     public int AlmacenaComida { get; set; }
    

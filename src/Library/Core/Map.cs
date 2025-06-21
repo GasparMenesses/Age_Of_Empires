@@ -14,7 +14,7 @@ public class Map
             Board = new string[100, 100];
             for (int i = 0; i < 100; i++)
                 for (int j = 0; j < 100; j++)
-                    Board[i, j] = ".";
+                    Board[i, j] = "..";
         }
     }
     
@@ -27,7 +27,7 @@ public class Map
         {
             int x = rand.Next(Board.GetLength(0));
             int y = rand.Next(Board.GetLength(1));
-            if (Board[x, y] == ".")
+            if (Board[x, y] == "..")
             {
                 Board[x, y] = simbolo;
                 colocados++;

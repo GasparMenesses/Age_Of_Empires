@@ -5,6 +5,7 @@ using Core;
 
 public class GoldStorage : Building //herdea de la clase building
 {
+    public static string Symbol => "GS";
     public int AlmacenaOro { get; set; }
 
 

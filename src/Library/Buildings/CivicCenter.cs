@@ -4,7 +4,7 @@ namespace Library.Buildings;
 
 public class CivicCenter
 {
-    public static string Symbol => "C";
+    public static string Symbol => "CC";
     
     public int Gold { get; set; }
     public int Wood { get; set; }

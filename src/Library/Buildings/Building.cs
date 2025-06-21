@@ -4,6 +4,8 @@ namespace Library.Buildings;
 //clase base abstracta utilizada para definir los costos y tiempos de construccion de los edificios de almacenamientos
 public abstract class Building : IConstructionInfo,IBuildable
 {
+    public static string Symbol => "Bg";
+    
     public int WoodCost { get; set; }
     public int StoneCost { get; set; }
     public int ConstructionTime { get; private set; }
@@ -36,9 +38,10 @@ public abstract class Building : IConstructionInfo,IBuildable
             }
         }
     }
+    
     public bool CanBuild()
     {           //verifica si hay disponible la cantidad de madera y piedra que requiere crear el almacen 
-        return _resources.Wood[0] >= WoodCost && _resources.Stone[0] >= StoneCost;
+        return _resources.Wood >= WoodCost && _resources.Stone >= StoneCost;
     }
     
     public bool Build()
