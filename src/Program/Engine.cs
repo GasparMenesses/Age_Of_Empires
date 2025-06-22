@@ -4,6 +4,7 @@ using System.Threading;
 using Library;
 using Library.Buildings;
 using Library.Core;
+using Library.Farming;
 
 public class Engine
 {
@@ -27,7 +28,6 @@ public class Engine
             Console.WriteLine($"\nEs turno del jugador N°{i + 1}");
             string nombre;
             bool nombreValido;
-
             do
             {
                 Console.WriteLine("Ingrese su nombre:");
@@ -50,6 +50,7 @@ public class Engine
         foreach (var jugador in Jugadores)
         {
             jugador.Villager = new Villager(3); // cada jugador empieza con 3 aldeanos
+            CreateBuildings();
         }
     }
 
@@ -71,10 +72,20 @@ public class Engine
 
     public void CreateNewGameMap()
     {
-        new Map(); 
+        new Map();
+
+        foreach (var jugador in Jugadores)
+        {
+
+        }
 
         Map.PlaceBuildings(CantidadJugadores, CivicCenter.Symbol);
         MapPrinter.PrintMap();
+    }
+
+    public void CreateBuildings()
+    {
+        
     }
 
     public void EmpezarLoop()
@@ -91,10 +102,7 @@ public class Engine
             Console.WriteLine($"\nUnidades disponibles:\n Aldeanos: {jugador.Villager.Villagers}");
             Thread.Sleep(1500);
             
-           
-            
             string accion = "0";
-
             while (accion != "1" && accion != "2" && accion != "3" && accion != "4")
             {
                 Console.WriteLine("\nAcciones disponibles:\n 1- Mover unidades\n 2- Recolectar recursos\n 3- Construir edificios\n 4- Atacar unidades");
@@ -108,31 +116,80 @@ public class Engine
             switch (accion)
             {
                 case "1":
-                    Console.WriteLine("Ingrese la posición (x, y) a la que desea mover sus unidades:");
-                    string[] posicion = Console.ReadLine().Split(',');
-                    if (posicion.Length == 2 && int.TryParse(posicion[0], out int x) && int.TryParse(posicion[1], out int y))
-                    {
-                        
-                    }
-                    else
-                    {
-                        Console.WriteLine("Posición inválida.");
-                    }
+                    MoverUnidadees(jugador);
                     break;
                 case "2":
-                    Console.WriteLine("Ingrese el recurso a recolectar (madera, piedra, oro, comida):");
-                    string recurso = Console.ReadLine().ToLower();
+                    RecolectarRecursos(jugador);
                     break;
                 case "3":
-                    Console.WriteLine("Construyendo edificios...");
+                    ConstruirEdificios(jugador);
                     break;
                 case "4":
-                    Console.WriteLine("Atacando unidades...");
+                    AtacarUnidades(jugador);
                     break;
             }
 
         }
 
-        Console.WriteLine("\nFin de ronda. (A futuro, este sería el loop principal del juego)");
+        Console.WriteLine("\nFin de ronda. (A futuro este sería el loop principal del juego)");
     }
+
+    public void MoverUnidadees(Player jugador)
+    {
+        Console.WriteLine("Ingrese la posición (x, y) a la que desea mover sus unidades:");
+        string[] posicion = Console.ReadLine().Split(',');
+        if (posicion.Length == 2 && int.TryParse(posicion[0], out int x) && int.TryParse(posicion[1], out int y))
+        {
+                        
+        }
+        else
+        {
+            Console.WriteLine("Posición inválida.");
+        }
+    }
+
+    public void RecolectarRecursos(Player jugador)
+    {
+        string recurso = "0";
+        while (recurso != "1" && recurso != "2" && recurso != "3" && recurso != "4")
+        {
+            Console.WriteLine("\nIngrese el recurso a recolectar:\n 1 - madera\n 2 - piedra\n 3 - oro\n 4 - comida):");
+            recurso = Console.ReadLine();
+            if (recurso != "1" && recurso != "2" && recurso != "3" && recurso != "4")
+            {
+                Console.WriteLine("\nRecurso inválido. Por favor, ingrese un número del 1 al 4.");
+            }
+        }
+        
+        
+        switch (recurso)
+        {
+            case "1":
+                Console.WriteLine("Recolectando madera...");
+                break;
+            case "2":
+                Console.WriteLine("Recolectando piedra...");
+                break;
+            case "3":
+                Console.WriteLine("Recolectando oro...");
+                break;
+            case "4":
+                Console.WriteLine("Recolectando comida...");
+                break;
+            default:
+                Console.WriteLine("Recurso inválido.");
+                break;
+        }
+    }
+
+    public void ConstruirEdificios(Player jugador)
+    {
+        Console.WriteLine("Construyendo edificios...");
+    }
+    
+    public void AtacarUnidades(Player jugador)
+    {
+        Console.WriteLine("Atacando unidades...");
+    }
+    
 }

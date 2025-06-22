@@ -18,11 +18,11 @@ public class Map
         }
     }
     
-    public static void PlaceBuildings(int cantidad, string simbolo)
+    public static bool PlaceBuildings(int cantidad, string simbolo)
     {
         var rand = new Random();
         int colocados = 0;
-
+        bool verificador = false;
         while (colocados < cantidad)
         {
             int x = rand.Next(Board.GetLength(0));
@@ -30,9 +30,11 @@ public class Map
             if (Board[x, y] == "..")
             {
                 Board[x, y] = simbolo;
+                verificador = true;
                 colocados++;
             }
         }
+        return verificador;
     }
 
     public static string CheckMap(int x, int y)
