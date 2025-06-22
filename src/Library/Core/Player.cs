@@ -10,6 +10,7 @@ public class Player
      public List<Building> Buildings { get; }
      public Civilization Civilization { get; set; }
      public List<IUnit> Units { get; set; }
+     
      private Civilization _society;
      
      public Player(string nombre  , string civilization)

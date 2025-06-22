@@ -75,17 +75,15 @@ public class Engine
 
         foreach (var jugador in Jugadores)
         {
-            Console.WriteLine($"\nTurno de {jugador.Nombre} ({jugador.Civilization})");
+            Console.WriteLine($"\nTurno de {jugador.Nombre} ({jugador.Civilization.NombreCivilizacion})");
             
             
-            Console.WriteLine($"Recursos disponibles: Oro: {jugador.Resources.Gold}\n Madera: {jugador.Resources.Wood}\n Comida: {jugador.Resources.Food}\n Piedra: {jugador.Resources.Stone}");
-            
+            Console.WriteLine($"Recursos disponibles:\n Oro: {jugador.Resources.Gold}\n Madera: {jugador.Resources.Wood}\n Comida: {jugador.Resources.Food}\n Piedra: {jugador.Resources.Stone}");
             
             
             Thread.Sleep(1500);
             
-            Console.WriteLine($"{jugador.Nombre}, aún no podés mover tropas pero ya estás en el juego :)");
-            Thread.Sleep(1500);
+
         }
 
         Console.WriteLine("\nFin de ronda. (A futuro, este sería el loop principal del juego)");
