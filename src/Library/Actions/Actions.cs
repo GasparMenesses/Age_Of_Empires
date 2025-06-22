@@ -1,17 +1,17 @@
 namespace Library.Actions;
 using Core;
 using Interfaces;
+using Units;
 public class Actions
 {
     public void Move(Player player, List<IUnit> units, (int x, int y) position)
     {
-        bool playerHas = true;
         foreach (IUnit unit in units)
         {
             if (!player.Units.Contains(unit))
-                playerHas = false;
+                return;
         }
-        if (position.x >= 100 || position.x < 0 || position.y >= 100 || position.y < 0 || Map.CheckMap(position.x, position.y) != "." || playerHas == false)
+        if (position.x >= 100 || position.x < 0 || position.y >= 100 || position.y < 0 || Map.CheckMap(position.x, position.y) != ".")
             return;
         for (int i = 0; i < units.Count; i++)
         {
@@ -23,6 +23,7 @@ public class Actions
 
     public void Farmear(Player player,Villager villager, string resource)
     {
+        
         
     }
     

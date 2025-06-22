@@ -1,6 +1,8 @@
-namespace Library.Interfaces;
-using Library;
-public interface IUnit
+namespace Library.Units;
+using Interfaces;
+
+
+public class Unit : IUnit
 {
     public int TimeTraining { get; }
     public string Type { get; }
