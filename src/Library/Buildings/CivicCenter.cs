@@ -1,28 +1,29 @@
 ﻿using Library.Core;
-
 namespace Library.Buildings;
 
-public class CivicCenter
+public class CivicCenter : Building
 {
-    public static string Symbol => "CC";
+    public new static string Symbol => "CC";
     
     public int Gold { get; set; }
     public int Wood { get; set; }
     public int Food { get; set; }
     public int Stone { get; set; }
-    public int Capacity { get;  } 
-    public int MaxCapacityAldeano { get; }
-    private Resources _resources;
-    public CivicCenter(Player player)
+    public int Capacity { get; set; } 
+    public int MaxCapacityAldeano { get; set; }
+    private Player _player;
+    
+    public CivicCenter(Player player)  : base((0,0),0,0,0)
     {
+        _player = player;
         Gold = 0;
         Stone = 0;
         Wood = 100;
         Food = 100;
         Capacity = 1000;
         MaxCapacityAldeano = 10;
-        _resources = player.Resources;
-        _resources.AddLimitResources(true, true, true, true); //Aumenta el limite de cada recurso a 1000
+        player.Resources.AddLimitResources(true, true, true, true); //Aumenta el limite de cada recurso en 1000
+        player.Buildings.Add(this);
     }
     public void AddStone(int stone)
     {
@@ -33,7 +34,7 @@ public class CivicCenter
         }
         else
             Stone += stone;
-        _resources.AddResources(stone: stone);
+        _player.Resources.AddResources(stone: stone);
     }
     public void AddGold(int gold)
     {
@@ -44,7 +45,7 @@ public class CivicCenter
         }
         else
             Gold += gold;
-        _resources.AddResources(gold: gold);
+        _player.Resources.AddResources(gold: gold);
     }
     public void AddWood(int wood)
     {
@@ -55,7 +56,7 @@ public class CivicCenter
         }
         else
             Wood += wood;
-        _resources.AddResources(wood: wood);
+        _player.Resources.AddResources(wood: wood);
     }
     public void AddFood(int food)
     {
@@ -66,6 +67,6 @@ public class CivicCenter
         }
         else
             Food += food;
-        _resources.AddResources(food: food);
+        _player.Resources.AddResources(food: food);
     }
 }

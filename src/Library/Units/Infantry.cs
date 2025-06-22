@@ -1,20 +1,14 @@
-namespace Library;
+using Library.Buildings;
+namespace Library.Units;
 
-public class Infantry
+public class Infantry : Unit
 {
-    public int Speed { get; set; }
-    public int Attack { get; set; }
-    public int Defense { get; set; }
-    public int CreationTime { get; set; }
-    public int CreationCost { get; set; }
-    
-
-    public Infantry()
+    public Infantry(Building building) : base(building)
     {
         Speed = 40;
         Attack = 23;
         Defense = 45;
-        CreationTime = 43;
-        CreationCost = 100;
+        TimeTraining = 43;
+        Cost = 100;
     }
 }

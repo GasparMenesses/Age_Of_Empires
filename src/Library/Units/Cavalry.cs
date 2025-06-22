@@ -1,16 +1,17 @@
-namespace Library;
-
-public class Cavalry
+using Library.Buildings;
+namespace Library.Units;
+public class Cavalry : Unit
 {
     public int Speed { get; set; }
     public int Attack { get; set; }
     public int Defense { get; set; }
     public int CreationTime { get; set; }
-    public Cavalry()
+    public Cavalry(Building building) : base(building)
     {
-        Speed = 80;
-            Attack = 45;
-                Defense = 30;
-                    CreationTime = 50;
+        Speed = 40;
+        Attack = 23;
+        Defense = 45;
+        TimeTraining = 43;
+        Cost = 100;
     }
 }

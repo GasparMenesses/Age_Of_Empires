@@ -1,5 +1,3 @@
-using Library.Core;
-
 namespace Library.Interfaces;
 
 public interface IConstructionInfo
@@ -9,10 +7,7 @@ public interface IConstructionInfo
     int StoneCost { get; set; }
     int ConstructionTime { get; }
     int TimeElapsed { get; }
-    bool IsBuilt { get; }
 
     // Métodos para control de construcción
     void Construyendo(int seconds);
-    bool CanBuild();
-    bool Build();
 }

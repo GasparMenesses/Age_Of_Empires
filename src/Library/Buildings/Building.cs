@@ -2,28 +2,27 @@ using Library.Interfaces;
 
 namespace Library.Buildings;
 //clase base abstracta utilizada para definir los costos y tiempos de construccion de los edificios de almacenamientos
-public abstract class Building : IConstructionInfo,IBuildable
+public abstract class Building : IConstructionInfo , IBuildable
 {
-    public static string Symbol => "Bg";
-    
     public int WoodCost { get; set; }
     public int StoneCost { get; set; }
     public int ConstructionTime { get; private set; }
     public int TimeElapsed { get; private set; }
     public bool IsBuilt => TimeElapsed >= ConstructionTime;
-    private readonly Resources _resources;
-    public (int x, int y) Posicion { get; set; }
+    public string Symbol { get; set; }
+    public Dictionary<string, int> Position { get; set; }
     
-
-    protected Building( Resources resources, int woodCost, int stoneCost, int constructionTime,(int x, int y)posicion)
+    protected Building((int x, int y)position, int woodCost, int stoneCost,int constructionTime)
     {
         WoodCost = woodCost;
         StoneCost = stoneCost;
         ConstructionTime = constructionTime;
         TimeElapsed = 0;
-        _resources = resources;
-        Posicion = posicion;
-
+        Position = new Dictionary<string, int>
+        {
+            { "x", position.x },
+            { "y", position.y }
+        };
     }
 
     public void Construyendo(int seconds)
@@ -38,21 +37,6 @@ public abstract class Building : IConstructionInfo,IBuildable
             }
         }
     }
-    
-    public bool CanBuild()
-    {           //verifica si hay disponible la cantidad de madera y piedra que requiere crear el almacen 
-        return _resources.Wood >= WoodCost && _resources.Stone >= StoneCost;
-    }
-    
-    public bool Build()
-{                                  //se llama a canbuild para asegurarse de que hay recursos suficientes, sino los hay retorna false
-                                    // si no retorna false, entonces procede a descontar la cantidad de recursos correspondiente
-        if (!CanBuild())
-            return false;
-    
-        return _resources.RemoveResources(wood: WoodCost, stone: StoneCost);
-    }
-    
 }   
 
 

@@ -65,7 +65,7 @@ public class Engine
     {
         new Map(); 
 
-        Map.PlaceBuildings(CantidadJugadores, CivicCenter.Symbol);
+        Map.PlaceRandom(CantidadJugadores, CivicCenter.Symbol);
         MapPrinter.PrintMap();
     }
 

@@ -1,14 +1,12 @@
 namespace Library.Buildings;
 
-public class Barrack:Building 
+using Core;
+public class Barrack : Building
 {
-    
-    public static string Symbol => "Bk";
- 
+    public new static string Symbol => "Bk";
 
-    public Barrack((int x, int y) posicion, Resources resources ): base(resources, 500,300,180,posicion)
+    public Barrack(Player player,(int x, int y) position) : base(position, woodCost:25, stoneCost:55,constructionTime:30)
     {
-       
+        // Aquí puedes agregar lógica de inicialización si es necesario
     }
-
 }

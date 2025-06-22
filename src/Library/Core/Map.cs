@@ -1,7 +1,5 @@
-﻿namespace Library.Core;
-
-using Library.Interfaces;
-
+﻿using Library.Buildings;
+namespace Library.Core;
 
 public class Map
 {
@@ -18,7 +16,7 @@ public class Map
         }
     }
     
-    public static void PlaceBuildings(int cantidad, string simbolo)
+    public static void PlaceRandom(int cantidad, string simbolo, Building building = null)
     {
         var rand = new Random();
         int colocados = 0;
@@ -29,14 +27,27 @@ public class Map
             int y = rand.Next(Board.GetLength(1));
             if (Board[x, y] == "..")
             {
-                Board[x, y] = simbolo;
+                ChangeMap(x,y,simbolo);
+                if (building != null)
+                {
+                    building.Position["x"] = x;
+                    building.Position["y"] = y;
+                }
                 colocados++;
             }
         }
+    }
+    public static void PlaceRandom(int cantidad, Building building)
+    {
+        PlaceRandom(cantidad, building.Symbol, building);
     }
 
     public static string CheckMap(int x, int y)
     {
         return Board[x, y];
+    }
+    public static void ChangeMap(int x, int y, string simbolo)
+    {
+        Board[x, y] = simbolo;
     }
 }
