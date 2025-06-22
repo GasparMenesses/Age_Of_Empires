@@ -11,6 +11,8 @@ public class Engine
     public DateTime HoraInicio { get; private set; }
     public int CantidadJugadores { get; private set; }
     public List<Player> Jugadores { get; private set; } = new List<Player>();
+    public List<GoldMine> MinasDeOro { get; private set; } = new List<GoldMine>();
+    public List<Woods> Woods { get; private set; } = new List<Woods>();
 
     public void CrearJugadores()
     {
@@ -50,7 +52,6 @@ public class Engine
         foreach (var jugador in Jugadores)
         {
             jugador.Villager = new Villager(3); // cada jugador empieza con 3 aldeanos
-            CreateBuildings();
         }
     }
 
@@ -73,20 +74,44 @@ public class Engine
     public void CreateNewGameMap()
     {
         new Map();
+        
 
         foreach (var jugador in Jugadores)
         {
+            // Cada jugador comienza con un centro cívico
+            var centroCivico = new CivicCenter(jugador);
+            var CivicCenterCoords = Map.PlaceBuildings(CivicCenter.Symbol);
+            centroCivico.Ubicacion(CivicCenterCoords);
+            jugador.Buildings.Add(centroCivico);
+            
+            
+            // Por cada jugador agrego 3 minas de oro al mapa
+            for (int i = 0; i < 3; i++)
+            {
+                var coords = Map.PlaceBuildings(GoldMine.Symbol);
+                int x = int.Parse(coords[0, 0]);
+                int y = int.Parse(coords[0, 1]);
 
+                var mina = new GoldMine((x, y), 500); 
+                MinasDeOro.Add(mina);
+            }
+            
+            // Por cada jugador agrego 5 woods al mapa
+            for (int i = 0; i < 5; i++)
+            {
+                var coords = Map.PlaceBuildings(WoodStorage.Symbol);
+                int x = int.Parse(coords[0, 0]);
+                int y = int.Parse(coords[0, 1]);
+
+                var wood = new Woods((x, y), 250); 
+                Woods.Add(wood);
+            }
+            
         }
 
-        Map.PlaceBuildings(CantidadJugadores, CivicCenter.Symbol);
         MapPrinter.PrintMap();
     }
-
-    public void CreateBuildings()
-    {
-        
-    }
+    
 
     public void EmpezarLoop()
     {
