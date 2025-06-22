@@ -10,6 +10,8 @@ public class Player
      public List<Building> Buildings { get; }
      public Civilization Civilization { get; set; }
      public List<IUnit> Units { get; set; }
+    
+     public Villager Villager { get; set; }
      
      private Civilization _society;
      
