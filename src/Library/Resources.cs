@@ -64,5 +64,6 @@ public class Resources
     public Resources ShowResources(Player player)
     {
         return player.Resources;
+        
     }
 }
