@@ -12,6 +12,7 @@ public class Player
      public Civilization Civilization { get; }
      public List<IUnit> Units { get; set; }
      private Civilization _society;
+     public  int PoblacionLimite  { get; set; }
      
      public Player(string nombre  , string civilization)
      {
@@ -34,5 +35,6 @@ public class Player
          this.Resources = new Resources();
          this.Civilization = _society;
          this.Units = new List<IUnit>();
+         this.PoblacionLimite = 10;
      }
 }
