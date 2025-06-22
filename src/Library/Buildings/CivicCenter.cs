@@ -2,18 +2,21 @@
 
 namespace Library.Buildings;
 
-public class CivicCenter
+public class CivicCenter : Building
 {
     public static string Symbol => "CC";
-    
+    public static string[,] Coordenadas = new string[0, 0];
+
     public int Gold { get; set; }
     public int Wood { get; set; }
     public int Food { get; set; }
     public int Stone { get; set; }
-    public int Capacity { get;  } 
+    public int Capacity { get; }
     public int MaxCapacityAldeano { get; }
     private Resources _resources;
+
     public CivicCenter(Player player)
+        : base(player.Resources, woodCost: 0, stoneCost: 0, constructionTime: 0, posicion: (0, 0)) // Valores dummy por ahora
     {
         Gold = 0;
         Stone = 0;
@@ -22,50 +25,40 @@ public class CivicCenter
         Capacity = 1000;
         MaxCapacityAldeano = 10;
         _resources = player.Resources;
-        _resources.AddLimitResources(true, true, true, true); //Aumenta el limite de cada recurso a 1000
+        _resources.AddLimitResources(true, true, true, true);
     }
+
+    public void Ubicacion(string[,] coordenadas)
+    {
+        Coordenadas = coordenadas;
+
+        if (int.TryParse(coordenadas[0, 0], out int x) && int.TryParse(coordenadas[0, 1], out int y))
+        {
+            Posicion = (x, y); // propiedad heredada de Building
+        }
+    }
+
     public void AddStone(int stone)
     {
-        if ((Stone + stone) > Capacity)
-        {
-            stone = Capacity - Stone;
-            Stone = Capacity;
-        }
-        else
-            Stone += stone;
+        Stone = Math.Min(Stone + stone, Capacity); // Asegura que no se exceda la capacidad
         _resources.AddResources(stone: stone);
     }
+
     public void AddGold(int gold)
     {
-        if ((Gold + gold) > Capacity)
-        {
-            gold = Capacity - Gold;
-            Gold = Capacity;
-        }
-        else
-            Gold += gold;
+        Gold = Math.Min(Gold + gold, Capacity); 
         _resources.AddResources(gold: gold);
     }
+
     public void AddWood(int wood)
     {
-        if ((Wood + wood) > Capacity)
-        {
-            wood = Capacity - Wood;
-            Wood = Capacity;
-        }
-        else
-            Wood += wood;
+        Wood = Math.Min(Wood + wood, Capacity);
         _resources.AddResources(wood: wood);
     }
+
     public void AddFood(int food)
     {
-        if ((Food + food) > Capacity)
-        {
-            food = Capacity - Food;
-            Food = Capacity;
-        }
-        else
-            Food += food;
+        Food = Math.Min(Food + food, Capacity);
         _resources.AddResources(food: food);
     }
 }

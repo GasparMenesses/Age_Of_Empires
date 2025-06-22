@@ -4,7 +4,6 @@ namespace Library.Buildings;
 //clase base abstracta utilizada para definir los costos y tiempos de construccion de los edificios de almacenamientos
 public abstract class Building : IConstructionInfo,IBuildable
 {
-    public static string Symbol => "Bg";
     
     public int WoodCost { get; set; }
     public int StoneCost { get; set; }

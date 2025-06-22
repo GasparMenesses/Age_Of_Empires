@@ -1,13 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading;
+using Library;
 using Library.Buildings;
 using Library.Core;
+using Library.Farming;
 
 public class Engine
 {
+    public DateTime HoraInicio { get; private set; }
     public int CantidadJugadores { get; private set; }
     public List<Player> Jugadores { get; private set; } = new List<Player>();
+    public List<GoldMine> MinasDeOro { get; private set; } = new List<GoldMine>();
+    public List<Woods> Woods { get; private set; } = new List<Woods>();
 
     public void CrearJugadores()
     {
@@ -15,7 +20,7 @@ public class Engine
         int cantidad;
         while (!int.TryParse(Console.ReadLine(), out  cantidad) || cantidad < 2 || cantidad > 4)
         {
-            Console.WriteLine("Número inválido. Ingrese entre 2 y 4 jugadores.");
+            Console.WriteLine("\nNúmero inválido. Ingrese entre 2 y 4 jugadores.");
         }
 
         CantidadJugadores = cantidad;
@@ -25,7 +30,6 @@ public class Engine
             Console.WriteLine($"\nEs turno del jugador N°{i + 1}");
             string nombre;
             bool nombreValido;
-
             do
             {
                 Console.WriteLine("Ingrese su nombre:");
@@ -34,7 +38,7 @@ public class Engine
 
                 if (!nombreValido)
                 {
-                    Console.WriteLine("Nombre ya usado, elija otro.");
+                    Console.WriteLine("\nNombre ya usado, elija otro.\n");
                 }
             } while (!nombreValido);
 
@@ -42,6 +46,12 @@ public class Engine
 
             Jugadores.Add(new Player(nombre, civilizacion));
             Console.WriteLine($"\nBienvenido {nombre}, ¡elegiste la civilización {civilizacion}!");
+            
+        }
+        
+        foreach (var jugador in Jugadores)
+        {
+            jugador.Villager = new Villager(3); // cada jugador empieza con 3 aldeanos
         }
     }
 
@@ -49,45 +59,162 @@ public class Engine
     {
         while (true)
         {
-            Console.WriteLine("Seleccione su civilización:\n1 - Cordobeses\n2 - Romanos\n3 - Vikingos");
+            Console.WriteLine("\nSeleccione su civilización:\n1 - Cordobeses\n2 - Romanos\n3 - Vikingos");
             string op = Console.ReadLine();
             switch (op)
             {
                 case "1": return "Cordobeses";
                 case "2": return "Romanos";
                 case "3": return "Vikingos";
-                default: Console.WriteLine("Opción inválida."); break;
+                default: Console.WriteLine("Opción inválida.\n"); break;
             }
         }
     }
 
     public void CreateNewGameMap()
     {
-        new Map(); 
-
-        Map.PlaceBuildings(CantidadJugadores, CivicCenter.Symbol);
-        MapPrinter.PrintMap();
-    }
-
-    public void EmpezarLoop()
-    {
-        Console.WriteLine("\n¡El juego ha comenzado!");
+        new Map();
+        
 
         foreach (var jugador in Jugadores)
         {
-            Console.WriteLine($"\nTurno de {jugador.Nombre} ({jugador.Civilization})");
+            // Cada jugador comienza con un centro cívico
+            var centroCivico = new CivicCenter(jugador);
+            var CivicCenterCoords = Map.PlaceBuildings(CivicCenter.Symbol);
+            centroCivico.Ubicacion(CivicCenterCoords);
+            jugador.Buildings.Add(centroCivico);
             
             
-            Console.WriteLine($"Recursos disponibles: Oro: {jugador.Resources.Gold}\n Madera: {jugador.Resources.Wood}\n Comida: {jugador.Resources.Food}\n Piedra: {jugador.Resources.Stone}");
+            // Por cada jugador agrego 3 minas de oro al mapa
+            for (int i = 0; i < 3; i++)
+            {
+                var coords = Map.PlaceBuildings(GoldMine.Symbol);
+                int x = int.Parse(coords[0, 0]);
+                int y = int.Parse(coords[0, 1]);
+
+                var mina = new GoldMine((x, y), 500); 
+                MinasDeOro.Add(mina);
+            }
             
+            // Por cada jugador agrego 5 woods al mapa
+            for (int i = 0; i < 5; i++)
+            {
+                var coords = Map.PlaceBuildings(WoodStorage.Symbol);
+                int x = int.Parse(coords[0, 0]);
+                int y = int.Parse(coords[0, 1]);
+
+                var wood = new Woods((x, y), 250); 
+                Woods.Add(wood);
+            }
             
-            
-            Thread.Sleep(1500);
-            
-            Console.WriteLine($"{jugador.Nombre}, aún no podés mover tropas pero ya estás en el juego :)");
-            Thread.Sleep(1500);
         }
 
-        Console.WriteLine("\nFin de ronda. (A futuro, este sería el loop principal del juego)");
+        MapPrinter.PrintMap();
     }
+    
+
+    public void EmpezarLoop()
+    {
+        HoraInicio = DateTime.Now;
+        Console.WriteLine($"\n¡El juego ha comenzado!     {HoraInicio}");
+        
+        foreach (var jugador in Jugadores)
+        {
+            Console.WriteLine($"\nTurno de {jugador.Nombre} ({jugador.Civilization.NombreCivilizacion})");
+            Console.WriteLine($"Recursos disponibles:\n Oro: {jugador.Resources.Gold}\n Madera: {jugador.Resources.Wood}\n Comida: {jugador.Resources.Food}\n Piedra: {jugador.Resources.Stone}");
+            Thread.Sleep(1500);
+            
+            Console.WriteLine($"\nUnidades disponibles:\n Aldeanos: {jugador.Villager.Villagers}");
+            Thread.Sleep(1500);
+            
+            string accion = "0";
+            while (accion != "1" && accion != "2" && accion != "3" && accion != "4")
+            {
+                Console.WriteLine("\nAcciones disponibles:\n 1- Mover unidades\n 2- Recolectar recursos\n 3- Construir edificios\n 4- Atacar unidades");
+                accion = Console.ReadLine();       
+                if (accion != "1" && accion != "2" && accion != "3" && accion != "4")
+                {
+                    Console.WriteLine("\nAcción inválida. Por favor, ingrese una acción válida (1-4):");
+                }
+            }
+            
+            switch (accion)
+            {
+                case "1":
+                    MoverUnidadees(jugador);
+                    break;
+                case "2":
+                    RecolectarRecursos(jugador);
+                    break;
+                case "3":
+                    ConstruirEdificios(jugador);
+                    break;
+                case "4":
+                    AtacarUnidades(jugador);
+                    break;
+            }
+
+        }
+
+        Console.WriteLine("\nFin de ronda. (A futuro este sería el loop principal del juego)");
+    }
+
+    public void MoverUnidadees(Player jugador)
+    {
+        Console.WriteLine("Ingrese la posición (x, y) a la que desea mover sus unidades:");
+        string[] posicion = Console.ReadLine().Split(',');
+        if (posicion.Length == 2 && int.TryParse(posicion[0], out int x) && int.TryParse(posicion[1], out int y))
+        {
+                        
+        }
+        else
+        {
+            Console.WriteLine("Posición inválida.");
+        }
+    }
+
+    public void RecolectarRecursos(Player jugador)
+    {
+        string recurso = "0";
+        while (recurso != "1" && recurso != "2" && recurso != "3" && recurso != "4")
+        {
+            Console.WriteLine("\nIngrese el recurso a recolectar:\n 1 - madera\n 2 - piedra\n 3 - oro\n 4 - comida):");
+            recurso = Console.ReadLine();
+            if (recurso != "1" && recurso != "2" && recurso != "3" && recurso != "4")
+            {
+                Console.WriteLine("\nRecurso inválido. Por favor, ingrese un número del 1 al 4.");
+            }
+        }
+        
+        
+        switch (recurso)
+        {
+            case "1":
+                Console.WriteLine("Recolectando madera...");
+                break;
+            case "2":
+                Console.WriteLine("Recolectando piedra...");
+                break;
+            case "3":
+                Console.WriteLine("Recolectando oro...");
+                break;
+            case "4":
+                Console.WriteLine("Recolectando comida...");
+                break;
+            default:
+                Console.WriteLine("Recurso inválido.");
+                break;
+        }
+    }
+
+    public void ConstruirEdificios(Player jugador)
+    {
+        Console.WriteLine("Construyendo edificios...");
+    }
+    
+    public void AtacarUnidades(Player jugador)
+    {
+        Console.WriteLine("Atacando unidades...");
+    }
+    
 }

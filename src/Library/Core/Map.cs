@@ -18,21 +18,18 @@ public class Map
         }
     }
     
-    public static void PlaceBuildings(int cantidad, string simbolo)
+    public static string[,] PlaceBuildings(string simbolo)
     {
-        var rand = new Random();
-        int colocados = 0;
-
-        while (colocados < cantidad)
+        int x = new Random().Next(1, 100);
+        int y = new Random().Next(1, 100);
+        // Checkeo si la posición está ocupada
+        while (Board[x, y] != "..")
         {
-            int x = rand.Next(Board.GetLength(0));
-            int y = rand.Next(Board.GetLength(1));
-            if (Board[x, y] == "..")
-            {
-                Board[x, y] = simbolo;
-                colocados++;
-            }
+            x = new Random().Next(1, 100);
+            y = new Random().Next(1, 100);
         }
+        Board[x, y] = simbolo;
+        return new string[1, 2] { { x.ToString(), y.ToString() } };
     }
 
     public static string CheckMap(int x, int y)

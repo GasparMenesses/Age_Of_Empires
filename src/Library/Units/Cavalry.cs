@@ -9,8 +9,8 @@ public class Cavalry
     public Cavalry()
     {
         Speed = 80;
-            Attack = 45;
-                Defense = 30;
-                    CreationTime = 50;
+        Attack = 45;
+        Defense = 30;
+        CreationTime = 50;
     }
 }
