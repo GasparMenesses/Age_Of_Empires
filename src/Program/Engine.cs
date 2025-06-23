@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Threading;
 using Library;
 using Library.Buildings;
 using Library.Core;
@@ -8,6 +6,8 @@ using Library.Farming;
 
 public class Engine
 {
+    
+    //  INICIALIZO VARIABLES
     public DateTime HoraInicio { get; private set; }
     public int CantidadJugadores { get; private set; }
     public List<Player> Jugadores { get; private set; } = new List<Player>();
@@ -20,6 +20,10 @@ public class Engine
     
     public List<Farm> Granjas { get; private set; } = new List<Farm>();
 
+    
+    
+    // FUNCIONES
+    
     public void CrearJugadores()
     {
         Console.WriteLine("Indique cuántos jugadores van a participar (2-4): ");
@@ -140,7 +144,6 @@ public class Engine
         MapPrinter.PrintMap();
     }
     
-
     public void EmpezarLoop()
     {
         HoraInicio = DateTime.Now;
@@ -204,32 +207,39 @@ public class Engine
     public void RecolectarRecursos(Player jugador)
     {
         string recurso = "0";
+        int cantidadAldeanos = 0;
+        
         while (recurso != "1" && recurso != "2" && recurso != "3" && recurso != "4")
         {
-            Console.WriteLine("\nIngrese el recurso a recolectar:\n 1 - madera\n 2 - piedra\n 3 - oro\n 4 - comida):");
+            Console.WriteLine("\nIngrese el recurso a recolectar:\n 1 - madera\n 2 - piedra\n 3 - oro\n 4 - comida:");
             recurso = Console.ReadLine();
             if (recurso != "1" && recurso != "2" && recurso != "3" && recurso != "4")
             {
                 Console.WriteLine("\nRecurso inválido. Por favor, ingrese un número del 1 al 4.");
             }
+            
         }
         
         
         switch (recurso)
         {
             case "1":
+                cantidadAldeanos = SeleccionarCantidadAldeanos(jugador, "Madera"); 
                 Console.WriteLine("Recolectando madera...");
                 break;
             case "2":
+                cantidadAldeanos = SeleccionarCantidadAldeanos(jugador, "Piedra"); 
                 Console.WriteLine("Recolectando piedra...");
                 break;
             case "3":
+                cantidadAldeanos = SeleccionarCantidadAldeanos(jugador, "Oro"); 
                 Console.WriteLine("Recolectando oro...");
                 break;
             case "4":
                 Console.WriteLine("Recolectando comida...");
                 break;
             default:
+                cantidadAldeanos = SeleccionarCantidadAldeanos(jugador, "Comida"); 
                 Console.WriteLine("Recurso inválido.");
                 break;
         }
@@ -244,5 +254,31 @@ public class Engine
     {
         Console.WriteLine("Atacando unidades...");
     }
+    
+    
+    private int SeleccionarCantidadAldeanos(Player jugador, string recurso)
+    {
+        Console.WriteLine($"\nIndique cuántos aldeanos quiere destinar a la recolección de {recurso}.");
+        Console.WriteLine($"Dispone de {jugador.Villager.Villagers} aldeanos:");
+
+        string input = "0";
+        int cantidad;
+
+        while (!int.TryParse(input, out cantidad) || cantidad < 1 || cantidad > jugador.Villager.Villagers)
+        {
+            input = Console.ReadLine();
+            if (!int.TryParse(input, out cantidad) || cantidad < 1 || cantidad > jugador.Villager.Villagers)
+            {
+                Console.WriteLine($"\nCantidad inválida. Debe ingresar un número entre 1 y {jugador.Villager.Villagers}.");
+            }
+        }
+
+        jugador.Villager.Villagers -= cantidad; // Descuento los aldeanos asignados
+        Console.WriteLine($"\n{cantidad} aldeanos asignados a la recolección de {recurso}.");
+        return cantidad;
+    }
+
+    
+    
     
 }
