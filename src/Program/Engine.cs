@@ -25,6 +25,10 @@ public class Engine
     
     // FUNCIONES
     
+    /// <summary>
+    /// Crea los jugadores de la partida, solicitando sus nombres y civilizaciones.
+    /// Asigna recursos iniciales y unidades iniciales a cada jugador.
+    /// </summary>
     public void CrearJugadores()
     {
         Console.WriteLine("Indique cuántos jugadores van a participar (2-4): ");
@@ -78,7 +82,10 @@ public class Engine
             }
         }
     } // Se encarga de la creación de los jugadores
-
+    
+    /// <summary>
+    /// Permite al jugador seleccionar una civilización de entre las disponibles.
+    /// </summary>
     private string SeleccionarCivilizacion()
     {
         while (true)
@@ -95,6 +102,10 @@ public class Engine
         }
     }  // Permite al jugador seleccionar su civilización
 
+    
+    /// <summary>
+    /// Crea un nuevo mapa de juego, colocando edificios y recursos iniciales para cada jugador.
+    /// </summary>
     public void CreateNewGameMap()
     {
         new Map(); 
@@ -141,6 +152,10 @@ public class Engine
         
     } // Crea un nuevo mapa para el juego, colocando los edificios y recursos iniciales
     
+    
+    /// <summary>
+    /// Inicia el bucle principal del juego, gestionando los turnos y acciones de los jugadores.
+    /// </summary>
     public void EmpezarLoop() // Inicia el bucle principal del juego
     {
         HoraInicio = DateTime.Now;
@@ -187,6 +202,10 @@ public class Engine
         Console.WriteLine("\nFin de ronda. (A futuro este sería el loop principal del juego)");
     }
 
+    
+    /// <summary>
+    /// Permite al jugador mover sus unidades a una nueva posición ingresada por coordenadas.
+    /// </summary>
     public void MoverUnidadees(Player jugador) // Permite al jugador mover sus unidades a una nueva posición en el mapa
     {
         Console.WriteLine("\nIngrese la posición (x, y) a la que desea mover sus unidades:");
@@ -216,6 +235,10 @@ public class Engine
         Console.WriteLine($"Unidades movidas a la posición ({x}, {y}).");
     }
 
+    
+    /// <summary>
+    /// Permite al jugador asignar aldeanos a la recolección de un recurso específico.
+    /// </summary>
     public async Task RecolectarRecursos(Player jugador) // Permite al jugador asignar aldeanos a la recolección de recursos
     {
         string recurso = "0";
@@ -256,6 +279,10 @@ public class Engine
 
     }
 
+    
+    /// <summary>
+    /// Permite al jugador construir un edificio especificando el tipo y la ubicación.
+    /// </summary>
     public async Task ConstruirEdificios(Player jugador)
     {
         Console.WriteLine("Construyendo edificios...");
@@ -302,11 +329,20 @@ public class Engine
         
     } // Permite al jugador construir edificios en el mapa, verificando los recursos necesarios y la posición
     
+    
+    
+    /// <summary>
+    /// Acción de atacar unidades enemigas. No implementado.
+    /// </summary>
     public void AtacarUnidades(Player jugador)
     {
         Console.WriteLine("Atacando unidades..."); // En desarrollo...
     } // Permite al jugador atacar unidades enemigas, aunque en esta versión no se implementa la lógica de ataque
     
+    
+    /// <summary>
+    /// Solicita al jugador cuántos aldeanos quiere asignar a una tarea específica.
+    /// </summary>
     private int SeleccionarCantidadAldeanos(Player jugador, string recurso)
     {
         Console.WriteLine($"\nIndique cuántos aldeanos quiere destinar a la recolección de {recurso}.");
