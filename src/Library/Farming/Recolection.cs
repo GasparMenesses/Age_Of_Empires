@@ -4,13 +4,18 @@ namespace Library.Farming;
 
 public  abstract class Recolection : IRecolection
 {
-    public (int x, int y )Posicion { get; }
     public int CantidadRecursoDisponible { get; set; }
     public int TasaDeRecoleccion { get; set; }
+    public Dictionary<string, int> Position { get; set; }
     
-    public Recolection((int x, int y )posicion, int cantidadinicial, int tasarecoleccion)
+    public Recolection((int x, int y )position, int cantidadinicial, int tasarecoleccion)
     {
-        Posicion = posicion;
+        
+        Position = new Dictionary<string, int>
+        {
+            { "x", position.x },
+            { "y", position.y }
+        };
         CantidadRecursoDisponible = cantidadinicial;
         TasaDeRecoleccion = tasarecoleccion;
     }

@@ -2,18 +2,18 @@ using Library.Core;
 
 namespace Library.Buildings;
 
-public class House: Building
+// Representa una casa que incrementa el límite de población del jugador
+public class House : Building
 {
-    
-    public House(Resources resources, (int x, int y) position) 
+
+    public House(Player player, (int x, int y) position)
         : base(position, 0, 0, 60)
     {
-        
     }
-    public void AumentarPoblacionLimite(Player player, int cantidad)
-    {
-        player.PoblacionLimite += cantidad;
-    }
-
     
+    // Aumenta el límite de población del jugador en la cantidad indicada
+    public void AumentarPoblacionLimite(Player player)
+    {
+        player.PoblacionLimite += 4;
+    }
 }

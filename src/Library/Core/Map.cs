@@ -1,4 +1,6 @@
 ﻿using Library.Buildings;
+using Library.Farming;
+
 namespace Library.Core;
 
 public class Map
@@ -17,7 +19,7 @@ public class Map
     }
 
     // Coloca un edificio en una posición aleatoria y retorna la posición
-    public static void PlaceBuilding(string simbolo, Building building = null)
+    public static void PlaceRandom(string simbolo, Building building = null, Recolection recolection = null)
     {
         var rand = new Random();
         int x, y;
@@ -33,18 +35,13 @@ public class Map
             building.Position["x"] = x;
             building.Position["y"] = y;
         }
-        return;
-    }
-
-    // Sobrecarga para usar el símbolo del edificio
-    public static void PlaceRandom(int cantidad, Building building)
-    {
-        for (int i = 0; i < cantidad; i++)
+        if (recolection != null)
         {
-            PlaceBuilding(building.Symbol, building);
+            recolection.Position["x"] = x;
+            recolection.Position["y"] = y;
         }
     }
-
+    
     public static string CheckMap(int x, int y)
     {
         return Board[x, y];

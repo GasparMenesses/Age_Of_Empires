@@ -1,12 +1,18 @@
+using Library.Core;
+
 namespace Library.Buildings;
 
-using Core;
+
+
 public class Barrack : Building
 {
+    // Símbolo que identifica al cuartel en el mapa
     public new static string Symbol => "Bk";
 
-    public Barrack(Player player,(int x, int y) position) : base(position, woodCost:25, stoneCost:55,constructionTime:30)
+    public Barrack(Player player, (int x, int y) position) : base(position, woodCost: 25, stoneCost: 55, constructionTime: 30)
     {
-        // Aquí puedes agregar lógica de inicialización si es necesario
+        // Representa un edificio cuartel en el juego
+        //cumple con srp porque solo se encarga de la lógica del cuartel    
     }
+
 }
