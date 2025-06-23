@@ -1,10 +1,11 @@
 using Library.Farming;
+using Library.Core;
+using Library.Interfaces;
+using Library.Units;
+using Library.Buildings;
 
 namespace Library.Actions;
-using Core;
-using Interfaces;
-using Units;
-using Buildings;
+
 public class Actions
 {
     private Player Player { get; set; }
@@ -16,7 +17,7 @@ public class Actions
 
     public async Task<bool> Build(string _building, (int x,int y) position)
     {
-        if (position.x >= 100 || position.x < 0 || position.y >= 100 || position.y < 0 || Map.CheckMap(position.x, position.y) != ".")
+        if (position.x >= 100 || position.x < 0 || position.y >= 100 || position.y < 0 || Map.CheckMap(position.x, position.y) != "..")
             return false; //verifica si la posicion es valida
         switch (_building)
         { 
@@ -55,7 +56,7 @@ public class Actions
             if (!Player.Units.Contains(unit))
                 return;
         }
-        if (position.x >= 100 || position.x < 0 || position.y >= 100 || position.y < 0 || Map.CheckMap(position.x, position.y) != ".")
+        if (position.x >= 100 || position.x < 0 || position.y >= 100 || position.y < 0 || Map.CheckMap(position.x, position.y) != "..")
             return;
         for (int i = 0; i < units.Count; i++)
         {
@@ -91,9 +92,5 @@ public class Actions
                 break;
         }
     }
-    
-    
-    
-    
     
 }

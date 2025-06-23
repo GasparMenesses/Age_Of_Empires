@@ -1,4 +1,5 @@
 using Library.Core;
+using Library.Units;
 
 namespace Library.Buildings;
 
@@ -19,6 +20,7 @@ public class CivicCenter : Building
     public int MaxCapacityAldeano { get; set; }
     private Player _player;
 
+    private Villager _villager;
     // Constructor: inicializa recursos, capacidad y asocia los recursos del jugador
     public CivicCenter(Player player)
         : base((0, 0), 0, 0, 0) // Ajusta los valores según tu lógica
@@ -29,6 +31,7 @@ public class CivicCenter : Building
             { "y", 0 }
         };
         _player = player;
+        _villager = new Villager(this);
         Gold = 0;
         Stone = 0;
         Wood = 100;
@@ -90,5 +93,19 @@ public class CivicCenter : Building
         else
             Food += food;
         _player.Resources.AddResources(food: food);
+    }
+
+    public void TrainingUnit(int quantity)
+    {
+        // Lógica para generar villagers en el CivicCenter
+        int totalCost = _villager.Cost * quantity;
+        if (_player.Resources.Food >= totalCost)
+        {
+            for (int i = 0; i < quantity; i++)
+            {
+                _player.Units.Add(new Villager(this));
+            }
+            _player.Resources.Food -= totalCost;
+        }
     }
 }

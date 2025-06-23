@@ -6,11 +6,11 @@ namespace Library.Units
 
         public Cavalry(Building building) : base(building)
         {
-            Speed = 80;
-            Attack = 45;
-            Defense = 30;
-            TimeTraining = 50;
-            Cost = 100;
+            Speed = 3;
+            Attack = 8;
+            Defense = 3;
+            TimeTraining = 40;
+            Cost = 70;
         }
     }
 }

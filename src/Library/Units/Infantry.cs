@@ -5,10 +5,10 @@ public class Infantry : Unit
 {
     public Infantry(Building building) : base(building)
     {
-        Speed = 40;
-        Attack = 23;
-        Defense = 45;
-        TimeTraining = 43;
-        Cost = 100;
+        Speed = 1;
+        Attack = 3;
+        Defense = 0;
+        TimeTraining = 26;
+        Cost = 50;
     }
 }
