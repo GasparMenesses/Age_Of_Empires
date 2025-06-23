@@ -6,6 +6,11 @@ namespace Library.Units
     {
         public Villager(Building building) : base(building)
         {
+            Speed = 1;
+            Attack = 1;
+            Defense = 0;
+            TimeTraining = 20;
+            Cost = 50;
         }
     }
 }

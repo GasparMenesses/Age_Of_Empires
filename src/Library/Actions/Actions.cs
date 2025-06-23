@@ -1,10 +1,11 @@
 using Library.Farming;
+using Library.Core;
+using Library.Interfaces;
+using Library.Units;
+using Library.Buildings;
 
 namespace Library.Actions;
-using Core;
-using Interfaces;
-using Units;
-using Buildings;
+
 public class Actions
 {
     private Player Player { get; set; }
