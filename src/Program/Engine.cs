@@ -102,7 +102,7 @@ public class Engine
         {
 
             // Cada jugador comienza con un centro cívico
-            Map.PlaceRandom(jugador.Buildings[0].Symbol);
+            Map.PlaceRandom(CivicCenter.Symbol);
             
             // Por cada jugador agrego 3 minas de oro al mapa
             for (int i = 0; i < 3; i++)
@@ -131,13 +131,14 @@ public class Engine
             // Por cada jugador agrego 5 granjas al mapa
             for (int i = 0; i < 5; i++)
             {
-                var granja = new Farm((0, 0), 500); 
+                var granja = new Farm((0, 0), 500);
                 Map.PlaceRandom(Farm.Symbol);
                 Granjas.Add(granja);
             }
             
         }
         MapPrinter.PrintMap();
+        
     }
     
     public void EmpezarLoop()
