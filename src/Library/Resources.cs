@@ -4,13 +4,13 @@ namespace Library;
 
 public class Resources
 {
-    public int Wood { get; private set; }
+    public int Wood { get;  set; }
     public int WoodLimit { get; private set; }
-    public int Stone { get; private set; }
+    public int Stone { get;  set; }
     public int StoneLimit { get; private set; }
-    public int Gold { get; private set; }
+    public int Gold { get;  set; }
     public int GoldLimit { get; private set; }
-    public int Food { get; private set; }
+    public int Food { get;  set; }
     public int FoodLimit { get; private set; }
 
     public Resources()
