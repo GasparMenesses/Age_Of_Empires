@@ -14,10 +14,10 @@ public class Actions
         Player = player;
     }
 
-    public void Build(string _building, (int x,int y) position)
+    public async Task<bool> Build(string _building, (int x,int y) position)
     {
         if (position.x >= 100 || position.x < 0 || position.y >= 100 || position.y < 0 || Map.CheckMap(position.x, position.y) != ".")
-            return;
+            return false; //verifica si la posicion es valida
         switch (_building)
         { 
             case "Barrack":
@@ -36,13 +36,17 @@ public class Actions
                 building = new WoodStorage(this.Player,position);
                 break;
             default:
-                return;
+                return false; //verifica si el edificio es valido
         }
         if (Player.Resources.Wood >= building.WoodCost && Player.Resources.Stone >= building.StoneCost) //verifica si hay disponible la cantidad de madera y piedra que requiere crear el almacen 
         {
+            await Task.Delay(10000); //simula el tiempo de construccion del edificio
             Player.Resources.RemoveResources(wood: building.WoodCost, stone: building.StoneCost);
             Player.Buildings.Add(building);
+            return true; // devuelve true si se pudo construir el edificio
         }
+
+        return false; // devuelve false si no se pudo construir el edificio
     }
     public void Move(List<IUnit> units, (int x, int y) position)
     {
@@ -66,10 +70,11 @@ public class Actions
         }
     }
 
-    public void Farmear(Player player,Villager villager, string resource)
+    public async Task Farmear(Player player,Villager villager, string resource)
     {
         if (!player.Units.Contains(villager))
             return;
+        await Task.Delay(5000); // Simula el tiempo de recolección
         switch (resource.ToLower())
         {
             case "oro":

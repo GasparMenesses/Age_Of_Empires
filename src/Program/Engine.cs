@@ -190,7 +190,7 @@ public class Engine
         }
     }
 
-    public void RecolectarRecursos(Player jugador)
+    public async Task RecolectarRecursos(Player jugador)
     {
         string recurso = "0";
         int cantidadAldeanos = 0;
@@ -220,7 +220,7 @@ public class Engine
         var actions = new Actions(jugador);
         foreach (var aldeano in aldeanos)
         {
-            actions.Farmear(jugador, aldeano, recursos);
+             await actions.Farmear(jugador, aldeano, recursos);
         }
         Console.WriteLine($"\n{cantidad} aldeano/s asignado/s a la recolección de {recursos}.");
         Console.WriteLine($"\nRecursos actuales de {jugador.Nombre}: Oro: {jugador.Resources.Gold}, Madera: {jugador.Resources.Wood}, Comida: {jugador.Resources.Food}, Piedra: {jugador.Resources.Stone}");
@@ -228,7 +228,7 @@ public class Engine
 
     }
 
-    public void ConstruirEdificios(Player jugador)
+    public async Task ConstruirEdificios(Player jugador)
     {
         string edificio = "0";
         
@@ -242,18 +242,33 @@ public class Engine
                 Console.WriteLine("\nEdificio inválido. Por favor, ingrese un número del 1 al 6.");
             }
             
-            
+        }
+        string nombreedificio= edificio switch
+        {
+            "1" => "GoldStorage",
+            "2" => "StoneStorage",
+            "3" => "WoodStorage",
+            "4" => "Mill",
+            "5" => "Barracks",
+            "6" => "House",
+            _ => throw new InvalidOperationException("Edificio no válido")
+        };
+        Console.WriteLine("ingrese la posición (x, y) donde desea construir el edificio:");
+        int x= int.Parse(Console.ReadLine());
+        int y = int.Parse(Console.ReadLine());
+        var actions = new Actions(jugador);
+        Console.WriteLine("\nConstruyendo edificio...");
+        bool construido =  await actions.Build(nombreedificio, (x, y));
+        if (construido)
+        {
+            Console.WriteLine($"\nEdificio {nombreedificio} construido exitosamente en la posición ({x}, {y}).");
+        }
+        else
+        {
+            Console.WriteLine("\nNo se pudo construir el edificio. Verifique los recursos o la posición.");
         }
 
-        switch (edificio)
-        {
-            case "1":
-                Console.WriteLine("Construyendo Almacen de oro...");
-                jugador.Resources.Stone -= 55; // Resta el costo de piedra
-                jugador.Resources.Wood -= 25; // Resta el costo de madera
-              break;
-                
-        }
+        
         
     }
     
