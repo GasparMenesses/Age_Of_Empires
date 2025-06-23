@@ -1,34 +1,38 @@
-using System.Data.SqlTypes;
-
+using Library.Core;
 namespace Library.Buildings;
-using Core;
 
 public class GoldStorage : Building //herdea de la clase building
 {
-    public static string Symbol => "GS";
-    public int AlmacenaOro { get; set; }
+    public new static string Symbol => "GS";
+    public int Gold { get; private set; } //propiedad que define la cantidad de oro almacenado
+    public int Capacity { get; set; }
+    public Player _player;
+    
 
-
-
-    public GoldStorage(Resources resources,(int x, int y)posicion) :
-        base(resources, woodCost:25, stoneCost:55,constructionTime:30,posicion) //constructor que define los costos de construccion del almacén, gastando piedra y madera.
+    public GoldStorage(Player player,(int x, int y)position) :
+        base(position, woodCost:25, stoneCost:55,constructionTime:30) //constructor que define los costos de construccion del almacén, gastando piedra y madera.
                                                                     //Tambien define el tiempo que demora
     {
-        AlmacenaOro = 0;
-        
-
+        _player = player;
+        Gold = 0; //inicializa la cantidad de oro almacenado en 0
+        Capacity = 1000; //define la capacidad del almacén
+        player.Resources.AddLimitResources(gold: true); //aumenta el limite de oro en 1000
+        player.Buildings.Add(this); //agrega el edificio al jugador
     }
-
-    public void AlmacenarOro(int cantidad)
+    public void AddGold(int gold)
     {
         if (!IsBuilt)
             throw new InvalidOperationException(
                 "El almacén aún no está construido."); // esto se hace por si el jugador quiere 
         // guardar recursos antes de que finalice la construccion del almacén
-
-        AlmacenaOro += cantidad;
+        if ((Gold + gold) > Capacity)
+        {
+            gold = Capacity - Gold;
+            Gold = Capacity;
+        }
+        else
+            Gold += gold;
+        _player.Resources.AddResources(gold: gold);
     }
-
-    
 }
    

@@ -1,11 +1,10 @@
 namespace Library.Interfaces;
 using Library;
-public interface IUnit
+public interface IUnit//Todas las unidades deben implementar esta interfaz ya que incluso los villagers en el juego pueden atacar
 {
     public int TimeTraining { get; }
-    public string Type { get; }
-    public Resources Cost { get; }
-    public List<int> Position { get; set; }
+    public int Cost { get; }
+    public Dictionary<string, int> Position { get; set; }
     public int Speed { get; }
     public int Attack { get; }
     public int Defense { get; }

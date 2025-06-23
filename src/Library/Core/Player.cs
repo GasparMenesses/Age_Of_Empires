@@ -1,7 +1,7 @@
-﻿using Library.Buildings;
-using Library.Interfaces;
-namespace Library.Core;
-using Library;
+﻿namespace Library.Core;
+using Buildings;
+using Interfaces;
+using Actions;
  
 public class Player
 {
@@ -10,11 +10,10 @@ public class Player
      public List<Building> Buildings { get; }
      public Civilization Civilization { get; set; }
      public List<IUnit> Units { get; set; }
-    
-     public Villager Villager { get; set; }
      
      private Civilization _society;
      public  int PoblacionLimite  { get; set; }
+     public Actions Actions { get; set; }
      
      public Player(string nombre  , string civilization)
      {
@@ -32,11 +31,13 @@ public class Player
              default:
                  throw new Exception("Civilización desconocida");
          }
-         this.Nombre = nombre;
-         this.Buildings = new List<Building>();
-         this.Resources = new Resources();
-         this.Civilization = _society;
-         this.Units = new List<IUnit>();
-         this.PoblacionLimite = 10;
+         Nombre = nombre;
+         Buildings = new List<Building>();
+         Resources = new Resources();
+         Civilization = _society;
+         Units = new List<IUnit>();
+         Actions = new Actions(this);
+         PoblacionLimite = 10;
+         Buildings.Add(new CivicCenter(this));
      }
 }
