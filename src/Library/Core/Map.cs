@@ -46,8 +46,10 @@ public class Map
     {
         return Board[x, y];
     }
-    public static void ChangeMap(int x, int y, string simbolo)
+    public static void ChangeMap(Building building, int x, int y, string simbolo)
     {
         Board[x, y] = simbolo;
+        building.Position["x"] = x;
+        building.Position["y"] = y;
     }
 }
