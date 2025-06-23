@@ -208,6 +208,8 @@ public class Engine
                 Console.WriteLine("Posición inválida, ingrese una posición válida (x, y) separada por coma.");
             }
         }
+        
+        
         // Acá movemos unidades
         Console.WriteLine($"Unidades movidas a la posición ({x}, {y}).");
     }
