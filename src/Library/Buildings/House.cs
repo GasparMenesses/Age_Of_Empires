@@ -6,7 +6,7 @@ public class House: Building
 {
     
     public House(Resources resources, (int x, int y) position) 
-        : base(resources, 100, 0, 60, position)
+        : base(position, 0, 0, 60)
     {
         
     }

@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading;
-using Library;
-using Library.Buildings;
-using Library.Core;
+﻿using Library.Core;
 using Library.Farming;
+using Library.Units;
+
 
 public class Engine
 {
@@ -51,7 +48,10 @@ public class Engine
         
         foreach (var jugador in Jugadores)
         {
-            jugador.Villager = new Villager(3); // cada jugador empieza con 3 aldeanos
+            for (int i = 0; i >= 3; i++)
+            {
+                jugador.Units.Add(new Villager(jugador.Buildings[0])); // cada jugador empieza con 3 aldeanos
+            }
         }
     }
 
@@ -73,46 +73,14 @@ public class Engine
 
     public void CreateNewGameMap()
     {
-        new Map();
-        
-
+        new Map(); 
         foreach (var jugador in Jugadores)
         {
-            // Cada jugador comienza con un centro cívico
-            var centroCivico = new CivicCenter(jugador);
-            var CivicCenterCoords = Map.PlaceBuildings(CivicCenter.Symbol);
-            centroCivico.Ubicacion(CivicCenterCoords);
-            jugador.Buildings.Add(centroCivico);
-            
-            
-            // Por cada jugador agrego 3 minas de oro al mapa
-            for (int i = 0; i < 3; i++)
-            {
-                var coords = Map.PlaceBuildings(GoldMine.Symbol);
-                int x = int.Parse(coords[0, 0]);
-                int y = int.Parse(coords[0, 1]);
-
-                var mina = new GoldMine((x, y), 500); 
-                MinasDeOro.Add(mina);
-            }
-            
-            // Por cada jugador agrego 5 woods al mapa
-            for (int i = 0; i < 5; i++)
-            {
-                var coords = Map.PlaceBuildings(WoodStorage.Symbol);
-                int x = int.Parse(coords[0, 0]);
-                int y = int.Parse(coords[0, 1]);
-
-                var wood = new Woods((x, y), 250); 
-                Woods.Add(wood);
-            }
-            
+            Map.PlaceRandom(CantidadJugadores, jugador.Buildings[0]);
         }
-
         MapPrinter.PrintMap();
     }
     
-
     public void EmpezarLoop()
     {
         HoraInicio = DateTime.Now;
@@ -123,8 +91,8 @@ public class Engine
             Console.WriteLine($"\nTurno de {jugador.Nombre} ({jugador.Civilization.NombreCivilizacion})");
             Console.WriteLine($"Recursos disponibles:\n Oro: {jugador.Resources.Gold}\n Madera: {jugador.Resources.Wood}\n Comida: {jugador.Resources.Food}\n Piedra: {jugador.Resources.Stone}");
             Thread.Sleep(1500);
-            
-            Console.WriteLine($"\nUnidades disponibles:\n Aldeanos: {jugador.Villager.Villagers}");
+            int numberOfVillagers = jugador.Units.OfType<Villager>().Count();
+            Console.WriteLine($"\nUnidades disponibles:\n Aldeanos: {numberOfVillagers}");
             Thread.Sleep(1500);
             
             string accion = "0";

@@ -1,12 +1,11 @@
-namespace Library.Units;
+using Library.Buildings;
 
-public class Villager : Unit
+namespace Library.Units
 {
-    public int Villagers { get; set; }
-
-    public Villager(int cantidad)
+    public class Villager : Unit
     {
-        Villagers = cantidad; 
+        public Villager(Building building) : base(building)
+        {
+        }
     }
-    
 }
