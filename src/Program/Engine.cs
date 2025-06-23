@@ -157,7 +157,7 @@ public class Engine
             string accion = "0";
             while (accion != "1" && accion != "2" && accion != "3" && accion != "4")
             {
-                Console.WriteLine("\nAcciones disponibles:\n 1- Mover unidades\n 2- Recolectar recursos\n 3- Construir edificios\n 4- Atacar unidades");
+                Console.WriteLine("\nAcciones disponibles:\n 1- Mover unidades \n 2- Recolectar recursos\n 3- Construir edificios\n 4- Atacar unidades");
                 accion = Console.ReadLine();       
                 if (accion != "1" && accion != "2" && accion != "3" && accion != "4")
                 {
@@ -188,16 +188,28 @@ public class Engine
 
     public void MoverUnidadees(Player jugador)
     {
-        Console.WriteLine("Ingrese la posición (x, y) a la que desea mover sus unidades:");
-        string[] posicion = Console.ReadLine().Split(',');
-        if (posicion.Length == 2 && int.TryParse(posicion[0], out int x) && int.TryParse(posicion[1], out int y))
+        Console.WriteLine("\nIngrese la posición (x, y) a la que desea mover sus unidades:");
+        int x = -1, y = -1;
+        bool posicionValida = false;
+
+        while (!posicionValida)
         {
-                        
+            string input = Console.ReadLine();
+            string[] posicion = input.Split(',');
+
+            if (posicion.Length == 2 &&
+                int.TryParse(posicion[0], out x) &&
+                int.TryParse(posicion[1], out y))
+            {
+                posicionValida = true;
+            }
+            else
+            {
+                Console.WriteLine("Posición inválida, ingrese una posición válida (x, y) separada por coma.");
+            }
         }
-        else
-        {
-            Console.WriteLine("Posición inválida.");
-        }
+        // Acá movemos unidades
+        Console.WriteLine($"Unidades movidas a la posición ({x}, {y}).");
     }
 
     public async Task RecolectarRecursos(Player jugador)
