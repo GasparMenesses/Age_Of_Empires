@@ -1,3 +1,5 @@
+using Library.Actions;
+using Library.Buildings;
 using Library.Core;
 using Library.Farming;
 using Library.Units;
@@ -188,7 +190,7 @@ public class Engine
         }
     }
 
-    public void RecolectarRecursos(Player jugador)
+    public async Task RecolectarRecursos(Player jugador)
     {
         string recurso = "0";
         int cantidadAldeanos = 0;
@@ -203,37 +205,74 @@ public class Engine
             }
             
         }
-        
-        switch (recurso)
+            
+        string recursos = recurso switch
+
         {
-            case "1":
-                cantidadAldeanos = SeleccionarCantidadAldeanos(jugador, "Madera"); 
-                Console.WriteLine("Recolectando madera...");
-                break;
-            case "2":
-                cantidadAldeanos = SeleccionarCantidadAldeanos(jugador, "Piedra"); 
-                Console.WriteLine("Recolectando piedra...");
-                break;
-            case "3":
-                cantidadAldeanos = SeleccionarCantidadAldeanos(jugador, "Oro"); 
-                Console.WriteLine("Recolectando oro...");
-                break;
-            case "4":
-                Console.WriteLine("Recolectando comida...");
-                break;
-            default:
-                cantidadAldeanos = SeleccionarCantidadAldeanos(jugador, "Comida"); 
-                Console.WriteLine("Recurso inválido.");
-                break;
+            "1" => "madera",
+            "2" => "piedra",
+            "3" => "oro",
+            "4" => "comida",
+            _ => throw new InvalidOperationException("Recurso no válido")
+        };
+        if (string.IsNullOrEmpty(recurso))
+            return;
+        int cantidad = SeleccionarCantidadAldeanos(jugador, recursos);
+        var aldeanos = jugador.Units.OfType<Villager>().Take(cantidad).ToList();
+        var actions = new Actions(jugador);
+        foreach (var aldeano in aldeanos)
+        {
+             await actions.Farmear(jugador, aldeano, recursos);
         }
+        Console.WriteLine($"\n{cantidad} aldeano/s asignado/s a la recolección de {recursos}.");
+        Console.WriteLine($"\nRecursos actuales de {jugador.Nombre}: Oro: {jugador.Resources.Gold}, Madera: {jugador.Resources.Wood}, Comida: {jugador.Resources.Food}, Piedra: {jugador.Resources.Stone}");
+
+
     }
 
-    public void ConstruirEdificios(Player jugador)
+    public async Task ConstruirEdificios(Player jugador)
     {
         Console.WriteLine("Construyendo edificios...");
         
         Console.WriteLine("Edificios disponibles:\n 1 - Centro Cívico\n 2 - Cuartel\n 3 - Establo");
-        string edificio = Console.ReadLine();
+        string edificio = "0";
+        
+        
+        while (edificio!= "1" && edificio != "2" && edificio != "3" && edificio != "4")
+        {
+            Console.WriteLine("\nIngrese el edificio a construir:\n 1 - Almacen de oro\n 2 - Almacen de piedra\n 3 - Almacen de madera\n 4 - Molino \n 5 - Cuartel \n 6 - Casa");
+            edificio = Console.ReadLine();
+            if (edificio != "1" && edificio != "2" && edificio != "3" && edificio != "4" && edificio != "5" && edificio != "6")
+            {
+                Console.WriteLine("\nEdificio inválido. Por favor, ingrese un número del 1 al 6.");
+            }
+            
+        }
+        string nombreedificio= edificio switch
+        {
+            "1" => "GoldStorage",
+            "2" => "StoneStorage",
+            "3" => "WoodStorage",
+            "4" => "Mill",
+            "5" => "Barracks",
+            "6" => "House",
+            _ => throw new InvalidOperationException("Edificio no válido")
+        };
+        Console.WriteLine("ingrese la posición (x, y) donde desea construir el edificio:");
+        int x= int.Parse(Console.ReadLine());
+        int y = int.Parse(Console.ReadLine());
+        var actions = new Actions(jugador);
+        Console.WriteLine("\nConstruyendo edificio...");
+        bool construido =  await actions.Build(nombreedificio, (x, y));
+        if (construido)
+        {
+            Console.WriteLine($"\nEdificio {nombreedificio} construido exitosamente en la posición ({x}, {y}).");
+        }
+        else
+        {
+            Console.WriteLine("\nNo se pudo construir el edificio. Verifique los recursos o la posición.");
+        }
+        
         
     }
     
@@ -259,7 +298,6 @@ public class Engine
             }
         }
         
-        Console.WriteLine($"\n{cantidad} aldeano/s asignado/s a la recolección de {recurso}.");
         return cantidad;
     }
 
