@@ -1,3 +1,5 @@
+using Library.Actions;
+using Library.Buildings;
 using Library.Core;
 using Library.Farming;
 using Library.Units;
@@ -203,7 +205,7 @@ public class Engine
             }
             
         }
-        int tiempoporaldeano=10000; // Tiempo que tarda un aldeano en recolectar un recurso (2 segundos)
+        int tiempoporaldeano=10000; // Tiempo que tarda un aldeano en recolectar un recurso (10 segundos)
         int cantidadRecursos = 0; // Cantidad de recursos recolectados por los aldeanos
         switch (recurso)
         {
@@ -269,7 +271,31 @@ public class Engine
 
     public void ConstruirEdificios(Player jugador)
     {
-        Console.WriteLine("Construyendo edificios...");
+        string edificio = "0";
+        
+        
+        while (edificio!= "1" && edificio != "2" && edificio != "3" && edificio != "4")
+        {
+            Console.WriteLine("\nIngrese el edificio a construir:\n 1 - Almacen de oro\n 2 - Almacen de piedra\n 3 - Almacen de madera\n 4 - Molino \n 5 - Cuartel \n 6 - Casa");
+            edificio = Console.ReadLine();
+            if (edificio != "1" && edificio != "2" && edificio != "3" && edificio != "4" && edificio != "5" && edificio != "6")
+            {
+                Console.WriteLine("\nEdificio inválido. Por favor, ingrese un número del 1 al 6.");
+            }
+            
+            
+        }
+
+        switch (edificio)
+        {
+            case "1":
+                Console.WriteLine("Construyendo Almacen de oro...");
+                jugador.Resources.Stone -= 55; // Resta el costo de piedra
+                jugador.Resources.Wood -= 25; // Resta el costo de madera
+              break;
+                
+        }
+        
     }
     
     public void AtacarUnidades(Player jugador)

@@ -6,7 +6,7 @@ public class Building : IConstructionInfo, IBuildable
 {
     //cumple con srp porque solo se encarga de la lógica de los edificios de almacenamiento
     public int WoodCost { get; set; }
-    public int StoneCost { get; set; }
+    public   int StoneCost { get; set; }
     public int ConstructionTime { get; }
 
     public int TimeElapsed { get; private set; }

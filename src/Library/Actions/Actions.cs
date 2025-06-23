@@ -1,3 +1,5 @@
+using Library.Farming;
+
 namespace Library.Actions;
 using Core;
 using Interfaces;
@@ -66,7 +68,23 @@ public class Actions
 
     public void Farmear(Player player,Villager villager, string resource)
     {
-        
+        if (!player.Units.Contains(villager))
+            return;
+        switch (resource.ToLower())
+        {
+            case "oro":
+                player.Resources.Gold += GoldMine.TasaDeRecoleccion;
+                break;
+            case "piedra":
+                player.Resources.Stone += Quarry.TasaDeRecoleccion;
+                break;
+            case "madera":
+                player.Resources.Wood += Woods.TasaDeRecoleccion;
+                break;
+            case "comida":
+                player.Resources.Food += Farm.TasaDeRecoleccion;
+                break;
+        }
     }
     
     
