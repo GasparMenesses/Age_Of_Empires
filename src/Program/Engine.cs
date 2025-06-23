@@ -205,68 +205,27 @@ public class Engine
             }
             
         }
-        int tiempoporaldeano=10000; // Tiempo que tarda un aldeano en recolectar un recurso (10 segundos)
-        int cantidadRecursos = 0; // Cantidad de recursos recolectados por los aldeanos
-        switch (recurso)
+        string recursos = recurso switch
         {
-            case "1":
-                cantidadAldeanos = SeleccionarCantidadAldeanos(jugador, "Madera"); 
-                Console.WriteLine("Recolectando madera...");
-                var woods = Bosques.FirstOrDefault(); // Obtiene el primer bosque disponible para recolectar madera
-                Thread.Sleep(tiempoporaldeano * cantidadAldeanos); // Simula el tiempo de recolección
-                if (woods != null)
-                {
-                    cantidadRecursos = cantidadAldeanos * Woods.TasaDeRecoleccion;
-                    jugador.Resources.Wood += cantidadRecursos;
-                    Woods.TasaDeRecoleccion -= Woods.CantidadRecursoDisponible; // Actualiza la cantidad de madera disponible en el bosque
-                    Console.WriteLine($"Recolectaste {cantidadRecursos} de madera.");
-                }
-                break;
-            case "2":
-                cantidadAldeanos = SeleccionarCantidadAldeanos(jugador, "Piedra"); 
-                Console.WriteLine("Recolectando piedra...");
-                var quarry = MinasDePiedra.FirstOrDefault(); // Obtiene la primera mina de piedra disponible
-                Thread.Sleep(tiempoporaldeano * cantidadAldeanos); // Simula el tiempo de recolección
-                if (quarry != null)
-                {
-                    cantidadRecursos = cantidadAldeanos * Quarry.TasaDeRecoleccion;
-                    jugador.Resources.Stone += cantidadRecursos;
-                    Quarry.TasaDeRecoleccion -= Quarry.CantidadRecursoDisponible; // Actualiza la cantidad de piedra disponible en la mina
-                    Console.WriteLine($"Recolectaste {cantidadRecursos} de piedra.");
-                }
-                
-                break;
-            case "3":
-                cantidadAldeanos = SeleccionarCantidadAldeanos(jugador, "Oro"); 
-                Console.WriteLine("Recolectando oro...");
-                var goldMine = MinasDeOro.FirstOrDefault(); // Obtiene la primera mina de oro disponible
-                Thread.Sleep(tiempoporaldeano * cantidadAldeanos); // Simula el tiempo de recolección
-                if (goldMine != null)
-                {
-                    cantidadRecursos = cantidadAldeanos * GoldMine.TasaDeRecoleccion;
-                    jugador.Resources.Gold += cantidadRecursos;
-                    GoldMine.TasaDeRecoleccion -= GoldMine.CantidadRecursoDisponible; // Actualiza la cantidad de oro disponible en la mina
-                    Console.WriteLine($"Recolectaste {cantidadRecursos} de oro.");
-                }
-               
-                break;
-            case "4":
-                cantidadAldeanos = SeleccionarCantidadAldeanos(jugador, "Comida");
-                Console.WriteLine("Recolectando comida...");
-                var farm = Granjas.FirstOrDefault(); // Obtiene la primera granja disponible
-                Thread.Sleep(tiempoporaldeano * cantidadAldeanos); // Simula el tiempo de recolección
-                if (farm != null)
-                {
-                    cantidadRecursos = cantidadAldeanos * Farm.TasaDeRecoleccion;
-                    jugador.Resources.Food += cantidadRecursos;
-                    Farm.TasaDeRecoleccion -= Farm.CantidadRecursoDisponible; // Actualiza la cantidad de comida disponible en la granja
-                    Console.WriteLine($"Recolectaste {cantidadRecursos} de comida.");
-                }
-                break;
-            default:
-                Console.WriteLine("Recurso inválido.");
-                break;
+            "1" => "madera",
+            "2" => "piedra",
+            "3" => "oro",
+            "4" => "comida",
+            _ => throw new InvalidOperationException("Recurso no válido")
+        };
+        if (string.IsNullOrEmpty(recurso))
+            return;
+        int cantidad = SeleccionarCantidadAldeanos(jugador, recursos);
+        var aldeanos = jugador.Units.OfType<Villager>().Take(cantidad).ToList();
+        var actions = new Actions(jugador);
+        foreach (var aldeano in aldeanos)
+        {
+            actions.Farmear(jugador, aldeano, recursos);
         }
+        Console.WriteLine($"\n{cantidad} aldeano/s asignado/s a la recolección de {recursos}.");
+        Console.WriteLine($"\nRecursos actuales de {jugador.Nombre}: Oro: {jugador.Resources.Gold}, Madera: {jugador.Resources.Wood}, Comida: {jugador.Resources.Food}, Piedra: {jugador.Resources.Stone}");
+
+
     }
 
     public void ConstruirEdificios(Player jugador)
@@ -321,7 +280,6 @@ public class Engine
             }
         }
         
-        Console.WriteLine($"\n{cantidad} aldeano/s asignado/s a la recolección de {recurso}.");
         return cantidad;
     }
 
