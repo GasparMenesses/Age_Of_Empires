@@ -6,6 +6,7 @@ public class Romanos : Civilization
     {
         NombreCivilizacion = "Romanos";
         TipoDeUnidadUnica = "JulioCesar";
-        Bonificacion = "Y";
+        Bonificacion = new Tuple<int, int, int, int>(0, 0, 50, 0);
+        DescripcionBonificacion = "los romanos tienen un bonus de 50 de oro al inicio de la partida";
     }
 }

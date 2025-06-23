@@ -57,14 +57,24 @@ public class Engine
 
             Jugadores.Add(new Player(nombre, civilizacion));
             Console.WriteLine($"\nBienvenido {nombre}, ¡elegiste la civilización {civilizacion}!");
+            Console.WriteLine($"\n{nombre}, {Jugadores.Last().Civilization.DescripcionBonificacion}");
             
         }
         
         foreach (var jugador in Jugadores)
         {
+            // Cada civilización tiene una bonificación inicial de recursos
+            jugador.Resources.AddResources( 
+                wood: jugador.Civilization.Bonificacion.Item1,
+                stone: jugador.Civilization.Bonificacion.Item2,
+                gold: jugador.Civilization.Bonificacion.Item3,
+                food: jugador.Civilization.Bonificacion.Item4
+            );
+            
+            // Cada jugador empieza con 3 aldeanos
             for (int i = 0; i < 3; i++)
             {
-                jugador.Units.Add(new Villager(jugador.Buildings[0])); // cada jugador empieza con 3 aldeanos
+                jugador.Units.Add(new Villager(jugador.Buildings[0])); 
             }
         }
     }
