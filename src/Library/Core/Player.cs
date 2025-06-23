@@ -33,11 +33,11 @@ public class Player
          }
          Nombre = nombre;
          Buildings = new List<Building>();
-         Buildings.Add(new CivicCenter(this));
          Resources = new Resources();
          Civilization = _society;
          Units = new List<IUnit>();
          Actions = new Actions(this);
          PoblacionLimite = 10;
+         Buildings.Add(new CivicCenter(this));
      }
 }

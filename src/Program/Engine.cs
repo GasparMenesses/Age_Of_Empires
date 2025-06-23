@@ -1,8 +1,4 @@
 using Library.Core;
-using System;
-using Library;
-using Library.Buildings;
-using Library.Core;
 using Library.Farming;
 using Library.Units;
 
@@ -64,7 +60,7 @@ public class Engine
         
         foreach (var jugador in Jugadores)
         {
-            for (int i = 0; i >= 3; i++)
+            for (int i = 0; i < 3; i++)
             {
                 jugador.Units.Add(new Villager(jugador.Buildings[0])); // cada jugador empieza con 3 aldeanos
             }
