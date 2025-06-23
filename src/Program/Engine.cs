@@ -11,8 +11,14 @@ public class Engine
     public DateTime HoraInicio { get; private set; }
     public int CantidadJugadores { get; private set; }
     public List<Player> Jugadores { get; private set; } = new List<Player>();
-    public List<GoldMine> MinasDeOro { get; private set; } = new List<GoldMine>();
-    public List<Woods> Woods { get; private set; } = new List<Woods>();
+    
+    public List<GoldMine> MinasDeOro { get; private set; } = new List<GoldMine>(); 
+    
+    public List<Woods> Bosques { get; private set; } = new List<Woods>();
+    
+    public List<Quarry> MinasDePiedra { get; private set; } = new List<Quarry>();
+    
+    public List<Farm> Granjas { get; private set; } = new List<Farm>();
 
     public void CrearJugadores()
     {
@@ -92,19 +98,41 @@ public class Engine
                 int x = int.Parse(coords[0, 0]);
                 int y = int.Parse(coords[0, 1]);
 
-                var mina = new GoldMine((x, y), 500); 
-                MinasDeOro.Add(mina);
+                var minaoro = new GoldMine((x, y), 500); 
+                MinasDeOro.Add(minaoro);
             }
             
             // Por cada jugador agrego 5 woods al mapa
             for (int i = 0; i < 5; i++)
             {
-                var coords = Map.PlaceBuildings(WoodStorage.Symbol);
+                var coords = Map.PlaceBuildings(Woods.Symbol);
                 int x = int.Parse(coords[0, 0]);
                 int y = int.Parse(coords[0, 1]);
 
                 var wood = new Woods((x, y), 250); 
-                Woods.Add(wood);
+                Bosques.Add(wood);
+            }
+            
+            // Por cada jugador agrego 5 minas de piedra al mapa
+            for (int i = 0; i < 5; i++)
+            {
+                var coords = Map.PlaceBuildings(Quarry.Symbol);
+                int x = int.Parse(coords[0, 0]);
+                int y = int.Parse(coords[0, 1]);
+
+                var minapiedra = new Quarry((x, y), 200); 
+                MinasDePiedra.Add(minapiedra);
+            }
+            
+            // Por cada jugador agrego 5 granjas al mapa
+            for (int i = 0; i < 5; i++)
+            {
+                var coords = Map.PlaceBuildings(Farm.Symbol);
+                int x = int.Parse(coords[0, 0]);
+                int y = int.Parse(coords[0, 1]);
+
+                var granja = new Farm((x, y), 200); 
+                Granjas.Add(granja);
             }
             
         }
