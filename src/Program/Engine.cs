@@ -220,7 +220,6 @@ public class Engine
             
         }
         
-        
         switch (recurso)
         {
             case "1":
@@ -248,13 +247,16 @@ public class Engine
     public void ConstruirEdificios(Player jugador)
     {
         Console.WriteLine("Construyendo edificios...");
+        
+        Console.WriteLine("Edificios disponibles:\n 1 - Centro Cívico\n 2 - Cuartel\n 3 - Establo");
+        string edificio = Console.ReadLine();
+        
     }
     
     public void AtacarUnidades(Player jugador)
     {
         Console.WriteLine("Atacando unidades...");
     }
-    
     
     private int SeleccionarCantidadAldeanos(Player jugador, string recurso)
     {
