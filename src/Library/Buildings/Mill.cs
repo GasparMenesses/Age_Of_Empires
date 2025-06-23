@@ -1,6 +1,8 @@
 ﻿using Library.Core;
 namespace Library.Buildings;
 
+// Esta clase representa un edificio de tipo "Mill" (molino) en el juego, que almacena recursos de comida.
+// Cumple con SRP ya que se encarga exclusivamente de la lógica relacionada con el molino y el almacenamiento de comida.
 
 public class Mill : Building //herdea de la clase building
 {

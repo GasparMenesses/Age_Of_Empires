@@ -2,7 +2,8 @@ using Library.Core;
 using Library.Units;
 namespace Library.Buildings;
 
-
+// Representa un cuartel en el juego, donde se entrenan unidades militares
+// Cumple con SRP ya que se encarga exclusivamente de la lógica relacionada con el cuartel y el entrenamiento de unidades
 
 public class Barrack : Building
 {

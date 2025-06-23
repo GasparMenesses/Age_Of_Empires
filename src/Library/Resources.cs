@@ -2,6 +2,11 @@
 
 namespace Library;
 
+// Esta clase representa los recursos del jugador en el juego, incluyendo madera, piedra, oro y comida.
+// Cada recurso tiene un valor actual y un límite máximo.
+// Los recursos pueden ser añadidos o eliminados, y los límites de cada recurso pueden ser incrementados.
+// Además, se proporciona un método para mostrar los recursos del jugador.
+
 public class Resources
 {
     public int Wood { get;  set; }

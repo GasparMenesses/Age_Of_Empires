@@ -1,6 +1,9 @@
 ﻿using Library.Core;
 namespace Library.Buildings;
 
+// Representa un almacén de madera en el juego, donde se almacenan recursos de madera
+// Cumple con SRP ya que se encarga exclusivamente de la lógica relacionada con el almacenamiento de madera
+
 public class WoodStorage : Building
 {
     public new static string Symbol => "WS";

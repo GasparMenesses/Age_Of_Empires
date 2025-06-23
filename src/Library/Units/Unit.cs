@@ -2,7 +2,9 @@ namespace Library.Units;
 using Interfaces;
 using Buildings;
 
-
+// Esta clase representa una unidad genérica en el juego, que implementa la interfaz IUnit.
+// La clase contiene propiedades comunes a todas las unidades, como tiempo de entrenamiento, costo, posición, velocidad, ataque y defensa.
+// La posición se define como un diccionario con coordenadas "x" e "y".
 public class Unit : IUnit
 {
     public int TimeTraining { get; set; }

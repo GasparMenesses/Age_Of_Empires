@@ -1,6 +1,8 @@
 using Library.Buildings;
-
 namespace Library.Units;
+
+// Esta clase representa una unidad de tipo Borracho en el juego, que hereda de la clase base Unit.
+// Un Borracho tiene propiedades específicas como velocidad (menor), ataque, defensa, tiempo de entrenamiento y costo.
 
 public class Borracho : Unit
 {

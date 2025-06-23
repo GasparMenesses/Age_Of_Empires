@@ -1,5 +1,7 @@
 namespace Library.Interfaces;
 
+// Esta interfaz define las operaciones básicas para recolectar recursos en el juego.
+
 public interface IRecolection
 {
         public Dictionary<string, int> Position { get; set; } // indica la posición del recurso a recolectar

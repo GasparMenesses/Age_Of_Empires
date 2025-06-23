@@ -6,6 +6,8 @@ using Library.Buildings;
 
 namespace Library.Actions;
 
+// Esta clase maneja las acciones que un jugador puede realizar en el juego, como construir edificios, mover unidades y recolectar recursos.
+// Cumple con SRP porque se encarga exclusivamente de las acciones del jugador, separando la lógica de negocio de otras responsabilidades como la gestión de recursos o el mapa.
 public class Actions
 {
     private Player Player { get; set; }

@@ -9,17 +9,17 @@ public class Engine
 {
     
     //  INICIALIZO VARIABLES
-    public DateTime HoraInicio { get; private set; }
-    public int CantidadJugadores { get; private set; }
-    public List<Player> Jugadores { get; private set; } = new List<Player>();
+    public DateTime HoraInicio { get; private set; }  // Hora de inicio del juego
+    public int CantidadJugadores { get; private set; } // Cantidad de jugadores en la partida
+    public List<Player> Jugadores { get; private set; } = new List<Player>(); // Lista de jugadores en la partida
     
-    public List<GoldMine> MinasDeOro { get; private set; } = new List<GoldMine>(); 
+    public List<GoldMine> MinasDeOro { get; private set; } = new List<GoldMine>();  // Lista de minas de oro en el mapa
     
-    public List<Woods> Bosques { get; private set; } = new List<Woods>();
+    public List<Woods> Bosques { get; private set; } = new List<Woods>(); // Lista de bosques en el mapa
     
-    public List<Quarry> MinasDePiedra { get; private set; } = new List<Quarry>();
+    public List<Quarry> MinasDePiedra { get; private set; } = new List<Quarry>(); // Lista de minas de piedra en el mapa
     
-    public List<Farm> Granjas { get; private set; } = new List<Farm>();
+    public List<Farm> Granjas { get; private set; } = new List<Farm>(); // Lista de granjas en el mapa
 
     
     
@@ -77,7 +77,7 @@ public class Engine
                 jugador.Units.Add(new Villager(jugador.Buildings[0])); 
             }
         }
-    }
+    } // Se encarga de la creación de los jugadores
 
     private string SeleccionarCivilizacion()
     {
@@ -93,7 +93,7 @@ public class Engine
                 default: Console.WriteLine("Opción inválida.\n"); break;
             }
         }
-    }
+    }  // Permite al jugador seleccionar su civilización
 
     public void CreateNewGameMap()
     {
@@ -139,19 +139,19 @@ public class Engine
         }
         MapPrinter.PrintMap();
         
-    }
+    } // Crea un nuevo mapa para el juego, colocando los edificios y recursos iniciales
     
-    public void EmpezarLoop()
+    public void EmpezarLoop() // Inicia el bucle principal del juego
     {
         HoraInicio = DateTime.Now;
-        Console.WriteLine($"\n¡El juego ha comenzado!     {HoraInicio}");
+        Console.WriteLine($"\n¡El juego ha comenzado!     {HoraInicio}");  // Muestra la hora de inicio del juego
         
         foreach (var jugador in Jugadores)
         {
             Console.WriteLine($"\nTurno de {jugador.Nombre} ({jugador.Civilization.NombreCivilizacion})");
             Console.WriteLine($"Recursos disponibles:\n Oro: {jugador.Resources.Gold}\n Madera: {jugador.Resources.Wood}\n Comida: {jugador.Resources.Food}\n Piedra: {jugador.Resources.Stone}");
             Thread.Sleep(1500);
-            int numberOfVillagers = jugador.Units.OfType<Villager>().Count();
+            int numberOfVillagers = jugador.Units.OfType<Villager>().Count(); // Cuenta la cantidad de aldeanos del jugador
             Console.WriteLine($"\nUnidades disponibles:\n Aldeanos: {numberOfVillagers}");
             Thread.Sleep(1500);
             
@@ -187,16 +187,17 @@ public class Engine
         Console.WriteLine("\nFin de ronda. (A futuro este sería el loop principal del juego)");
     }
 
-    public void MoverUnidadees(Player jugador)
+    public void MoverUnidadees(Player jugador) // Permite al jugador mover sus unidades a una nueva posición en el mapa
     {
         Console.WriteLine("\nIngrese la posición (x, y) a la que desea mover sus unidades:");
         int x = -1, y = -1;
         bool posicionValida = false;
 
+        // Validación de la posición ingresada, asegurando que sea un par de números enteros separados por coma
         while (!posicionValida)
         {
             string input = Console.ReadLine();
-            string[] posicion = input.Split(',');
+            string[] posicion = input.Split(','); // Separa la entrada por coma
 
             if (posicion.Length == 2 &&
                 int.TryParse(posicion[0], out x) &&
@@ -215,7 +216,7 @@ public class Engine
         Console.WriteLine($"Unidades movidas a la posición ({x}, {y}).");
     }
 
-    public async Task RecolectarRecursos(Player jugador)
+    public async Task RecolectarRecursos(Player jugador) // Permite al jugador asignar aldeanos a la recolección de recursos
     {
         string recurso = "0";
         int cantidadAldeanos = 0;
@@ -242,12 +243,12 @@ public class Engine
         };
         if (string.IsNullOrEmpty(recurso))
             return;
-        int cantidad = SeleccionarCantidadAldeanos(jugador, recursos);
-        var aldeanos = jugador.Units.OfType<Villager>().Take(cantidad).ToList();
-        var actions = new Actions(jugador);
+        int cantidad = SeleccionarCantidadAldeanos(jugador, recursos); // Selecciona la cantidad de aldeanos a asignar a la recolección del recurso
+        var aldeanos = jugador.Units.OfType<Villager>().Take(cantidad).ToList();  // Toma los aldeanos disponibles del jugador
+        var actions = new Actions(jugador); // Crea una instancia de la clase Actions para realizar acciones con los aldeanos
         foreach (var aldeano in aldeanos)
         {
-             await actions.Farmear(jugador, aldeano, recursos);
+             await actions.Farmear(jugador, aldeano, recursos); // Asigna cada aldeano a la recolección del recurso seleccionado
         }
         Console.WriteLine($"\n{cantidad} aldeano/s asignado/s a la recolección de {recursos}.");
         Console.WriteLine($"\nRecursos actuales de {jugador.Nombre}: Oro: {jugador.Resources.Gold}, Madera: {jugador.Resources.Wood}, Comida: {jugador.Resources.Food}, Piedra: {jugador.Resources.Stone}");
@@ -288,7 +289,7 @@ public class Engine
         int y = int.Parse(Console.ReadLine());
         var actions = new Actions(jugador);
         Console.WriteLine("\nConstruyendo edificio...");
-        bool construido =  await actions.Build(nombreedificio, (x, y));
+        bool construido =  await actions.Build(nombreedificio, (x, y)); // Llama al método Build de la clase Actions para construir el edificio en la posición especificada
         if (construido)
         {
             Console.WriteLine($"\nEdificio {nombreedificio} construido exitosamente en la posición ({x}, {y}).");
@@ -299,12 +300,12 @@ public class Engine
         }
         
         
-    }
+    } // Permite al jugador construir edificios en el mapa, verificando los recursos necesarios y la posición
     
     public void AtacarUnidades(Player jugador)
     {
-        Console.WriteLine("Atacando unidades...");
-    }
+        Console.WriteLine("Atacando unidades..."); // En desarrollo...
+    } // Permite al jugador atacar unidades enemigas, aunque en esta versión no se implementa la lógica de ataque
     
     private int SeleccionarCantidadAldeanos(Player jugador, string recurso)
     {
@@ -324,7 +325,7 @@ public class Engine
         }
         
         return cantidad;
-    }
+    } // Permite al jugador seleccionar la cantidad de aldeanos a asignar a la recolección de un recurso específico
 
     
     

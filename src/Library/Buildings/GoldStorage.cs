@@ -1,6 +1,9 @@
 using Library.Core;
 namespace Library.Buildings;
 
+// Representa un almacén de oro en el juego, donde se almacena el oro recolectado
+// Cumple con SRP ya que se encarga exclusivamente de la lógica relacionada con el almacenamiento de oro
+
 public class GoldStorage : Building //herdea de la clase building
 {
     public new static string Symbol => "GS";

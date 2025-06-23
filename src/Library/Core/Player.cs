@@ -3,6 +3,10 @@ using Buildings;
 using Interfaces;
 using Actions;
  
+// Esta clase representa un jugador en el juego, con su nombre, recursos, edificios, civilización y unidades.
+// El jugador puede pertenecer a una civilización específica y tiene un límite de población, así como acciones disponibles.
+// Además, el jugador comienza con un centro cívico y puede construir otros edificios y unidades a lo largo del juego.
+
 public class Player
 {
      public string Nombre { get; set; }

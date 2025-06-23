@@ -1,5 +1,7 @@
 ﻿using System;
-
+// esta clase representa la fachada del juego, que es la interfaz principal para interactuar con el motor del juego
+// La fachada simplifica la interacción con el motor, encapsulando la lógica de creación de jugadores y el entorno del juego.
+// La clase también maneja la inicialización del motor y el inicio del bucle del juego.
 public class Fachada
 {
     private Engine engine;

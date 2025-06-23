@@ -1,5 +1,7 @@
 ﻿namespace Library;
 
+// Esta clase representa la civilización Romanos en el juego, con su nombre, tipo de unidad única y bonificaciones específicas.
+
 public class Romanos : Civilization
 {
     public Romanos()

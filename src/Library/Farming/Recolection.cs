@@ -1,6 +1,8 @@
 using Library.Interfaces;
-
 namespace Library.Farming;
+
+// Esta clase abstracta representa un recolectable en el juego, como una mina de oro, cantera o granja.
+// Contiene propiedades y métodos comunes para todos los tipos de recolectables, como la posición, cantidad de recursos disponibles y tasa de recolección.
 
 public  abstract class Recolection : IRecolection
 {

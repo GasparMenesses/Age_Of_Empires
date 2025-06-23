@@ -4,6 +4,7 @@ using Library.Units;
 namespace Library.Buildings;
 
 // Representa el centro cívico del jugador, encargado de almacenar y gestionar recursos principales
+// Cumple con SRP ya que se encarga exclusivamente de la lógica relacionada con el centro cívico y la gestión de recursos
 public class CivicCenter : Building
 {
     // Símbolo identificador del centro cívico en el mapa

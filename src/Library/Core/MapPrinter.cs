@@ -11,7 +11,8 @@ public static class MapPrinter
             {
                 Console.Write(Map.Board[i, j] + " "); // Imprime el simbolo del mapa en la posicion actual
             }
-            Console.WriteLine();    // Imprime un salto de linea al final de cada fila
+
+            Console.WriteLine(); // Imprime un salto de linea al final de cada fila
         }
     }
 }

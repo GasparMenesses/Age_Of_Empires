@@ -1,6 +1,9 @@
 ﻿using Library.Core;
 namespace Library.Buildings;
 
+// Representa un almacén de piedra en el juego, donde se almacenan recursos de piedra
+// Cumple con SRP ya que se encarga exclusivamente de la lógica relacionada con el almacenamiento de piedra
+
 public class StoneStorage : Building //herdea de la clase building
 {
     public new static string Symbol => "SS";
