@@ -210,6 +210,53 @@ public class Tests
     }
     
     
+    /// <summary>
+    /// Verifica que ninguna civilización tenga campos nulos al ser creada.
+    /// </summary>
+    [Test]
+    public void CivilizationsNoNullFields()
+    {
+        Civilization[] civis = new Civilization[]
+        {
+            new Cordobeses(),
+            new Romanos(),
+            new Vikingos()
+        };
+
+        foreach (var c in civis)
+        {
+            Assert.That(c.NombreCivilizacion, Is.Not.Null);
+            Assert.That(c.TipoDeUnidadUnica, Is.Not.Null);
+            Assert.That(c.Bonificacion, Is.Not.Null);
+            Assert.That(c.DescripcionBonificacion, Is.Not.Null);
+        }
+    }
+    
+    
+    
+    /// <summary>
+    /// Verifica que los valores de bonificación sean coherentes (entre 0 y 100).
+    /// </summary>
+    [Test]
+    public void BonificacionesEnRangoValido()
+    {
+        Civilization[] civis = new Civilization[]
+        {
+            new Cordobeses(),
+            new Romanos(),
+            new Vikingos()
+        };
+
+        foreach (var c in civis)
+        {
+            Assert.That(c.Bonificacion.Item1, Is.InRange(0, 100));
+            Assert.That(c.Bonificacion.Item2, Is.InRange(0, 100));
+            Assert.That(c.Bonificacion.Item3, Is.InRange(0, 100));
+            Assert.That(c.Bonificacion.Item4, Is.InRange(0, 100));
+        }
+    }
+    
+    
     
 }
     
