@@ -19,19 +19,19 @@ public class Actions
 
     public async Task<bool> Build(string _building, (int x, int y) position)
     {
-        if (position.x >= 100 || position.x < 0 || position.y >= 100 || position.y < 0 || Map.CheckMap(position.x, position.y) != ".")
+        if (position.x >= 100 || position.x < 0 || position.y >= 100 || position.y < 0 || Map.CheckMap(position.x, position.y) != "..")
             return false;
 
         if (_building == "Barrack")
-            building = new Barrack(this.Player, position);
+            building = new Barrack(Player, position);
         else if (_building == "GoldStorage")
-            building = new GoldStorage(this.Player, position);
+            building = new GoldStorage(Player, position);
         else if (_building == "Mill")
-            building = new Mill(this.Player, position);
+            building = new Mill(Player, position);
         else if (_building == "StoneStorage")
-            building = new StoneStorage(this.Player, position);
+            building = new StoneStorage(Player, position);
         else if (_building == "WoodStorage")
-            building = new WoodStorage(this.Player, position);
+            building = new WoodStorage(Player, position);
         else
             return false;
 
@@ -40,6 +40,7 @@ public class Actions
             await Task.Delay(10000);
             Player.Resources.RemoveResources(wood: building.WoodCost, stone: building.StoneCost);
             Player.Buildings.Add(building);
+            Map.ChangeMap(position, building.Symbol, building);
             return true;
         }
 
@@ -52,7 +53,7 @@ public class Actions
             if (!Player.Units.Contains(unit))
                 return;
         }
-        if (position.x >= 100 || position.x < 0 || position.y >= 100 || position.y < 0 || Map.CheckMap(position.x, position.y) != ".")
+        if (position.x >= 100 || position.x < 0 || position.y >= 100 || position.y < 0 || Map.CheckMap(position.x, position.y) != "..")
             return;
         for (int i = 0; i < units.Count; i++)
         {

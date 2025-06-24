@@ -7,17 +7,13 @@ namespace Library.Core;
 
 public class Map
 {
-    public static string[,] Board;
+    public static string[,] Board = new string[100, 100];
 
-    public Map()
+    static Map()
     {
-        if (Board == null)
-        {
-            Board = new string[100, 100];
-            for (int i = 0; i < 100; i++)
+        for (int i = 0; i < 100; i++)
             for (int j = 0; j < 100; j++)
                 Board[i, j] = "..";
-        }
     }
 
     // Coloca un edificio en una posición aleatoria y retorna la posición
@@ -50,10 +46,13 @@ public class Map
         return Board[x, y];
     }
 
-    public static void ChangeMap(Building building, int x, int y, string simbolo)
+    public static void ChangeMap((int x, int y) position, string simbolo, Building building = null)
     {
-        Board[x, y] = simbolo;
-        building.Position["x"] = x;
-        building.Position["y"] = y;
+        Board[position.x, position.y] = simbolo;
+        if (building != null)
+        {
+            building.Position["x"] = position.x;
+            building.Position["y"] = position.y;
+        }
     }
 }
