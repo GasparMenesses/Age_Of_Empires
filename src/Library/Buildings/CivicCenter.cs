@@ -8,7 +8,7 @@ namespace Library.Buildings;
 public class CivicCenter : Building
 {
     // Símbolo identificador del centro cívico en el mapa
-    public new static string Symbol => "CC";
+    public override string Symbol => "CC";
 
     // Recursos almacenados en el centro cívico
     public int Gold { get; set; }

@@ -63,4 +63,9 @@ public class Map
     {
         return Board.GetLength(1);
     }
+
+    public static string [,] ReturnBoard()
+    {
+        return Board;
+    }
 }

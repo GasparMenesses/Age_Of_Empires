@@ -6,7 +6,7 @@ namespace Library.Buildings;
 
 public class StoneStorage : Building //herdea de la clase building
 {
-    public new static string Symbol => "SS";
+    public override string Symbol => "SS";
     public int Stone { get;  set; } //propiedad que define la cantidad de piedra almacenado
     public int Capacity { get; set; }
     public   new static int StoneCost => 55; //costo de piedra para construir el almacén

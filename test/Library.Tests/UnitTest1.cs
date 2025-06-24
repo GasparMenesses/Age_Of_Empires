@@ -60,6 +60,8 @@ public class Tests
         int stoneQuantity = player.Resources.Stone;
         bool result = player.Actions.Build("Barrack", (x, y)).Result;
         Assert.That(result, Is.True);
+        string symbol = player.Buildings[1].Symbol;
+        string [,] Board = Map.ReturnBoard();
         Assert.That(Map.CheckMap(x,y), Is.EqualTo("Bk"));
         Assert.That(player.Buildings.Count, Is.EqualTo(2));
         Assert.That(player.Buildings[1].Symbol, Is.EqualTo("Bk"));
