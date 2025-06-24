@@ -1,6 +1,5 @@
 using Library.Core;
 
-
 namespace Library.Tests;
 
 public class Tests
@@ -87,5 +86,133 @@ public class Tests
         Assert.That(result, Is.False);
         Assert.That(Map.CheckMap(x, y), Is.Not.EqualTo("Bk"));
         Assert.That(player.Buildings.Count, Is.EqualTo(1));
-    } 
+    }
+
+    
+    /// <summary>
+    /// Este test verifica que el jugador no puede construir un edificio si no tiene suficientes recursos.
+    /// </summary>
+    [Test]
+    public void PlayerCannotBuildWithoutResources()
+    {
+        int x = 20;
+        int y = 20;
+        player.Resources.Wood = 0;
+        player.Resources.Stone = 0;
+        bool result = player.Actions.Build("Barrack", (x, y)).Result;
+        Assert.That(result, Is.False);
+        Assert.That(Map.CheckMap(x, y), Is.Not.EqualTo("Bk"));
+        Assert.That(player.Buildings.Count, Is.EqualTo(1));
+    }
+    
+    
+    /// <summary>
+    /// Este test verifica que el jugador no puede construir un edificio con un nombre inválido.
+    /// </summary>
+    [Test]
+    public void PlayerCannotBuildWithInvalidBuildingName()
+    {
+        int x = 15;
+        int y = 15;
+        player.Resources.Wood = 1000;
+        player.Resources.Stone = 1000;
+        bool result = player.Actions.Build("EdificioInexistente", (x, y)).Result;
+        Assert.That(result, Is.False);
+        Assert.That(Map.CheckMap(x, y), Is.Not.EqualTo("EdificioInexistente"));
+        Assert.That(player.Buildings.Count, Is.EqualTo(1));
+    }
+    
+    /// <summary>
+    /// Este test verifica que el jugador no puede construir dos edificios en la misma posición del mapa.
+    /// </summary>
+    [Test]
+    public void PlayerCannotBuildTwoBuildingsInSamePosition()
+    {
+        int x = 25;
+        int y = 25;
+        player.Resources.Wood = 2000;
+        player.Resources.Stone = 2000;
+        // Construye el primer edificio
+        bool firstBuild = player.Actions.Build("Barrack", (x, y)).Result;
+        // Intenta construir otro edificio en la misma posición
+        bool secondBuild = player.Actions.Build("Barrack", (x, y)).Result;
+        Assert.That(firstBuild, Is.True);
+        Assert.That(secondBuild, Is.False);
+        Assert.That(player.Buildings.Count, Is.EqualTo(2));
+    }
+    
+    /// <summary>
+    /// Este test verifica que el jugador no puede construir un edificio en una posición negativa del mapa.
+    /// </summary>
+    [Test]
+    public void PlayerCannotBuildWithNegativePosition()
+    {
+        int x = -5;
+        int y = -10;
+        player.Resources.Wood = 1000;
+        player.Resources.Stone = 1000;
+        bool result = player.Actions.Build("Barrack", (x, y)).Result;
+        Assert.That(result, Is.False);
+        Assert.That(Map.CheckMap(x, y), Is.Not.EqualTo("Bk"));
+        Assert.That(player.Buildings.Count, Is.EqualTo(1));
+    }
+  
+    
+    // <summary>
+    /// Verifica que la civilización Cordobeses se inicializa con los valores correctos:
+    /// nombre, tipo de unidad única, bonificación de recursos y descripción de bonificación.
+    /// </summary>
+    [Test]
+    public void CordobesesInitializationTest()
+    {
+        // Act
+        var cordobeses = new Cordobeses();
+
+        // Assert
+        Assert.That(cordobeses.NombreCivilizacion, Is.EqualTo("Cordobeses"));
+        Assert.That(cordobeses.TipoDeUnidadUnica, Is.EqualTo("Ferneh"));
+        Assert.That(cordobeses.Bonificacion, Is.EqualTo(new Tuple<int, int, int, int>(0, 0, 0, 100)));
+        Assert.That(cordobeses.DescripcionBonificacion, Does.Contain("bonus de 100 de comida"));
+    }
+    
+    /// <summary>
+    /// Verifica que la civilización Romanos se inicializa con los valores correctos:
+    /// nombre, tipo de unidad única, bonificación de recursos y descripción de bonificación.
+    /// </summary>
+    [Test]
+    public void RomanosInitializationTest()
+    {
+        // Act
+        var romanos = new Romanos();
+
+        // Assert
+        Assert.That(romanos.NombreCivilizacion, Is.EqualTo("Romanos"));
+        Assert.That(romanos.TipoDeUnidadUnica, Is.EqualTo("JulioCesar"));
+        Assert.That(romanos.Bonificacion, Is.EqualTo(new Tuple<int, int, int, int>(0, 0, 50, 0)));
+        Assert.That(romanos.DescripcionBonificacion.ToLower(), Does.Contain("bonus de 50 de oro"));
+    }
+    
+    /// <summary>
+    /// Verifica que la civilización Vikingos se inicializa con los valores correctos:
+    /// nombre, tipo de unidad única, bonificación de recursos y descripción de bonificación.
+    /// </summary>
+    [Test]
+    public void VikingosInitializationTest()
+    {
+        // Act
+        var vikingos = new Vikingos();
+
+        // Assert
+        Assert.That(vikingos.NombreCivilizacion, Is.EqualTo("Vikingos"));
+        Assert.That(vikingos.TipoDeUnidadUnica, Is.EqualTo("Thor"));
+        Assert.That(vikingos.Bonificacion, Is.EqualTo(new Tuple<int, int, int, int>(100, 0, 0, 0)));
+        Assert.That(vikingos.DescripcionBonificacion.ToLower(), Does.Contain("bonus de 100 de madera"));
+    }
+    
+    
+    
 }
+    
+    
+    
+
