@@ -7,7 +7,7 @@ namespace Library.Core;
 
 public class Map
 {
-    public static string[,] Board = new string[100, 100];
+    private static string[,] Board = new string[100, 100];
 
     static Map()
     {
@@ -54,5 +54,13 @@ public class Map
             building.Position["x"] = position.x;
             building.Position["y"] = position.y;
         }
+    }
+    public static int ReturnLength0()
+    {
+        return Board.GetLength(0);
+    }
+    public static int ReturnLength1()
+    {
+        return Board.GetLength(1);
     }
 }

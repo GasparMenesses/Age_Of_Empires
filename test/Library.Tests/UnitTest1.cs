@@ -16,7 +16,7 @@ public class Tests
     [Test]
     public void BoardCreated()
     {
-        int Length = Map.Board.Length;
+        int Length = Map.ReturnLength0() * Map.ReturnLength1();
         Assert.That(Length, Is.EqualTo(100 * 100));
     }
     [Test]
