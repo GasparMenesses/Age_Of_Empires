@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Documentación del motor de juego (Clase Engine)</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+            line-height: 1.6;
+        }
+
+        h1,
+        h2,
+        h3 {
+            color: #333366;
+        }
+
+        code {
+            background-color: #f4f4f4;
+            padding: 2px 5px;
+            border-radius: 4px;
+        }
+
+        .propiedad,
+        .metodo {
+            margin-bottom: 15px;
+        }
+
+        .firma {
+            font-family: Consolas, monospace;
+            background-color: #eee;
+            padding: 5px;
+            border-radius: 5px;
+            display: inline-block;
+        }
+
+        .seccion {
+            margin-top: 40px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>Documentación Técnica:</h1>
+    <h2> Clase <code>Engine</code></h2>
+    <p>Esta clase representa el motor principal del juego. Gestiona la creación de jugadores, el inicio del mapa, y el
+        bucle principal del juego.</p>
+
+    <div class="seccion">
+        <h3>Propiedades</h3>
+
+        <div class="propiedad">
+            <p class="firma">DateTime HoraInicio</p>
+            <p>Registra la hora de inicio de la partida.</p>
+        </div>
+
+        <div class="propiedad">
+            <p class="firma">int CantidadJugadores</p>
+            <p>Indica cuántos jugadores participarán en la partida.</p>
+        </div>
+
+        <div class="propiedad">
+            <p class="firma">List&lt;Player&gt; Jugadores</p>
+            <p>Contiene la lista de jugadores activos en la partida.</p>
+        </div>
+
+        <div class="propiedad">
+            <p class="firma">List&lt;GoldMine&gt; MinasDeOro</p>
+            <p>Lista de todas las minas de oro presentes en el mapa.</p>
+        </div>
+
+        <div class="propiedad">
+            <p class="firma">List&lt;Woods&gt; Bosques</p>
+            <p>Lista de zonas de bosque del mapa.</p>
+        </div>
+
+        <div class="propiedad">
+            <p class="firma">List&lt;Quarry&gt; MinasDePiedra</p>
+            <p>Lista de canteras (minas de piedra) disponibles en el juego.</p>
+        </div>
+
+        <div class="propiedad">
+            <p class="firma">List&lt;Farm&gt; Granjas</p>
+            <p>Lista de granjas presentes en el juego.</p>
+        </div>
+    </div>
+
+    <div class="seccion">
+        <h3>Métodos</h3>
+
+        <div class="metodo">
+            <p class="firma">void CrearJugadores()</p>
+            <p>Solicita la cantidad de jugadores y sus datos, como nombre y civilización. Inicializa sus recursos y
+                unidades.</p>
+        </div>
+
+        <div class="metodo">
+            <p class="firma">private string SeleccionarCivilizacion()</p>
+            <p>Permite al jugador elegir una civilización de entre las disponibles. Retorna el nombre de la civilización
+                elegida.</p>
+        </div>
+
+        <div class="metodo">
+            <p class="firma">void CreateNewGameMap()</p>
+            <p>Genera un nuevo mapa para la partida, agregando recursos como minas, bosques y granjas, y coloca el
+                centro cívico.</p>
+        </div>
+
+        <div class="metodo">
+            <p class="firma">void EmpezarLoop()</p>
+            <p>Inicia el ciclo de turnos del juego. Muestra los recursos y unidades del jugador y permite ejecutar
+                acciones.</p>
+        </div>
+
+        <div class="metodo">
+            <p class="firma">void MoverUnidadees(Player jugador)</p>
+            <p>Permite al jugador ingresar coordenadas y mover sus unidades a esa posición.</p>
+        </div>
+
+        <div class="metodo">
+            <p class="firma">Task RecolectarRecursos(Player jugador)</p>
+            <p>Asigna aldeanos disponibles a la recolección de un recurso específico elegido por el jugador.</p>
+        </div>
+
+        <div class="metodo">
+            <p class="firma">Task ConstruirEdificios(Player jugador)</p>
+            <p>Permite al jugador construir un edificio específico en una posición indicada. Verifica recursos y
+                posición.</p>
+        </div>
+
+        <div class="metodo">
+            <p class="firma">void AtacarUnidades(Player jugador)</p>
+            <p>Acción para atacar otras unidades (actualmente no implementado).</p>
+        </div>
+
+        <div class="metodo">
+            <p class="firma">private int SeleccionarCantidadAldeanos(Player jugador, string recurso)</p>
+            <p>Permite elegir cuántos aldeanos se asignan a una tarea determinada (como recolección de recursos).</p>
+        </div>
+    </div>
+
+
+    <div class="seccion">
+        <h2>Clase <code>Fachada</code></h2>
+        <p>Esta clase representa la <strong>fachada del sistema</strong>, sirviendo como interfaz principal para
+            interactuar con el motor del juego (<code>Engine</code>). Simplifica la inicialización del entorno de juego
+            y la configuración de la partida.</p>
+    </div>
+
+    <div class="seccion">
+        <h3>Propiedades</h3>
+        <div class="propiedad">
+            <p class="firma">Engine engine</p>
+            <p>Instancia del motor del juego, a través del cual se manejan todas las operaciones internas como la
+                creación de jugadores, mapa y bucle de juego.</p>
+        </div>
+    </div>
+
+    <div class="seccion">
+        <h3>Constructor</h3>
+        <div class="metodo">
+            <p class="firma">Fachada()</p>
+            <p>Constructor de la clase <code>Fachada</code>. Encargado de:
+            <ul>
+                <li>Inicializar el motor de juego.</li>
+                <li>Solicitar la configuración de los jugadores.</li>
+                <li>Crear el entorno y el mapa del juego.</li>
+                <li>Iniciar el bucle principal del juego.</li>
+            </ul>
+            </p>
+        </div>
+    </div>
+
+    <div class="seccion">
+        <h2>Clase <code>Building</code></h2>
+        <p>Clase base abstracta para todos los edificios. Se encarga de definir los <strong>costos de
+                construcción</strong>, <strong>tiempos</strong> y <strong>posición en el mapa</strong>.</p>
+        <ul>
+            <li><strong>SRP:</strong> Se dedica exclusivamente a la lógica común de todos los edificios.</li>
+            <li><strong>Propiedades:</strong> <code>WoodCost</code>, <code>StoneCost</code>,
+                <code>ConstructionTime</code>, <code>IsBuilt</code>, <code>Position</code>.</li>
+            <li><strong>Método principal:</strong> <code>Construyendo(int seconds)</code>.</li>
+        </ul>
+    </div>
+
+
+    <div class="seccion">
+        <h2>Clase <code>Civilization</code></h2>
+        <p>Representa una civilización del juego. Define su <strong>nombre</strong>, la <strong>unidad única</strong>
+            que posee y <strong>bonificaciones</strong> iniciales.</p>
+        <ul>
+            <li><strong>Propiedades:</strong></li>
+            <ul>
+                <li><code>NombreCivilizacion</code>: Nombre de la civilización.</li>
+                <li><code>TipoDeUnidadUnica</code>: Unidad especial disponible solo para esta civilización.</li>
+                <li><code>Bonificacion</code>: Bonus inicial representado como una tupla
+                    <code>(madera, piedra, oro, comida)</code>.</li>
+                <li><code>DescripcionBonificacion</code>: Texto explicativo sobre las bonificaciones.</li>
+            </ul>
+            <li><strong>SRP:</strong> Se encarga del entorno de las civilizaciones, siendo además la clase exteprta para
+                sus tareas</li>
+        </ul>
+    </div>
+
+    <div class="seccion">
+        <h2>Clase <code>Cordobeses</code></h2>
+        <p>Civilización que representa a los jugadores de Córdoba. Unidad única: <code>Ferneh</code>.</p>
+        <ul>
+            <li>Hereda de <code>Civilization</code>.</li>
+            <li><strong>Bonificación:</strong> +100 de comida al inicio de la partida.</li>
+            <li><strong>Descripción:</strong> “los cordobobeses te otorgan un bonus de 100 de comida al inicio de la
+                partida.”</li>
+        </ul>
+    </div>
+
+    <div class="seccion">
+        <h2>Clase <code>Romanos</code></h2>
+        <p>Civilización inspirada en el Imperio Romano. Unidad única: <code>JulioCesar</code>.</p>
+        <ul>
+            <li>Hereda de <code>Civilization</code>.</li>
+            <li><strong>Bonificación:</strong> +50 de oro al inicio de la partida.</li>
+            <li><strong>Descripción:</strong> “los romanos tienen un bonus de 50 de oro al inicio de la partida.”</li>
+        </ul>
+    </div>
+
+    <div class="seccion">
+        <h2>Clase <code>Vikingos</code></h2>
+        <p>Civilización nórdica con énfasis en la madera. Unidad única: <code>Thor</code>.</p>
+        <ul>
+            <li>Hereda de <code>Civilization</code>.</li>
+            <li><strong>Bonificación:</strong> +100 de madera al inicio de la partida.</li>
+            <li><strong>Descripción:</strong> “los vikingos tienen un bonus de 100 de madera al inicio de la partida.”
+            </li>
+        </ul>
+    </div>
+
+
+    <div class="seccion">
+        <h2>Clase <code>Map</code></h2>
+        <p>Representa el mapa del juego donde se colocan edificios y recursos recolectables. El mapa es una matriz
+            estática de 100x100 celdas.</p>
+        <ul>
+            <li><strong>SRP:</strong> Se encarga exclusivamente de la lógica relacionada con la estructura y contenido
+                del mapa.</li>
+            <li><strong>Propiedades:</strong></li>
+            <ul>
+                <li><code>string[,] Board</code>: Matriz estática que representa el tablero del juego.</li>
+            </ul>
+            <li><strong>Métodos:</strong></li>
+            <ul>
+                <li><code>Map()</code>: Constructor que inicializa el mapa si aún no fue creado.</li>
+                <li><code>static void PlaceRandom(string simbolo, Building?, Recolection?)</code>: Coloca un elemento
+                    aleatoriamente en el mapa.</li>
+                <li><code>static string CheckMap(int x, int y)</code>: Retorna el contenido de una celda del mapa.</li>
+                <li><code>static void ChangeMap(Building, int x, int y, string simbolo)</code>: Modifica la posición de
+                    un edificio en el mapa.</li>
+            </ul>
+        </ul>
+    </div>
+
+    <div class="seccion">
+        <h2>Clase <code>MapPrinter</code></h2>
+        <p>Clase utilitaria que imprime el estado actual del mapa en la consola.</p>
+        <ul>
+            <li><strong>SRP:</strong> Se encarga exclusivamente de mostrar el mapa, separando la lógica visual del
+                modelo de datos.</li>
+            <li><strong>Método:</strong> <code>static void PrintMap()</code> – Recorre la matriz y la muestra fila por
+                fila en la consola.</li>
+        </ul>
+    </div>
+
+    <div class="seccion">
+        <h2>Clase <code>Player</code></h2>
+        <p>Representa un jugador en la partida, incluyendo su nombre, civilización, recursos, edificios, unidades y
+            acciones disponibles.</p>
+        <ul>
+            <li><strong>SRP:</strong> Encapsula el estado y el comportamiento del jugador dentro del juego.</li>
+            <li><strong>Propiedades:</strong></li>
+            <ul>
+                <li><code>Nombre</code>: Nombre del jugador.</li>
+                <li><code>Civilization</code>: Civilización elegida, instancia de una subclase de
+                    <code>Civilization</code>.</li>
+                <li><code>Resources</code>: Recursos actuales del jugador (madera, piedra, oro, comida).</li>
+                <li><code>Buildings</code>: Lista de edificios construidos por el jugador.</li>
+                <li><code>Units</code>: Lista de unidades disponibles.</li>
+                <li><code>PoblacionLimite</code>: Límite de población que el jugador puede tener.</li>
+                <li><code>Actions</code>: Objeto que encapsula las acciones que puede realizar el jugador.</li>
+            </ul>
+            <li><strong>Constructor:</strong> <code>Player(string nombre, string civilization)</code></li>
+            <ul>
+                <li>Inicializa los recursos, la civilización, el centro cívico y otras estructuras básicas.</li>
+                <li>Incluye validación para civilizaciones desconocidas.</li>
+            </ul>
+        </ul>
+    </div>
+
+
+    <div class="seccion">
+        <h2>Clase <code>Unit</code></h2>
+        <p>Clase base que representa una unidad genérica en el juego, implementa la interfaz <code>IUnit</code>.
+            Contiene propiedades comunes a todas las unidades.</p>
+        <ul>
+            <li><strong>Propiedades:</strong></li>
+            <ul>
+                <li><code>int TimeTraining</code>: Tiempo de entrenamiento requerido para la unidad.</li>
+                <li><code>int Cost</code>: Costo de creación de la unidad.</li>
+                <li><code>Dictionary&lt;string, int&gt; Position</code>: Posición actual de la unidad (coordenadas
+                    <code>x</code> y <code>y</code>).</li>
+                <li><code>int Speed</code>: Velocidad de movimiento.</li>
+                <li><code>int Attack</code>: Poder de ataque.</li>
+                <li><code>int Defense</code>: Capacidad defensiva.</li>
+            </ul>
+            <li><strong>Constructor:</strong></li>
+            <ul>
+                <li><code>Unit(Building building)</code>: Inicializa la posición de la unidad basada en la posición del
+                    edificio asociado.</li>
+            </ul>
+    </div>
+
+    <div class="seccion">
+        <h2>Clase <code>Archer</code></h2>
+        <p>Unidad de tipo arquero con atributos específicos.</p>
+        <ul>
+            <li><strong>Valores por defecto:</strong> <code>Speed = 1</code>, <code>Attack = 3</code>,
+                <code>Defense = 0</code>, <code>TimeTraining = 35</code>, <code>Cost = 40</code>.</li>
+            <li><strong>Constructor:</strong> <code>Archer(Building building)</code> – llama al constructor base e
+                inicializa atributos.</li>
+        </ul>
+    </div>
+
+    <div class="seccion">
+        <h2>Clase <code>Borracho</code></h2>
+        <p>Unidad de tipo borracho con atributos específicos, velocidad alta y costo considerable.</p>
+        <ul>
+            <li><strong>Valores por defecto:</strong> <code>Speed = 5</code>, <code>Attack = 5</code>,
+                <code>Defense = 1</code>, <code>TimeTraining = 90</code>, <code>Cost = 90</code>.</li>
+            <li><strong>Constructor:</strong> <code>Borracho(Building building)</code>.</li>
+        </ul>
+    </div>
+
+    <div class="seccion">
+        <h2>Clase <code>Cavalry</code></h2>
+        <p>Unidad de caballería con atributos balanceados entre velocidad, ataque y defensa.</p>
+        <ul>
+            <li><strong>Valores por defecto:</strong> <code>Speed = 3</code>, <code>Attack = 8</code>,
+                <code>Defense = 3</code>, <code>TimeTraining = 40</code>, <code>Cost = 70</code>.</li>
+            <li><strong>Constructor:</strong> <code>Cavalry(Building building)</code>.</li>
+        </ul>
+    </div>
+
+    <div class="seccion">
+        <h2>Clase <code>Infantry</code></h2>
+        <p>Unidad de infantería con atributos básicos.</p>
+        <ul>
+            <li><strong>Valores por defecto:</strong> <code>Speed = 1</code>, <code>Attack = 3</code>,
+                <code>Defense = 0</code>, <code>TimeTraining = 26</code>, <code>Cost = 50</code>.</li>
+            <li><strong>Constructor:</strong> <code>Infantry(Building building)</code>.</li>
+        </ul>
+    </div>
+
+    <div class="seccion">
+        <h2>Clase <code>JulioCesar</code></h2>
+        <p>Unidad especial que representa a Julio César, con alta capacidad ofensiva y defensiva.</p>
+        <ul>
+            <li><strong>Valores por defecto:</strong> <code>Speed = 2</code>, <code>Attack = 9</code>,
+                <code>Defense = 2</code>, <code>TimeTraining = 120</code>, <code>Cost = 100</code>.</li>
+            <li><strong>Constructor:</strong> <code>JulioCesar(Building building)</code>.</li>
+        </ul>
+    </div>
+
+    <div class="seccion">
+        <h2>Clase <code>Thor</code></h2>
+        <p>Unidad especial tipo Thor, con gran poder ofensivo y defensivo, pero lenta y costosa.</p>
+        <ul>
+            <li><strong>Valores por defecto:</strong> <code>Speed = 1</code>, <code>Attack = 11</code>,
+                <code>Defense = 5</code>, <code>TimeTraining = 150</code>, <code>Cost = 150</code>.</li>
+            <li><strong>Constructor:</strong> <code>Thor(Building building)</code>.</li>
+        </ul>
+    </div>
+
+    <div class="seccion">
+        <h2>Clase <code>Villager</code></h2>
+        <p>Unidad tipo aldeano con atributos básicos, utilizado para recolección y tareas simples.</p>
+        <ul>
+            <li><strong>Valores por defecto:</strong> <code>Speed = 1</code>, <code>Attack = 1</code>,
+                <code>Defense = 0</code>, <code>TimeTraining = 20</code>, <code>Cost = 50</code>.</li>
+            <li><strong>Constructor:</strong> <code>Villager(Building building)</code>.</li>
+        </ul>
+    </div>
+
+
+    <div class="seccion">
+        <h2>Clase <code>Resources</code></h2>
+        <p>Representa los recursos del jugador en el juego, incluyendo madera, piedra, oro y comida, junto con sus
+            límites máximos.</p>
+        <ul>
+            <li><strong>Propiedades:</strong></li>
+            <ul>
+                <li><code>int Wood</code>: Cantidad actual de madera.</li>
+                <li><code>int WoodLimit</code>: Límite máximo de madera.</li>
+                <li><code>int Stone</code>: Cantidad actual de piedra.</li>
+                <li><code>int StoneLimit</code>: Límite máximo de piedra.</li>
+                <li><code>int Gold</code>: Cantidad actual de oro.</li>
+                <li><code>int GoldLimit</code>: Límite máximo de oro.</li>
+                <li><code>int Food</code>: Cantidad actual de comida.</li>
+                <li><code>int FoodLimit</code>: Límite máximo de comida.</li>
+            </ul>
+            <li><strong>Constructor:</strong></li>
+            <ul>
+                <li><code>Resources()</code>: Inicializa los recursos con valores por defecto (madera y comida en 100,
+                    piedra y oro en 0, límites en 1000).</li>
+            </ul>
+            <li><strong>Métodos:</strong></li>
+            <ul>
+                <li><code>bool AddResources(int wood = 0, int stone = 0, int gold = 0, int food = 0)</code>: Añade
+                    recursos sin superar los límites. Retorna <code>true</code> si la operación fue válida.</li>
+                <li><code>bool RemoveResources(int wood = 0, int stone = 0, int gold = 0, int food = 0)</code>: Elimina
+                    recursos si hay suficiente cantidad disponible. Retorna <code>true</code> si la operación fue
+                    válida.</li>
+                <li><code>void AddLimitResources(bool wood = false, bool stone = false, bool gold = false, bool food = false)</code>:
+                    Incrementa en 1000 el límite de los recursos indicados.</li>
+                <li><code>Resources ShowResources(Player player)</code>: Devuelve los recursos actuales de un jugador
+                    dado.</li>
+            </ul>
+        </ul>
+    </div>
+
+
+
+    <h1>Algunas Interfaces</h1>
+
+    <div class="seccion">
+        <h2>Interfaz <code>IBuildable</code></h2>
+        <p>Esta interfaz define las operaciones básicas para un edificio en el juego, como la construcción y el estado
+            de construcción.</p>
+        <ul>
+            <li><strong>Propiedades:</strong></li>
+            <ul>
+                <li><code>bool IsBuilt</code>: Indica si el edificio está construido.</li>
+            </ul>
+            <li><strong>Métodos:</strong></li>
+            <ul>
+                <li><code>void Construyendo(int time)</code>: Inicia el proceso de construcción del edificio, recibiendo
+                    el tiempo que tarda en construirse.</li>
+            </ul>
+    </div>
+
+    <div class="seccion">
+        <h2>Interfaz <code>IConstructionInfo</code></h2>
+        <p>Define las propiedades y métodos necesarios para manejar la información de construcción de un edificio en el
+            juego.</p>
+        <ul>
+            <li><strong>Propiedades:</strong></li>
+            <ul>
+                <li><code>int WoodCost</code>: Costo en madera del edificio.</li>
+                <li><code>int StoneCost</code>: Costo en piedra del edificio.</li>
+                <li><code>int ConstructionTime</code>: Tiempo total que demora la construcción.</li>
+                <li><code>int TimeElapsed</code>: Tiempo transcurrido desde que comenzó la construcción.</li>
+            </ul>
+            <li><strong>Métodos:</strong></li>
+            <ul>
+                <li><code>void Construyendo(int seconds)</code>: Controla el proceso de construcción con los segundos
+                    pasados.</li>
+            </ul>
+    </div>
+
+    <div class="seccion">
+        <h2>Interfaz <code>IRecolection</code></h2>
+        <p>Define las operaciones básicas para recolectar recursos en el juego.</p>
+        <ul>
+            <li><strong>Propiedades:</strong></li>
+            <ul>
+                <li><code>Dictionary&lt;string, int&gt; Position</code>: Indica la posición del recurso a recolectar.
+                </li>
+                <li><code>static int CantidadRecursoDisponible</code>: Cantidad total de recurso disponible para
+                    recolectar.</li>
+                <li><code>static int TasaDeRecoleccion</code>: Cantidad de recurso que se puede recolectar por unidad de
+                    tiempo.</li>
+            </ul>
+            <li><strong>Métodos:</strong></li>
+            <ul>
+                <li><code>int Recolectar(int cantidad)</code>: Recolecta la cantidad indicada y retorna la cantidad
+                    efectivamente recolectada.</li>
+            </ul>
+    </div>
+
+    <div class="seccion">
+        <h2>Interfaz <code>IUnit</code></h2>
+        <p>Define las propiedades y métodos que debe tener una unidad en el juego, ya sean soldados, aldeanos, u otros.
+        </p>
+        <ul>
+            <li><strong>Propiedades:</strong></li>
+            <ul>
+                <li><code>int TimeTraining</code>: Tiempo requerido para entrenar la unidad.</li>
+                <li><code>int Cost</code>: Costo para crear la unidad.</li>
+                <li><code>Dictionary&lt;string, int&gt; Position</code>: Posición actual de la unidad en el mapa.</li>
+                <li><code>int Speed</code>: Velocidad de movimiento de la unidad.</li>
+                <li><code>int Attack</code>: Poder de ataque de la unidad.</li>
+                <li><code>int Defense</code>: Capacidad defensiva de la unidad.</li>
+            </ul>
+        </ul>
+    </div>
+    <br>
+    <br>
+
+</body>
+
+</html>
