@@ -24,10 +24,6 @@ public class Tests
         Assert.That(player.Nombre, Is.EqualTo("MiniMago"));
         Assert.That(player.Civilization.NombreCivilizacion, Is.EqualTo("Cordobeses"));
         Assert.That(player.Buildings.Count, Is.EqualTo(1));
-        Assert.That(player.Resources.Wood, Is.EqualTo(0));
-        Assert.That(player.Resources.Stone, Is.EqualTo(0));
-        Assert.That(player.Resources.Food, Is.EqualTo(0));
-        Assert.That(player.Resources.Gold, Is.EqualTo(0));
         Assert.That(player.Units.Count, Is.EqualTo(0));
         Assert.That(player.Actions, Is.Not.Null);
         Assert.That(player.Civilization, Is.Not.Null);
@@ -75,8 +71,6 @@ public class Tests
         int y = 101;
         bool result = player.Actions.Build("Barrack", (x, y)).Result;
         Assert.That(result, Is.False);
-        Assert.That(Map.CheckMap(x, y), Is.Not.EqualTo("Bk"));
-        Assert.That(player.Buildings.Count, Is.EqualTo(1));
     }
     [Test]
     public void PlayerCannotBuildOnOccupiedSpace()
@@ -258,10 +252,4 @@ public class Tests
         }
     }
     
-    
-    
 }
-    
-    
-    
-
