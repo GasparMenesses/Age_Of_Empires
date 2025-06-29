@@ -113,7 +113,7 @@ public class Engine
         {
 
             // Cada jugador comienza con un centro cívico
-            Map.PlaceRandom(CivicCenter.Symbol, jugador.Buildings[0]);
+            Map.PlaceRandom(jugador.Buildings[0].Symbol, jugador.Buildings[0]);
             
             // Por cada jugador agrego 3 minas de oro al mapa
             for (int i = 0; i < 3; i++)

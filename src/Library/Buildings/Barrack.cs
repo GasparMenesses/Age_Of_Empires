@@ -8,7 +8,7 @@ namespace Library.Buildings;
 public class Barrack : Building
 {
     // Símbolo que identifica al cuartel en el mapa
-    public new static string Symbol => "Bk";
+    public override string Symbol => "Bk";
     private Player _player;
     public Dictionary<string, Unit> Unit { get; set; }
 

@@ -43,6 +43,8 @@ public class Map
 
     public static string CheckMap(int x, int y)
     {
+        if (x < 0 || x >= Board.GetLength(0) || y < 0 || y >= Board.GetLength(1))
+            return null;
         return Board[x, y];
     }
 
@@ -62,5 +64,10 @@ public class Map
     public static int ReturnLength1()
     {
         return Board.GetLength(1);
+    }
+
+    public static string [,] ReturnBoard()
+    {
+        return Board;
     }
 }

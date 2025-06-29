@@ -13,7 +13,7 @@ public class Building : IConstructionInfo, IBuildable
 
     // Indica si el edificio ya está completamente construido
     public bool IsBuilt => TimeElapsed >= ConstructionTime;
-    public string Symbol { get; set; }
+    public virtual string Symbol { get; set; } 
     public Dictionary<string, int> Position { get; set; }
 
     // Constructor protegido que inicializa los valores principales del edificio

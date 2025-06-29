@@ -8,7 +8,7 @@ namespace Library.Buildings;
 public class CivicCenter : Building
 {
     // Símbolo identificador del centro cívico en el mapa
-    public new static string Symbol => "CC";
+    public override string Symbol => "CC";
 
     // Recursos almacenados en el centro cívico
     public int Gold { get; set; }
@@ -41,7 +41,6 @@ public class CivicCenter : Building
         MaxCapacityAldeano = 10;
         // Establece los límites máximos de recursos
         player.Resources.AddLimitResources(true, true, true, true); // Aumenta el límite de cada recurso
-        player.Buildings.Add(this);
     }
 
     // Agrega piedra al centro cívico, sin exceder la capacidad máxima

@@ -6,7 +6,7 @@ namespace Library.Buildings;
 
 public class GoldStorage : Building //herdea de la clase building
 {
-    public new static string Symbol => "GS";
+    public override string Symbol => "GS";
     public int Gold { get; private set; } //propiedad que define la cantidad de oro almacenado
     public int Capacity { get; set; }
     public Player _player;
