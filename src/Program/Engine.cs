@@ -278,7 +278,6 @@ public class Engine
 
 
     }
-
     
     /// <summary>
     /// Permite al jugador construir un edificio especificando el tipo y la ubicación.
