@@ -1,0 +1,22 @@
+﻿body {
+    background-color: black;
+}
+
+.border {
+    border: 1px solid white;
+    padding: 10px;
+    margin: 20px 10px;
+    color: white;
+}
+
+.encabezado {
+    font-size: 0.7vw;
+    letter-spacing: 0.3px;
+}
+
+h1 {
+    letter-spacing: 0.02px;
+    font-size: 1.2vw;
+    color: white;
+    text-align: center;
+}

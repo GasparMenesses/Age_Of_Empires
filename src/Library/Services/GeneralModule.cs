@@ -1,25 +1,26 @@
 ﻿using Discord.Commands;
+using System.Threading.Tasks;
 using Library.Core;
+
+
+
 
 public class GeneralModule : ModuleBase<SocketCommandContext>
 {
     List<Player> jugadores = new List<Player>();
-    [Command("Map")]
+    [Command("Mapa")]
     public async Task HolaAsync()
     {
-        await ReplyAsync("Que hace loco");
         new Map();
-        await ReplyAsync(MapPrinter.PrintMap());
+        await ReplyAsync(("http://localhost:63342/Age_Of_Empires/src/Library/html/index.html?_ijt=gj5tbh1o5snvg6rnpkjdm1u0bo&_ij_reload=RELOAD_ON_SAVE"));
     }
 
-    [Command("Join")]
-    public async Task JoinAsync()
+    [Command("Add")]
+    
+    public async Task Add(int n1, int n2)
     {
-        await ReplyAsync($"Muy buenas {Context.User.Username}, bienvenido al juego de Age of Empires" +
-                         "Para comenzar, por favor, elige una civilización de las siguientes opciones:\n" +
-                         "1. Cordobeses\n" + "2. Romanos\n" + "3. Vikingos\n" + "(Escriba el número de la civilización deseada)");
-        var response = await NextMessageAsync();
-        
+        int result = n1 + n2;
+        await ReplyAsync($"El resultado es: {result}");
     }
     
     [Command("sape")]
