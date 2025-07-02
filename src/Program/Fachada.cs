@@ -22,6 +22,7 @@ public class Fachada
         Thread.Sleep(2000);
         
         Console.WriteLine("Cargando mapa...");
+        
         Thread.Sleep(2000);
 
         engine.CreateNewGameMap(); // Llama al método para crear un nuevo mapa de juego

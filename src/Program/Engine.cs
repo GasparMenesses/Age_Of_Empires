@@ -31,19 +31,6 @@ public class Engine
     /// </summary>
     public void CrearJugadores()
     {
-        Console.WriteLine("Indique cuántos jugadores van a participar (2-4): ");
-        int cantidad;
-        while (!int.TryParse(Console.ReadLine(), out  cantidad) || cantidad < 2 || cantidad > 4)
-        {
-            Console.WriteLine("\nNúmero inválido. Ingrese entre 2 y 4 jugadores.");
-        }
-
-        CantidadJugadores = cantidad;
-
-        for (int i = 0; i < CantidadJugadores; i++)
-        {
-            Console.WriteLine($"\nEs turno del jugador N°{i + 1}");
-            string nombre;
             bool nombreValido;
             do
             {
@@ -106,7 +93,7 @@ public class Engine
     /// <summary>
     /// Crea un nuevo mapa de juego, colocando edificios y recursos iniciales para cada jugador.
     /// </summary>
-    public void CreateNewGameMap()
+    public void CreateNewGameMap(List<Player> Jugadores) // Crea un nuevo mapa para el juego, colocando edificios y recursos iniciales>)
     {
         new Map(); 
         foreach (var jugador in Jugadores)

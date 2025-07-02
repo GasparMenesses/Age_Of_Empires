@@ -1,15 +1,18 @@
 using Library.Core;
+using Library.Buildings;
 
 namespace Library.Tests;
 
 public class Tests
 {
     private Player player;
+    private CivicCenter civicCenter;
     [SetUp]
     public void Setup()
     {
         Map map = new Map();
         player = new Player("MiniMago", "Cordobeses");
+        CivicCenter civicCenter = (CivicCenter)player.Buildings[0];
     }
 
     [Test]
@@ -252,4 +255,22 @@ public class Tests
         }
     }
     
+    [Test]
+    public void PlayerCanAddResourcesToCivicCenter()
+    {
+        int initialWood = civicCenter.Wood;
+        int initialStone = civicCenter.Stone;
+        int initialFood = civicCenter.Food;
+        int initialGold = civicCenter.Gold;
+
+        civicCenter.AddWood(50);
+        civicCenter.AddStone(30);
+        civicCenter.AddFood(20);
+        civicCenter.AddGold(10);
+
+        Assert.That(civicCenter.Wood, Is.EqualTo(initialWood + 50));
+        Assert.That(civicCenter.Stone, Is.EqualTo(initialStone + 30));
+        Assert.That(civicCenter.Food, Is.EqualTo(initialFood + 20));
+        Assert.That(civicCenter.Gold, Is.EqualTo(initialGold + 10));
+    }
 }
