@@ -148,7 +148,11 @@ public class Engine
             }
             
         }
-        MapPrinter.PrintMap();
+        
+        string mapaComoTexto = MapPrinter.PrintMap();
+        string ruta = @"C:\proyectosP2\Age_Of_Empires\MapaHtml\mapa_generado.html";
+        File.WriteAllText(ruta, mapaComoTexto);
+        Console.WriteLine("✅ Mapa generado en mapa_generado");
         
     } // Crea un nuevo mapa para el juego, colocando los edificios y recursos iniciales
     
