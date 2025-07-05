@@ -2,17 +2,24 @@
 using System.Threading.Tasks;
 using Library.Core;
 
-
-
-
 public class GeneralModule : ModuleBase<SocketCommandContext>
 {
     static List<Player> jugadores = new List<Player>();
     static Dictionary<string,TaskCompletionSource<string>> selections = new Dictionary<string,TaskCompletionSource<string>>();
-    [Command("Mapa")]
-    public async Task HolaAsync()
+    private Fachada fachada = new Fachada();
+    
+    [Command("Comenzar")]
+    public async Task StartNewGameAsync()
     {
         new Map();
+        string username = Context.User.Username;
+        await ReplyAsync($"🎮 Bienvenido a **AGE OF EMPIRES**, {username}! Vamos a configurar la partida ⚔️");
+        fachada.Comenzar();
+    }
+    
+    [Command("PrintMapa")]
+    public async Task HolaAsync()
+    {
         await ReplyAsync(("http://localhost:63342/Age_Of_Empires/src/Library/html/index.html?_ijt=gj5tbh1o5snvg6rnpkjdm1u0bo&_ij_reload=RELOAD_ON_SAVE"));
     }
 
