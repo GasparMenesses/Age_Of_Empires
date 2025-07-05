@@ -1,12 +1,10 @@
 ﻿using Discord.Commands;
-using System.Threading.Tasks;
 using Library.Core;
 
 public class GeneralModule : ModuleBase<SocketCommandContext>
 {
     static List<Player> jugadores = new List<Player>();
     static Dictionary<string,TaskCompletionSource<string>> selections = new Dictionary<string,TaskCompletionSource<string>>();
-    private Fachada fachada = new Fachada();
     
     [Command("Comenzar")]
     public async Task StartNewGameAsync()
@@ -14,7 +12,6 @@ public class GeneralModule : ModuleBase<SocketCommandContext>
         new Map();
         string username = Context.User.Username;
         await ReplyAsync($"🎮 Bienvenido a **AGE OF EMPIRES**, {username}! Vamos a configurar la partida ⚔️");
-        fachada.Comenzar();
     }
     
     [Command("PrintMapa")]
