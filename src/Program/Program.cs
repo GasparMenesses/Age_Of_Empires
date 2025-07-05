@@ -7,8 +7,10 @@ class Program
 {
     static void Main(string[] args)
     {
-        // new Fachada(); // Inicializa la fachada del juego
         DemoBot();
+        // Primero crea el mapa del juego
+        new Fachada();
+
     }
     
     private static void DemoBot()

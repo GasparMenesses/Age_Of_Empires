@@ -2,13 +2,20 @@
 using System.Threading.Tasks;
 using Library.Core;
 
-
-
-
 public class GeneralModule : ModuleBase<SocketCommandContext>
 {
-    List<Player> jugadores = new List<Player>();
-    [Command("Mapa")]
+    private Fachada fachada = new Fachada();
+    
+    [Command("Comenzar")]
+    public async Task StartNewGameAsync()
+    {
+        string username = Context.User.Username;
+        await ReplyAsync($"🎮 Bienvenido a **AGE OF EMPIRES**, {username}! Vamos a configurar la partida ⚔️");
+        fachada.Comenzar();
+
+    }
+    
+    [Command("PrintMapa")]
     public async Task HolaAsync()
     {
         new Map();
@@ -22,10 +29,5 @@ public class GeneralModule : ModuleBase<SocketCommandContext>
         int result = n1 + n2;
         await ReplyAsync($"El resultado es: {result}");
     }
-    
-    [Command("sape")]
-    public async Task HolaxdAsync()
-    {
-        await ReplyAsync("Mama");
-    }
+
 }
