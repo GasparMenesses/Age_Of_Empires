@@ -1,29 +1,20 @@
 ﻿using Discord.Commands;
 using Library.Core;
 using Facade;
-
+namespace GeneralModule; 
 public class GeneralModule : ModuleBase<SocketCommandContext>
 {
+    private static Fachada fachada = new Fachada();
+    private List<Player> jugadores = fachada.jugadores; // Lista de jugadores, se obtiene de la fachada
+    
 
-    private Fachada fachada = new Fachada();
-    //
-    // [Command("Comenzar")]
-    // public async Task StartNewGameAsync()
-    // {
-    //     var username = Context.User.Username;
-    //     await ReplyAsync($"🎮 Bienvenido a **AGE OF EMPIRES**, {username}! Vamos a configurar la partida ⚔️");
-    //     fachada.Comenzar();
-    //
-    // }
     private int phase = 1; // Fase del juego, 1: Generacion de la partida, 2: Construcción de edificios, 3: Recolección de recursos
-    static List<Player> jugadores = new List<Player>();
     static Dictionary<string,TaskCompletionSource<string>> selections = new Dictionary<string,TaskCompletionSource<string>>();
     [Command("Comenzar")]
     public async Task StartNewGameAsync()
     {
         new Map();
         string username = Context.User.Username;
-        await ReplyAsync($"🎮 Bienvenido a **AGE OF EMPIRES**, {username}! Vamos a configurar la partida ⚔️");
     }
 
     
@@ -44,7 +35,7 @@ public class GeneralModule : ModuleBase<SocketCommandContext>
 
     ///
     [Command("Unirse")]
-    public async Task JoinAsync()
+    public async Task UnirseAsync()
     {
         string userId = Context.User.Id.ToString();
 
@@ -56,31 +47,23 @@ public class GeneralModule : ModuleBase<SocketCommandContext>
                 return;
             }
         }
-
         await ReplyAsync(
-            $"Bienvenido {Context.User.Username} a Age of Empires, por favor, selecciona una civilización:\n" +
+            $"Bienvenido {Context.User.Username} a **AGE OF EMPIRES**, por favor, selecciona una civilización:\n" +
             "1.Cordobeses\n2.Romanos\n3.Vikingos\n(Por favor, ingrese su número)");
 
         var tcs = new TaskCompletionSource<string>();
         selections[userId] = tcs;
 
         // Lanzamos la tarea que espera la selección sin bloquear JoinAsync
-        WaitJoinAsync(Context, userId, tcs);
+        WaitUnirseAsync(Context, tcs);
     }
 
-    private async Task WaitJoinAsync(SocketCommandContext context, string userId, TaskCompletionSource<string> tcs)
+    private async Task WaitUnirseAsync(SocketCommandContext context, TaskCompletionSource<string> tcs)
     {
         string selection = await tcs.Task;
-
-        string civilization = selection switch
-        {
-            "1" => "Cordobeses",
-            "2" => "Romanos",
-            "3" => "Vikingos"
-        };
-        jugadores.Add(new Player(userId, civilization));
-        await context.Channel.SendMessageAsync($"El jugador {context.User.Username} se ha unido a la partida con la civilización {civilization}.");
-        selections.Remove(userId);
+        fachada.CrearJugador(context, selection);
+        await context.Channel.SendMessageAsync($"El jugador {context.User.Username} se ha unido a la partida con la civilización {jugadores[-1].Civilization}.");
+        selections.Remove(context.User.Id.ToString());
     }
 ///    
     
