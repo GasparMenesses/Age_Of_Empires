@@ -85,9 +85,23 @@ public class Actions
             Player.Resources.Food += Farm.TasaDeRecoleccion;
     }
 
-    public void AtacarUnidades()
+    public void AtacarUnidades(List<IUnit> atacantes, List<IUnit> atacados)
     {
-        
+        foreach (var atacante in atacantes)
+        {
+            foreach (var atacado in atacados)
+            {
+                if (atacado.Position["x"] == atacante.Position["x"] && atacado.Position["y"] == atacante.Position["y"])
+                {
+                    atacado.Life -= atacado.Attack;
+                    if (atacado.Life <= 0)
+                    {
+                        Player.Units.Remove(atacado);
+                        Map.ChangeMap((atacado.Position["x"], atacado.Position["y"]), "..", null);
+                    }
+                }
+            }
+        }
     }
     public void AtacarEdificios()
     {

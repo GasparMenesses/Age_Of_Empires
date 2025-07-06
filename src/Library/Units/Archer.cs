@@ -18,6 +18,6 @@ public class Archer : Unit
         Defense = 0;
         TimeTraining = 35;
         Cost = 40;
-        life = 100;
+        Life = 100;
     }
 }

@@ -11,6 +11,6 @@ public class Infantry : Unit
         Defense = 0;
         TimeTraining = 26;
         Cost = 50;
-        life = 100;
+        Life = 100;
     }
 }

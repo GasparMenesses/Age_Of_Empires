@@ -14,6 +14,6 @@ public class Thor : Unit
         Defense = 5;
         TimeTraining = 150;
         Cost = 150;
-        life = 100;
+        Life = 100;
     }
 }

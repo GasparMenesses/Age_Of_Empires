@@ -10,4 +10,5 @@ public interface IUnit//Todas las unidades deben implementar esta interfaz ya qu
     public int Speed { get; }
     public int Attack { get; }
     public int Defense { get; }
+    public int Life { get; set; }
 }
