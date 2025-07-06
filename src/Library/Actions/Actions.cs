@@ -84,5 +84,14 @@ public class Actions
         else if (res == "comida")
             Player.Resources.Food += Farm.TasaDeRecoleccion;
     }
+
+    public void AtacarUnidades()
+    {
+        
+    }
+    public void AtacarEdificios()
+    {
+        
+    }
     
 }

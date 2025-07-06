@@ -13,6 +13,7 @@ namespace Library.Units
             Defense = 3;
             TimeTraining = 40;
             Cost = 70;
+            life = 100;
         }
     }
 }

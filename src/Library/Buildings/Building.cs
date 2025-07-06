@@ -8,8 +8,8 @@ public class Building : IConstructionInfo, IBuildable
     public int WoodCost { get; set; }
     public   int StoneCost { get; set; }
     public int ConstructionTime { get; }
-
     public int TimeElapsed { get; private set; }
+    public int Life { get; set; } // Vida del edificio, por defecto 100
 
     // Indica si el edificio ya está completamente construido
     public bool IsBuilt => TimeElapsed >= ConstructionTime;
@@ -17,12 +17,13 @@ public class Building : IConstructionInfo, IBuildable
     public Dictionary<string, int> Position { get; set; }
 
     // Constructor protegido que inicializa los valores principales del edificio
-    public Building((int x, int y) position, int woodCost, int stoneCost, int constructionTime)
+    public Building((int x, int y) position, int woodCost, int stoneCost, int constructionTime, int life=100)
     {
         WoodCost = woodCost;
         StoneCost = stoneCost;
         ConstructionTime = constructionTime;
         TimeElapsed = 0;
+        Life= life;
         Position = new Dictionary<string, int>
         {
             { "x", position.x },

@@ -14,5 +14,6 @@ public class JulioCesar : Unit
         Defense = 2;
         TimeTraining = 120;
         Cost = 100;
+        life = 100;
     }
 }

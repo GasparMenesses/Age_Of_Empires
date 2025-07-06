@@ -41,6 +41,7 @@ public class CivicCenter : Building
         MaxCapacityAldeano = 10;
         // Establece los límites máximos de recursos
         player.Resources.AddLimitResources(true, true, true, true); // Aumenta el límite de cada recurso
+        
     }
 
     // Agrega piedra al centro cívico, sin exceder la capacidad máxima
