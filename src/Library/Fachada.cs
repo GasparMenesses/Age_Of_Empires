@@ -7,7 +7,7 @@ namespace Facade;
 
 public class Fachada
 {
-    public List<Player> jugadores = new();
+    static public List<Player> jugadores = new();
     public Engine engine;
     public Fachada() // Constructor de la fachada que inicializa el motor del juego
     {
@@ -27,7 +27,6 @@ public class Fachada
             "2" => "Romanos",
             "3" => "Vikingos"
         };
-                
         Player player = new Player(context.User.Username, civilization,context.User.Id.ToString()); // Crea los jugadores y devuelve un mensaje de bienvenida);
         jugadores.Add(player); // Agrega el jugador a la lista de jugadores
         // Console.WriteLine("Creando entorno de juego...");

@@ -1,20 +1,42 @@
 ﻿using Discord.Commands;
 using Library.Core;
 using Facade;
+using Library.Exceptions;
+using Microsoft.VisualBasic;
+
 namespace GeneralModule; 
 public class GeneralModule : ModuleBase<SocketCommandContext>
 {
     private static Fachada fachada = new Fachada();
-    private List<Player> jugadores = fachada.jugadores; // Lista de jugadores, se obtiene de la fachada
-    private int phase = 1; // Fase del juego, 1: Generacion de la partida, 2: Construcción de edificios, 3: Recolección de recursos
+    private List<Player> jugadores => Fachada.jugadores; // Lista de jugadores, se obtiene de la fachada
+    private static int phase = 0; // Fases del juego, 1: Generacion de la partida, 2: Acciones en partida, 3: Finalizacion de la partida
     static Dictionary<string,TaskCompletionSource<string>> selections = new Dictionary<string,TaskCompletionSource<string>>();
-    
-    
-    
-    
-    [Command("Comenzar")]
-    public async Task StartNewGameAsync()
+    static Dictionary<string,bool> boolPlayers = new Dictionary<string,bool>();
+    static Dictionary<int, List<string>> commands = new Dictionary<int, List<string>>()
     {
+        {0, new List<string>{"Crear"}},
+        {1, new List<string>{"Unirse", "Iniciar"}},
+        {2, new List<string>{"Mapa" , "Add"}},
+        {3, new List<string>{"Resumen"}}
+    };
+    [Command("Crear")]
+    public async Task CrearJuegoAsync()
+    {
+        if (phase != 0)
+        {
+            await ReplyAsync("Ya hay una partida en curso, por favor, espere a que finalice.");
+            return;
+        }
+        phase += 1; // Cambia la fase a 1, indicando que se está creando una partida
+        await ReplyAsync(
+            $"Bienvenidos a **AGE OF EMPIRES**\nEs hora de preparar el juego...\nCuentan con los siguientes comandos:\n" +
+            $"{string.Join("\n", commands[1])}\n");
+    }
+    [Command("Iniciar")]
+    public async Task IniciarJuegoAsync()
+    {
+        if (phase != 1)
+            return;
         new Map();
         string username = Context.User.Username;
     }
@@ -39,11 +61,31 @@ public class GeneralModule : ModuleBase<SocketCommandContext>
     [Command("Unirse")]
     public async Task UnirseAsync()
     {
+        switch (phase)
+        {
+            case 0:
+                await ReplyAsync("No hay una partida creada, por favor, crea una partida primero.");
+                return;
+            case 2:
+                await ReplyAsync("La partida esta en curso, no puedes unirte.");
+                return;
+            case 3:
+                await ReplyAsync("La partida ha finalizado, espera a que se cree una nueva partida.");
+                return;
+        }
         string userId = Context.User.Id.ToString();
-
+        try 
+        {
+            await RespuestaPendiente(Context);
+        }
+        catch (SeleccionPendienteException e)
+        {
+            await ReplyAsync(e.Message);
+            return;
+        }
         foreach (Player player in jugadores)
         {
-            if (player.Nombre == userId)
+            if (player.Id == userId)
             {
                 await ReplyAsync($"El jugador {Context.User.Username} ya se encuentra en la partida.");
                 return;
@@ -64,7 +106,7 @@ public class GeneralModule : ModuleBase<SocketCommandContext>
     {
         string selection = await tcs.Task;
         fachada.CrearJugador(context, selection);
-        await context.Channel.SendMessageAsync($"El jugador {context.User.Username} se ha unido a la partida con la civilización {jugadores[-1].Civilization}.");
+        await context.Channel.SendMessageAsync($"El jugador {context.User.Username} se ha unido a la partida con la civilización {jugadores[jugadores.Count-1].Civilization.NombreCivilizacion}.");
         selections.Remove(context.User.Id.ToString());
     }
 ///    
@@ -90,5 +132,13 @@ public class GeneralModule : ModuleBase<SocketCommandContext>
             await ReplyAsync("No tiene nada por elegir");
         }
         selections[Context.User.Id.ToString()].SetResult(selection);
+    }
+
+    private async Task RespuestaPendiente(SocketCommandContext context)
+    {
+        if (selections.ContainsKey(context.User.Id.ToString()))
+        {
+            throw new SeleccionPendienteException($"El jugador {Context.User.Username} tiene una seleccion pendiente por elegir");
+        }
     }
 }
