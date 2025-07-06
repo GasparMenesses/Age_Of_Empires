@@ -213,28 +213,24 @@ public class GeneralModule : ModuleBase<SocketCommandContext>
         string userId = Context.User.Id.ToString();
         await ReplyAsync("Que elemento deseas recolectar " + Context.User.Username + "?");
         await ReplyAsync($"Ingrese **!N** donde N = **\n 1 - Recolectar Madera\n 2 - Recolectar Piedra\n 3 - Recolectar Oro\n 4 - Recolectar Comida**" );
-        
-        
-        int numeroAldeanos = jugadores.FirstOrDefault(j => j.Id == userId)?.Units.OfType<Villager>().Count() ?? 0;
 
         var tcs = new TaskCompletionSource<string>();
         selections[userId] = tcs;
 
         // Espera la selección del usuario
-        _ = WaitRecolectarAsync(Context, tcs, numeroAldeanos);
+        _ = WaitRecolectarAsync(Context, tcs);
         
-        await ReplyAsync(
-            $"El jugador {Context.User.Username} dispone de los recursos:\n" + jugadores.FirstOrDefault(j => j.Id == Context.User.Id.ToString()).Resources
-        );
     }
     
-    private async Task WaitRecolectarAsync(SocketCommandContext context, TaskCompletionSource<string> tcs, int numeroAldeanos )
+    private async Task WaitRecolectarAsync(SocketCommandContext context, TaskCompletionSource<string> tcs )
     {
+        await ReplyAsync("crotolamo");
         // Espera la selección del usuario  
         string selection = await tcs.Task;
+        Player jugador = jugadores.FirstOrDefault(j => j.Id == Context.User.Id.ToString());
         try
         {
-            fachada.Recolectar(selection);
+            fachada.Recolectar(selection , jugador );
         }
         catch (UnidadNoDisponibleException e)
         {
@@ -246,6 +242,20 @@ public class GeneralModule : ModuleBase<SocketCommandContext>
         );
 
         selections.Remove(context.User.Id.ToString()); // Elimina la selección pendiente del jugador
+    }
+    
+    
+    // ----------------------------
+    // Comando: Ver Recursos
+    // ----------------------------
+    [Command("RecursosDisponibles")]
+    public async Task MostrarRecursosAsync()
+    {
+        Player jugador = jugadores.FirstOrDefault(j => j.Id == Context.User.Id.ToString());
+        await ReplyAsync( 
+            $"El jugador {Context.User.Username} dispone de los recursos:\n " +
+            $"ORO: {jugador.Resources.Gold.ToString()}\n MADERA: {jugador.Resources.Wood.ToString()}\n PIEDRA: {jugador.Resources.Stone.ToString()}\n COMIDA: {jugador.Resources.Food.ToString()}\n "
+        );
     }
     
     

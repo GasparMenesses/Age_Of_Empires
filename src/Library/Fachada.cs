@@ -12,7 +12,6 @@ public class Fachada
 {
     static public List<Player> jugadores = new();
     public Engine engine;
-    private Player _player;
     
     public Fachada() // Constructor de la fachada que inicializa el motor del juego
     {
@@ -50,9 +49,8 @@ public class Fachada
         
     }
 
-    public void Recolectar(string selection)
+    public void Recolectar(string selection, Player _player) // Método para recolectar recursos según la selección del jugador
     {
-        
         string resource = selection switch
         {
             "1" => "madera",

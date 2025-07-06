@@ -27,7 +27,6 @@ public class Engine
         new Map();
     }
     
-    
     public void PlaceBuilduingsRandomInGameMap( List<Player> jugadores) 
     {
         
@@ -77,8 +76,6 @@ public class Engine
         
     } // Crea un nuevo mapa para el juego, colocando los edificios y recursos iniciales
     
-    
-    
     public void AsignarTresAldeanosPorJugador( List<Player> jugadores) // Asigna 3 aldeanos a cada jugador al inicio del juego
     {
         foreach (Player jugador in jugadores)
@@ -91,8 +88,6 @@ public class Engine
         }
  
     } // Asigna 3 aldeanos a cada jugador al inicio del juego
-    
-    
     
     
 
