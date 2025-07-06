@@ -6,7 +6,7 @@ using System.Timers;
 
 public class Farm: Recolection 
 {
-    public static string Symbol => "Fm";
+    public static string Symbol => "🌾🌾";
     
   
 

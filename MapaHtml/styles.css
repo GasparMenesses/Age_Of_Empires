@@ -1,22 +1,43 @@
 ﻿body {
-    background-color: black;
+    background-color: #7cce05;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #fff;
 }
 
-.border {
-    border: 1px solid white;
-    padding: 10px;
-    margin: 20px 10px;
-    color: white;
+.tabla {
+    border-collapse: collapse;
+    margin: 20px auto;
+    border: 2px solid rgba(255, 255, 255, 0.8);
+    box-shadow: 0 0 10px rgba(0,0,0,0.3);
+    background-color: rgba(0, 0, 0, 0.3);
+    width: max-content;
 }
 
-.encabezado {
-    font-size: 0.7vw;
-    letter-spacing: 0.3px;
-}
-
-h1 {
-    letter-spacing: 0.02px;
-    font-size: 1.2vw;
-    color: white;
+/* Bordes para celdas */
+.tabla tr td {
+    border: 1px solid rgba(255, 255, 255, 0.33);
+    padding: 6px 10px;
     text-align: center;
+    min-width: 15px;
+    font-size: 1vw;
+    color: #60b726;
+}
+
+/* Celdas de índices (filas y columnas) */
+.tabla tr td:first-child,
+.tabla tr td:last-child,
+.tabla tr:first-child td,
+.tabla tr:last-child td {
+    background-color: rgba(255, 255, 255, 0.3);
+    font-weight: bold;
+    color: #222;
+}
+
+/* Para la celda vacía de la esquina (arriba izquierda y abajo izquierda) */
+.tabla tr:first-child td:first-child,
+.tabla tr:last-child td:first-child,
+.tabla tr:first-child td:last-child,
+.tabla tr:last-child td:last-child {
+    background-color: transparent;
+    border: none;
 }

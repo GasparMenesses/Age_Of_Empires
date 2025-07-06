@@ -25,11 +25,18 @@ public class Engine
     
     // FUNCIONES
     
+     public string CrearJugadores( string username, string civilization = "Cordobeses") // Crea un jugador con el nombre y civilización especificados
+    {
+        Jugadores.Add(new Player(username, civilization));
+        return "Se ha creado el jugador " + username + " con la civilización " + civilization + ".";
+    }
+     
+    
     /// <summary>
     /// Crea los jugadores de la partida, solicitando sus nombres y civilizaciones.
     /// Asigna recursos iniciales y unidades iniciales a cada jugador.
     /// </summary>
-    public void CrearJugadores()
+    public void CrearJugadores1()
     {
         Console.WriteLine("Indique cuántos jugadores van a participar (2-4): ");
         int cantidad;

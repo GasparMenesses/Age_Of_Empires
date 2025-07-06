@@ -5,7 +5,7 @@ namespace Library.Farming;
 
 public class GoldMine: Recolection
 {
-    public static string Symbol => "GM";
+    public static string Symbol => "⛏️💰";
 
     
 

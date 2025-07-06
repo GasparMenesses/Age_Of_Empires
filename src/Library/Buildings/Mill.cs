@@ -6,7 +6,7 @@ namespace Library.Buildings;
 
 public class Mill : Building //herdea de la clase building
 {
-    public override string Symbol => "Ml";
+    public override string Symbol => "🌾🏠";
     public int Food { get; private set; } //propiedad que define la cantidad de food almacenado
     public int Capacity { get; set; }
     public Player _player;

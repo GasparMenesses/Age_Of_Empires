@@ -6,7 +6,7 @@ namespace Library.Buildings;
 
 public class WoodStorage : Building
 {
-    public override string Symbol => "WS";
+    public override string Symbol => "🪵🏚️";
     public int Wood { get; private set; } //propiedad que define la cantidad de food almacenado
     public int Capacity { get; set; }
     public Player _player;
