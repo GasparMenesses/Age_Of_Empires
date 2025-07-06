@@ -2,6 +2,7 @@
 using Library.Core;
 using Facade;
 using Library.Exceptions;
+using Library.Units;
 using Microsoft.VisualBasic;
 
 namespace GeneralModule;
@@ -189,25 +190,72 @@ public class GeneralModule : ModuleBase<SocketCommandContext>
     // ----------------------------
     // Comando: Recolectar
     // ----------------------------
-    [Command("Recolectar")]
-    public async Task RecolectarAsync()
+    [Command("RecolectarRecursos")]
+    public async Task RecolectarRecursosAsync()
     {
         if (phase < 2)
         {
             await ReplyAsync("No hay una partida en curso, usá **!iniciar**.");
             return;
         }
-        string userId = Context.User.Id.ToString();
-        await ReplyAsync("Que elemento deseas recolectar " + userId + "?");
-        foreach (var jugadoractual in jugadores)
+        
+        // Verificamos si tiene una selección pendiente
+        try
         {
-            if (jugadoractual.Id == userId)
-            {
-                
-            }
+            await RespuestaPendiente(Context);
+        }
+        catch (SeleccionPendienteException e)
+        {
+            await ReplyAsync(e.Message);
+            return;
         }
         
-        await ReplyAsync($"Puede utlizar los siguientes comandos **\n !RecolectarMadera + cantidad aldeanos\n !RecolectarPiedra + cantidad aldeanos\n  !RecolectarOro + cantidad aldeanos\n !RecolectarComida + cantidad aldeanos**" );
+        string userId = Context.User.Id.ToString();
+        await ReplyAsync("Que elemento deseas recolectar " + userId + "?");
+        await ReplyAsync($"Ingrese **!N** donde N = **\n 1 - Recolectar Madera\n 2 - Recolectar Piedra\n 3 - Recolectar Oro\n 4 - Recolectar Comida**" );
+        
+        
+        int numeroAldeanos = jugadores.FirstOrDefault(j => j.Id == userId)?.Units.OfType<Villager>().Count() ?? 0;
+        // foreach (var jugadoractual in jugadores)
+        // {
+        //     if (jugadoractual.Id == userId)
+        //     {
+        //         numeroAldeanos = jugadoractual.Units.OfType<Villager>().Count();
+        //     }
+        // }
+        
+        var tcs = new TaskCompletionSource<string>();
+        selections[userId] = tcs;
+
+        // Espera la selección del usuario
+        _ = WaitRecolectarAsync(Context, tcs, numeroAldeanos);
+        
+        await ReplyAsync(
+            $"El jugador {Context.User.Username} dispone de los recursos:\n" + jugadores.FirstOrDefault(j => j.Id == Context.User.Id.ToString()).Resources.
+        );
+    }
+    
+    private async Task WaitRecolectarAsync(SocketCommandContext context, TaskCompletionSource<string> tcs, int numeroAldeanos )
+    {
+        // Verifica si el jugador tiene aldeanos disponibles
+        if (numeroAldeanos <= 0)
+        {
+            await context.Channel.SendMessageAsync(
+                $"El jugador {context.User.Username} no tiene aldeanos disponibles para recolectar recursos."
+            );
+            selections.Remove(context.User.Id.ToString());
+            return;
+        }
+        
+        // Espera la selección del usuario  
+        string selection = await tcs.Task;
+        fachada.RecolectarRecursos(selection, jugadores.FirstOrDefault(j => j.Id == context.User.Id.ToString()));
+
+        await context.Channel.SendMessageAsync(
+            $"El jugador {context.User.Username} ha seleccionado recolectar recursos con la opción: {selection}."
+        );
+
+        selections.Remove(context.User.Id.ToString());
     }
     
     [Command("RecolectarMadera")]
@@ -239,6 +287,9 @@ public class GeneralModule : ModuleBase<SocketCommandContext>
 
     [Command("3")]
     public async Task Selection3() => await Selection("3");
+    
+    [Command("4")]
+    public async Task Selection4() => await Selection("4");
 
     // Manejo genérico de selección de civilización
     private async Task Selection(string selection)

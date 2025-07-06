@@ -39,5 +39,10 @@ public class Fachada
         engine.PlaceBuilduingsRandomInGameMap(jugadores); // Coloca edificios aleatorios en el mapa del juego, depende de la cantidad de jugadores
 
     }
+    
+    public void RecolectarRecursos (string selection , Player player) // Método para recolectar recursos
+    {
+        
+    }
 
 }
