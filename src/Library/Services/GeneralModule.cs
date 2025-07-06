@@ -230,20 +230,17 @@ public class GeneralModule : ModuleBase<SocketCommandContext>
     
     private async Task WaitRecolectarAsync(SocketCommandContext context, TaskCompletionSource<string> tcs, int numeroAldeanos )
     {
-        // Verifica si el jugador tiene aldeanos disponibles
-        if (numeroAldeanos <= 0)
-        {
-            await context.Channel.SendMessageAsync(
-                $"El jugador {context.User.Username} no tiene aldeanos disponibles para recolectar recursos, dispone de {numeroAldeanos} aldeanos."
-            );
-            selections.Remove(context.User.Id.ToString());
-            return;
-        }
-        
         // Espera la selección del usuario  
         string selection = await tcs.Task;
-        fachada.Recolectar(selection, jugadores.FirstOrDefault(j => j.Id == context.User.Id.ToString()));
-
+        try
+        {
+            fachada.Recolectar(selection);
+        }
+        catch (UnidadNoDisponibleException e)
+        {
+            await ReplyAsync(e.Message);
+            return;
+        }
         await context.Channel.SendMessageAsync(
             $"El jugador {context.User.Username} ha seleccionado recolectar recursos con la opción: {selection}."
         );

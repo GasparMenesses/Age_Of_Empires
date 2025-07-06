@@ -50,7 +50,7 @@ public class Fachada
         
     }
 
-    public void Recolectar(string selection , Player player)
+    public void Recolectar(string selection)
     {
         
         string resource = selection switch
