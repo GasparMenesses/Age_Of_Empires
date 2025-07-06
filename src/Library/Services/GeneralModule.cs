@@ -14,12 +14,17 @@ public class GeneralModule : ModuleBase<SocketCommandContext>
     static Dictionary<string,bool> boolPlayers = new Dictionary<string,bool>();
     static Dictionary<int, List<string>> commands = new Dictionary<int, List<string>>()
     {
-        {0, new List<string>{"Crear"}},
+        {0, new List<string>{"CrearPartida"}},
         {1, new List<string>{"Unirse", "Iniciar"}},
         {2, new List<string>{"Mapa" , "Add"}},
         {3, new List<string>{"Resumen"}}
     };
-    [Command("Crear")]
+
+    private static string RelativeMapURL = "../../../../../MapaHtml/mapa_generado.html"; // URL relativa del mapa generado
+    private static string AbstoluteMapURL = Path.GetFullPath(RelativeMapURL).Replace("\\", "/");
+    
+    
+    [Command("CrearPartida")]
     public async Task CrearJuegoAsync()
     {
         if (phase != 0)
@@ -29,23 +34,47 @@ public class GeneralModule : ModuleBase<SocketCommandContext>
         }
         phase += 1; // Cambia la fase a 1, indicando que se está creando una partida
         await ReplyAsync(
-            $"Bienvenidos a **AGE OF EMPIRES**\nEs hora de preparar el juego...\nCuentan con los siguientes comandos:\n" +
+            $"Bienvenidos a **⚔️AGE OF EMPIRES⚔️**\n🎮Es hora de preparar el juego...\nCuentan con los siguientes comandos:\n" +
             $"{string.Join("\n", commands[1])}\n");
     }
+    
     [Command("Iniciar")]
     public async Task IniciarJuegoAsync()
     {
-        if (phase != 1)
+
+        if (phase < 1)
+        {
+            await ReplyAsync("No hay una partida creada, por favor, crea una partida primero: **!crearpartida**");
             return;
-        new Map();
-        string username = Context.User.Username;
+        }
+        else if (jugadores.Count == 0)
+        {
+            await ReplyAsync("Debe unirse al menos un jugador, por favor, crea un jugador primero: **!unirse**");
+            return;
+        } 
+        else if (phase > 1)
+        {
+            await ReplyAsync("Ya hay una partida en curso, por favor, espere a que finalice.");
+            return;
+        }
+        else
+        {
+            // Código para phase == 1
+            phase += 1; // Cambia la fase a 2, indicando que se está iniciando una partida
+            await ReplyAsync("Cargando entonrno de juego...");
+            Thread.Sleep(1000);
+            fachada.CrearEntornoJuego(); // Crea el entorno del juego, incluyendo el mapa y los edificios
+            await ReplyAsync("Accede al nuevo mapa, recuerda que debes recargarlo con F5");
+            await ReplyAsync("Pega esta URL en tu navegador: **" + AbstoluteMapURL + "**");
+            
+        }
     }
 
     
     [Command("Mapa")]
     public async Task HolaAsync()
     {
-        await ReplyAsync(("http://localhost:63342/Age_Of_Empires/src/Library/html/index.html?_ijt=gj5tbh1o5snvg6rnpkjdm1u0bo&_ij_reload=RELOAD_ON_SAVE"));
+        await ReplyAsync("Pega esta URL en tu navegador: " + AbstoluteMapURL);
     }
     
     
@@ -64,7 +93,7 @@ public class GeneralModule : ModuleBase<SocketCommandContext>
         switch (phase)
         {
             case 0:
-                await ReplyAsync("No hay una partida creada, por favor, crea una partida primero.");
+                await ReplyAsync("No hay una partida creada, por favor, crea una partida primero: **!crearpartida**");
                 return;
             case 2:
                 await ReplyAsync("La partida esta en curso, no puedes unirte.");

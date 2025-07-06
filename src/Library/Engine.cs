@@ -109,14 +109,20 @@ public class Engine
         }
     }  // Permite al jugador seleccionar su civilización
 
-    
+
     /// <summary>
     /// Crea un nuevo mapa de juego, colocando edificios y recursos iniciales para cada jugador.
     /// </summary>
+    
     public void CreateNewGameMap()
     {
-        new Map(); 
-        foreach (var jugador in Jugadores)
+        new Map();
+    }
+    
+    public void PlaceBuilduingsRandomInGameMap( List<Player> jugadores) 
+    {
+        
+        foreach (var jugador in jugadores)
         {
 
             // Cada jugador comienza con un centro cívico
@@ -153,7 +159,6 @@ public class Engine
                 Map.PlaceRandom(Farm.Symbol);
                 Granjas.Add(granja);
             }
-            
         }
         
         string mapaComoTexto = MapPrinter.PrintMap();
