@@ -150,7 +150,7 @@ public class Engine
         }
         
         string mapaComoTexto = MapPrinter.PrintMap();
-        string ruta = @"C:\proyectosP2\Age_Of_Empires\MapaHtml\mapa_generado.html";
+        string ruta = @"..\MapaHtml\mapa_generado.html";
         File.WriteAllText(ruta, mapaComoTexto);
         Console.WriteLine("✅ Mapa generado en mapa_generado");
         
