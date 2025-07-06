@@ -1,10 +1,11 @@
 ﻿using Discord.Commands;
 using Library.Core;
+using Facade;
 
 public class GeneralModule : ModuleBase<SocketCommandContext>
 {
 
-    // private Fachada fachada = new Fachada();
+    private Fachada fachada = new Fachada();
     //
     // [Command("Comenzar")]
     // public async Task StartNewGameAsync()
@@ -102,7 +103,6 @@ public class GeneralModule : ModuleBase<SocketCommandContext>
         if (!selections.ContainsKey(Context.User.Id.ToString()))
         {
             await ReplyAsync("No tiene nada por elegir");
-            return;
         }
         selections[Context.User.Id.ToString()].SetResult(selection);
     }

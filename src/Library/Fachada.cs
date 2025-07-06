@@ -15,8 +15,8 @@ namespace Facade
         {
             
             engine = new Engine(); // Inicializa el motor del juego
-            engine.CrearJugadores1();
-            engine.CreateNewGameMap(); // Crea un nuevo mapa de juego
+            // engine.CrearJugadores1();
+            // engine.CreateNewGameMap(); // Crea un nuevo mapa de juego
 
         }
 

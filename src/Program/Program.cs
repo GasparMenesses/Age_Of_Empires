@@ -10,8 +10,6 @@ class Program
         new Fachada();
         DemoBot();
         // Primero crea el mapa del juego
-  
-
     }
     
     private static void DemoBot()
