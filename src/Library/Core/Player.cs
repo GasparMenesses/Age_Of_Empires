@@ -10,6 +10,8 @@ using Actions;
 public class Player
 {
      public string Nombre { get; set; }
+     
+     public string Id { get; set; }
      public Resources Resources { get; }
      public List<Building> Buildings { get; }
      public Civilization Civilization { get; set; }
@@ -18,8 +20,8 @@ public class Player
      private Civilization _society;
      public  int PoblacionLimite  { get; set; }
      public Actions Actions { get; set; }
-     
-     public Player(string nombre  , string civilization)
+
+     public Player(string nombre, string civilization, string id = null)
      {
          switch (civilization)
          {
@@ -35,6 +37,8 @@ public class Player
              default:
                  throw new Exception("Civilización desconocida");
          }
+
+         Id = id;
          Nombre = nombre;
          Buildings = new List<Building>();
          Resources = new Resources();
