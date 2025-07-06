@@ -6,10 +6,12 @@ public class GeneralModule : ModuleBase<SocketCommandContext>
 {
     private static Fachada fachada = new Fachada();
     private List<Player> jugadores = fachada.jugadores; // Lista de jugadores, se obtiene de la fachada
-    
-
     private int phase = 1; // Fase del juego, 1: Generacion de la partida, 2: Construcción de edificios, 3: Recolección de recursos
     static Dictionary<string,TaskCompletionSource<string>> selections = new Dictionary<string,TaskCompletionSource<string>>();
+    
+    
+    
+    
     [Command("Comenzar")]
     public async Task StartNewGameAsync()
     {
