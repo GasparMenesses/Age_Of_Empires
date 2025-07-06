@@ -1,5 +1,8 @@
 ﻿using Discord.Commands;
 using Library.Core;
+using Library.Exceptions;
+using Library.Units;
+
 // esta clase representa la fachada del juego, que es la interfaz principal para interactuar con el motor del juego
 // La fachada simplifica la interacción con el motor, encapsulando la lógica de creación de jugadores y el entorno del juego.
 // La clase también maneja la inicialización del motor y el inicio del bucle del juego.
@@ -9,6 +12,7 @@ public class Fachada
 {
     static public List<Player> jugadores = new();
     public Engine engine;
+    private Player _player;
     
     public Fachada() // Constructor de la fachada que inicializa el motor del juego
     {
@@ -45,4 +49,16 @@ public class Fachada
         
     }
 
+    public void Recolectar(string resource)
+    {
+        var villager = _player.Units.OfType<Villager>().FirstOrDefault();
+        if (villager != null)
+        {
+            _player.Actions.Farmear(villager, resource);//Recolecta el recurso especificado por un aldeano
+        }
+        else
+        {
+            throw new UnidadNoDisponibleException("No tienes ningun aldeano disponible para farmear.");
+        }
+    }
 }
