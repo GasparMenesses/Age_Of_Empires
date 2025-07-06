@@ -9,7 +9,7 @@ public interface IConstructionInfo
       int StoneCost { get; set; }
     int ConstructionTime { get; }
     int TimeElapsed { get; }
-
     // Métodos para control de construcción
     void Construyendo(int seconds);
+    int Health { get; set; }
 }
