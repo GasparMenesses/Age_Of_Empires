@@ -1,5 +1,6 @@
 using Library.Core;
 using Library.Buildings;
+using Library.Farming;
 
 namespace Library.Tests;
 
@@ -12,8 +13,11 @@ public class Tests
     {
         Map map = new Map();
         player = new Player("MiniMago", "Cordobeses");
-        CivicCenter civicCenter = (CivicCenter)player.Buildings[0];
+        civicCenter  = (CivicCenter)player.Buildings[0];
     }
+    /// <summary>
+    /// Verifica que el mapa se crea con las dimensiones correctas (100x100).
+    /// </summary>
 
     [Test]
     public void BoardCreated()
@@ -21,6 +25,11 @@ public class Tests
         int Length = Map.ReturnLength0() * Map.ReturnLength1();
         Assert.That(Length, Is.EqualTo(100 * 100));
     }
+    
+    /// <summary>
+    /// Verifica que el jugador se crea correctamente con los valores iniciales esperados:
+    /// Nombre, civilización, edificios, unidades, acciones y población límite.
+    /// </summary>
     [Test]
     public void PlayerCreated()
     {
@@ -67,6 +76,11 @@ public class Tests
         Assert.That(player.Resources.Wood, Is.LessThan(woodQuantity));
         Assert.That(player.Resources.Stone, Is.LessThan(stoneQuantity));
     }
+    
+    /// <summary>
+    /// Confirma que no se puede construir un edificio fuera de los límites del mapa.
+    /// (posiciones mayores a 99
+    /// </summary>
     [Test]
     public void PlayerCannotBuildOutsideMap()
     {
@@ -75,6 +89,9 @@ public class Tests
         bool result = player.Actions.Build("Barrack", (x, y)).Result;
         Assert.That(result, Is.False);
     }
+    /// <summary>
+    /// Comprueba que el jugador no puede construir un edificio en una posición ya ocupada por otro edificio.
+    /// </summary>
     [Test]
     public void PlayerCannotBuildOnOccupiedSpace()
     {
@@ -255,6 +272,9 @@ public class Tests
         }
     }
     
+    /// <summary>
+    /// Verifica que se puedan agregar recursos al centro cívico del jugador y que se actualicen correctamente los valores de recursos.
+    /// </summary>
     [Test]
     public void PlayerCanAddResourcesToCivicCenter()
     {
@@ -273,4 +293,235 @@ public class Tests
         Assert.That(civicCenter.Food, Is.EqualTo(initialFood + 20));
         Assert.That(civicCenter.Gold, Is.EqualTo(initialGold + 10));
     }
+    
+    public class BuildingTests
+    {
+        private Building building;
+
+        [SetUp]
+        public void Setup()
+        {
+            // Creamos un edificio en la posición (5,10) con costos y tiempo de construcción
+            building = new Building((5, 10), woodCost: 100, stoneCost: 50, constructionTime: 60);
+        }
+
+        
+        /// <summary>
+        ///Verifica que los valores iniciales del edificio sean correctos.
+        /// se inicializa correctamente los costos de madera y piedra, el tiempo de construcción es el esperado
+        /// la posicion es correcta y el estado de construcción es falso.
+        /// el tiempo transcurrido es 0 
+        /// </summary>
+        [Test]
+        public void Building_InitialValues_AreCorrect()
+        {
+            Assert.That(building.WoodCost, Is.EqualTo(100));
+            Assert.That(building.StoneCost, Is.EqualTo(50));
+            Assert.That(building.ConstructionTime, Is.EqualTo(60));
+            Assert.That(building.TimeElapsed, Is.EqualTo(0));
+            Assert.That(building.IsBuilt, Is.False);
+            Assert.That(building.Position["x"], Is.EqualTo(5));
+            Assert.That(building.Position["y"], Is.EqualTo(10));
+            // Como Symbol es virtual y no está inicializado, puede ser null o vacío (depende de implementación)
+        }
+
+        /// <summary>
+        /// Comprueba que el metodo Construyendo incrementa el tiempo transcurrido correctamente
+        /// que no se supere el tiempo de construcción y que el estado de construcción se actualice correctamente.
+        /// (IsBuilt=true cuando TimeElapsed >= ConstructionTime)
+        /// </summary>
+        [Test]
+        public void Construyendo_IncrementsTimeElapsed()
+        {
+            building.Construyendo(30);
+            Assert.That(building.TimeElapsed, Is.EqualTo(30));
+            Assert.That(building.IsBuilt, Is.False);
+
+            building.Construyendo(20);
+            Assert.That(building.TimeElapsed, Is.EqualTo(50));
+            Assert.That(building.IsBuilt, Is.False);
+
+            building.Construyendo(15); // Suma 15 pero no debe superar ConstructionTime
+            Assert.That(building.TimeElapsed, Is.EqualTo(60));
+            Assert.That(building.IsBuilt, Is.True);
+        }
+
+        /// <summary>
+        /// Asegura que si el edificio ya está construido, el tiempo transcurrido no se incremente más.
+        /// el estado de construcción no cambia.
+        /// </summary>
+        [Test]
+        public void Construyendo_DoesNotIncrementAfterBuilt()
+        {
+            building.Construyendo(60);
+            Assert.That(building.IsBuilt, Is.True);
+
+            building.Construyendo(10);
+            // TimeElapsed no debe aumentar porque ya está construido
+            Assert.That(building.TimeElapsed, Is.EqualTo(60));
+        }
+    }
+
+
+    // Clase concreta para testeo
+    public class TestRecolection : Recolection
+    {
+        public TestRecolection((int x, int y) position, int cantidadinicial, int tasarecoleccion)
+            : base(position, cantidadinicial, tasarecoleccion)
+        {
+        }
+    }
+
+    public class RecolectionTests
+    {
+        private TestRecolection recolection;
+
+        [SetUp]
+        public void Setup()
+        {
+            recolection = new TestRecolection((10, 20), cantidadinicial: 100, tasarecoleccion: 15);
+        }
+        /// <summary>
+        /// Verifica que los valores iniciales de la recolección, posicion,cantidad de recurso disponible y tasa de recoleccion se establezcan correctamente.
+        /// 
+        /// </summary>
+
+        [Test]
+        public void InitialValues_AreSetCorrectly()
+        {
+            Assert.That(recolection.Position["x"], Is.EqualTo(10));
+            Assert.That(recolection.Position["y"], Is.EqualTo(20));
+            Assert.That(Recolection.CantidadRecursoDisponible, Is.EqualTo(100));
+            Assert.That(Recolection.TasaDeRecoleccion, Is.EqualTo(15));
+        }
+        /// <summary>
+        /// Confirma que al recolectar menor o igual cantidad que la disponible, se retorne la tasa de recolección y se actualice la cantidad de recurso disponible.
+        /// </summary>
+        [Test]
+        public void Recolectar_ReturnsCorrectAmount_WhenCantidadIsLessOrEqualAvailable()
+        {
+            int cantidadSolicitada = 10;
+
+            int recolectado = recolection.Recolectar(cantidadSolicitada);
+
+            Assert.That(recolectado, Is.EqualTo(Recolection.TasaDeRecoleccion));
+            Assert.That(Recolection.CantidadRecursoDisponible, Is.EqualTo(100 - recolectado));
+        }
+        /// <summary>
+        /// Verifica que al recolectar más cantidad que la disponible, se retorne la cantidad restante y se actualice a 0.
+        /// </summary>
+        [Test]
+        public void Recolectar_ReturnsRemaining_WhenCantidadIsMoreThanAvailable()
+        {
+            int cantidadSolicitada = 200; // Más que disponible
+
+            int recolectado = recolection.Recolectar(cantidadSolicitada);
+
+            Assert.That(recolectado, Is.EqualTo(100)); // debería recolectar lo que queda
+            Assert.That(Recolection.CantidadRecursoDisponible, Is.EqualTo(0));
+        }
+        /// <summary>
+        /// Asegura que tras varias veces de recolección, la cantidad de recurso disponible nunca sea negativa.
+        /// </summary>
+        [Test]
+        public void CantidadRecursoDisponible_NeverNegative()
+        {
+            // Recolectar más veces de lo que hay
+            recolection.Recolectar(50); // -15
+            recolection.Recolectar(50); // -15
+            recolection.Recolectar(50); // -15
+            recolection.Recolectar(50); // -15
+            recolection.Recolectar(50); // -15
+            recolection.Recolectar(50); // Debería quedar 100 - 15*6 = 10
+            recolection.Recolectar(50); // -10 restantes
+
+            Assert.That(Recolection.CantidadRecursoDisponible, Is.GreaterThanOrEqualTo(0));
+        }
+    }
+  
+    
+    public class WoodsTests
+    {
+        private Woods woods;
+
+        [SetUp]
+        public void Setup()
+        {
+            woods = new Woods((5, 10), cantidadinicial: 300);
+        }
+        /// <summary>
+        /// Verifica que los valores iniciales del bosque se establezcan correctamente, que la tasa de recolección sea 120 y la cantidad de recurso disponible sea 300.
+        /// </summary>
+        [Test]
+        public void Woods_InitialValues_AreSetCorrectly()
+        {
+            Assert.That(woods.Position["x"], Is.EqualTo(5));
+            Assert.That(woods.Position["y"], Is.EqualTo(10));
+            Assert.That(Recolection.CantidadRecursoDisponible, Is.EqualTo(300));
+            Assert.That(Recolection.TasaDeRecoleccion, Is.EqualTo(120));
+        }
+        /// <summary>
+        /// Confirma que el símbolo del bosque sea "Wd", como se espera.
+        /// </summary>
+        [Test]
+        public void Woods_Symbol_ReturnsWd()
+        {
+            Assert.That(Woods.Symbol, Is.EqualTo("Wd"));
+        }
+        /// <summary>
+        /// Testea que el metodo Recolectar del bosque funcione correctamente, recolectando la tasa de recolección y actualizando la cantidad de recurso disponible.
+        /// </summary>
+        [Test]
+        public void Recolectar_Woods_ReturnsCorrectAmount()
+        {
+            int cantidadSolicitada = 50;
+            int recolectado = woods.Recolectar(cantidadSolicitada);
+
+            Assert.That(recolectado, Is.EqualTo(Recolection.TasaDeRecoleccion));
+            Assert.That(Recolection.CantidadRecursoDisponible, Is.EqualTo(300 - recolectado));
+        }
+    }
+    [Test]
+    public void AddWood_AddsCorrectly_WhenUnderCapacity_AndBuilt()
+    {
+        var player = new Player("Tester", "Cordobeses");
+        var storage = new WoodStorage(player, (10, 10));
+    
+        // Simular que el edificio está terminado
+        storage.Construyendo(999);
+
+        storage.AddWood(200);
+
+        Assert.That(storage.Wood, Is.EqualTo(200));
+        Assert.That(player.Resources.Wood, Is.GreaterThanOrEqualTo(200)); // depende de lógica en AddResources
+    }
+    [Test]
+    public void AddWood_ThrowsException_IfNotBuilt()
+    {
+        var player = new Player("Tester", "Cordobeses");
+        var storage = new WoodStorage(player, (5, 5));
+
+        // No lo construyo, así que IsBuilt debe ser false
+        var ex = Assert.Throws<InvalidOperationException>(() => storage.AddWood(100));
+        Assert.That(ex.Message, Is.EqualTo("El almacén aún no está construido."));
+    }
+    [Test]
+    public void AddWood_DoesNotExceedCapacity()
+    {
+        var player = new Player("Tester", "Cordobeses");
+        var storage = new WoodStorage(player, (1, 1));
+        storage.Construyendo(999); // simula edificio terminado
+
+        storage.AddWood(1200); // mayor que capacidad
+
+        Assert.That(storage.Wood, Is.EqualTo(1000));
+    }
+
+
 }
+
+
+
+
+
+
