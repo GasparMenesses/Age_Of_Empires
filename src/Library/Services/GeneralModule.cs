@@ -1,65 +1,30 @@
 ﻿using Discord.Commands;
 using Library.Core;
-using Facade;
 
 public class GeneralModule : ModuleBase<SocketCommandContext>
 {
-    
-    private Fachada fachada = new Fachada();
-    private static bool MapIsCreated = false;
-    
-    [Command("Comenzar")]
-    public async Task ComenzarAsync()
-    {
-        var username = Context.User.Username;
-        await ReplyAsync($"🎮 Bienvenido a **AGE OF EMPIRES**, {username}! Vamos a configurar la partida ⚔️");
-        await ReplyAsync($"Usa el comando **!Crear ´civilizacion´** para crear tu jugador");
-        await ReplyAsync($"Elige una de estas civilizaciones: **Cordobeses, Romanos o Vikingos** ");
-    }
-    
-    [Command("Crear")]
-    public async Task SetPlayerAsync(string civilizacion)
-    {
-        var username = Context.User.Username;
-    
-        // Normalizamos para comparar
-        string civLower = civilizacion.Trim().ToLower();
 
-        // Validamos que sea una opción válida
-        if (civLower != "cordobeses" && civLower != "romanos" && civLower != "vikingos")
-        {
-            await ReplyAsync("❌ Civilización inválida. Usá: Cordobeses, Romanos o Vikingos.");
-            return;
-        }
-        
-        await ReplyAsync($"Has elegido la civilización: **{civilizacion}**");
-
-        // Pasás el username y la civilización (si querés podés modificar fachada para recibir la civ)
-        string text = fachada.Comenzar(username, civilizacion);
-        await ReplyAsync($"{text}");
-    }
-    
-    
-
-
-    // static List<Player> jugadores = new List<Player>();
-    // static Dictionary<string,TaskCompletionSource<string>> selections = new Dictionary<string,TaskCompletionSource<string>>();
+    // private Fachada fachada = new Fachada();
     //
     // [Command("Comenzar")]
     // public async Task StartNewGameAsync()
     // {
-    //     
-    //     string username = Context.User.Username;
+    //     var username = Context.User.Username;
     //     await ReplyAsync($"🎮 Bienvenido a **AGE OF EMPIRES**, {username}! Vamos a configurar la partida ⚔️");
     //     fachada.Comenzar();
+    //
     // }
 
-    [Command("CrearMapa")]
-    public async Task CreatenEwGameMapAsync()
+    static List<Player> jugadores = new List<Player>();
+    static Dictionary<string,TaskCompletionSource<string>> selections = new Dictionary<string,TaskCompletionSource<string>>();
+    [Command("Comenzar")]
+    public async Task StartNewGameAsync()
     {
         new Map();
-        await ReplyAsync(("http://localhost:63342/Age_Of_Empires/src/Library"));
+        string username = Context.User.Username;
+        await ReplyAsync($"🎮 Bienvenido a **AGE OF EMPIRES**, {username}! Vamos a configurar la partida ⚔️");
     }
+
     
     [Command("PrintMapa")]
     public async Task HolaAsync()
@@ -69,100 +34,76 @@ public class GeneralModule : ModuleBase<SocketCommandContext>
     
     
     [Command("Add")]
+    
     public async Task Add(int n1, int n2)
     {
         int result = n1 + n2;
         await ReplyAsync($"El resultado es: {result}");
     }
+
+    ///
+    [Command("Join")]
+    public async Task JoinAsync()
+    {
+        string userId = Context.User.Id.ToString();
+
+        foreach (Player player in jugadores)
+        {
+            if (player.Nombre == userId)
+            {
+                await ReplyAsync($"El jugador {Context.User.Username} ya se encuentra en la partida.");
+                return;
+            }
+        }
+
+        await ReplyAsync(
+            $"Bienvenido {Context.User.Username} a Age of Empires, por favor, selecciona una civilización:\n" +
+            "1.Cordobeses\n2.Romanos\n3.Vikingos\n(Por favor, ingrese su número)");
+
+        var tcs = new TaskCompletionSource<string>();
+        selections[userId] = tcs;
+
+        // Lanzamos la tarea que espera la selección sin bloquear JoinAsync
+        WaitJoinAsync(Context, userId, tcs);
+    }
+
+    private async Task WaitJoinAsync(SocketCommandContext context, string userId, TaskCompletionSource<string> tcs)
+    {
+        string selection = await tcs.Task;
+
+        string civilization = selection switch
+        {
+            "1" => "Cordobeses",
+            "2" => "Romanos",
+            "3" => "Vikingos"
+        };
+        jugadores.Add(new Player(userId, civilization));
+        await context.Channel.SendMessageAsync($"El jugador {context.User.Username} se ha unido a la partida con la civilización {civilization}.");
+        selections.Remove(userId);
+    }
+///    
     
-///
- 
-//     [Command("Join")]
-//     public async Task JoinAsync()
-//     {
-//         string civilization = "";
-//         foreach (Player player in jugadores)
-//         {
-//             if (player.Nombre == Context.User.Id.ToString())
-//             {
-//                 await ReplyAsync($"El jugador {Context.User.Username} ya se encuentra en la partida.");
-//                 return;
-//             }
-//         }
-//         await ReplyAsync($"Bienvenido {Context.User.Username} a Age of Empires, por favor, selecciona una civilización:\n 1.Cordobeses\n 2.Romanos\n 3.Vikingos\n (Por favor, ingrese su numero)");
-//         selections[Context.User.Id.ToString()] = new TaskCompletionSource<string>();
-//         await ReplyAsync("Esperando que completes la selección (estado inicial: " +
-//                          selections[Context.User.Id.ToString()].Task.IsCompleted + ")");
-//         await ReplyAsync("DEBUG - Tu ID es: " + Context.User.Id.ToString());
-//         string selection = await selections[Context.User.Id.ToString()].Task;
-//         await ReplyAsync("¡Selección recibida!");
-//         switch (selection)
-//         {
-//             case "1":
-//                 civilization = "Cordobeses";
-//                 break;
-//             case "2":
-//                 civilization = "Romanos";
-//                 break;
-//             case "3": 
-//                 civilization = "Vikingos";
-//                 break;
-//         }
-//         jugadores.Add(new Player(Context.User.Id.ToString(), civilization));
-//         await ReplyAsync($"El jugador {Context.User.Username} se ha unido a la partida con la civilizacion {civilization}.");
-//         selections.Remove(Context.User.Id.ToString());
-//     }
-//     
-// ///    
-//     
-//     [Command("sape")]
-//     public async Task HolaxdAsync()
-//     {
-//         await ReplyAsync("Mama");
-//     }
-//
-//     [Command("1")]
-//     public async Task SelectionIs1()
-//     {
-//         await ReplyAsync("DEBUG - Tu ID es: " + Context.User.Id.ToString());
-//         string key = Context.User.Id.ToString();
-//
-//         if (!selections.ContainsKey(key))
-//         {
-//             await ReplyAsync("Por favor, únete a la partida primero usando el comando !Join.");
-//             return;
-//         }
-//
-//         var tcs = selections[key];
-//         if (tcs.Task.IsCompleted)
-//         {
-//             await ReplyAsync("Ya completaste tu selección antes.");
-//             return;
-//         }
-//
-//         await ReplyAsync("Seleccionando opción 1...");
-//         tcs.SetResult("1");
-//     }
-//
-//
-//     [Command("2")]
-//     public async Task SelectionIs2()
-//     {
-//         if (!selections.ContainsKey(Context.User.Id.ToString()))
-//         {
-//             await ReplyAsync("Por favor, únete a la partida primero usando el comando !Join.");
-//             return;
-//         }
-//         selections[Context.User.Id.ToString()].SetResult("2");
-//     }
-//     [Command("3")]
-//     public async Task SelectionIs3()
-//     {
-//         if (!selections.ContainsKey(Context.User.Id.ToString()))
-//         {
-//             await ReplyAsync("Por favor, únete a la partida primero usando el comando !Join.");
-//             return;
-//         }
-//         selections[Context.User.Id.ToString()].SetResult("3");
-//     }
+    [Command("sape")]
+    public async Task HolaxdAsync()
+    {
+        await ReplyAsync("Mama");
+    }
+
+
+    [Command("1")]
+    public async Task Selection1() => await Selection("1");
+    [Command("2")]
+    public async Task Selection2() => await Selection("2");
+    [Command("3")]
+    public async Task Selection3() => await Selection("3");
+    private async Task Selection(string selection)
+    {
+        string userId = Context.User.Id.ToString();
+        if (!selections.ContainsKey(Context.User.Id.ToString()))
+        {
+            await ReplyAsync("No tiene nada por elegir");
+            return;
+        }
+        selections[Context.User.Id.ToString()].SetResult(selection);
+    }
 }
