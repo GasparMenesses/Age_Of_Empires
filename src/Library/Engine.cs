@@ -79,6 +79,21 @@ public class Engine
     
     
     
+    public void AsignarTresAldeanosPorJugador( List<Player> jugadores) // Asigna 3 aldeanos a cada jugador al inicio del juego
+    {
+        foreach (Player jugador in jugadores)
+        {
+            // Cada jugador comienza con 3 aldeanos
+            for (int i = 0; i < 3; i++)
+            {
+                jugador.Units.Add(new Villager(jugador.Buildings[0])); // Asigna un aldeano al centro cívico del jugador
+            }
+        }
+ 
+    } // Asigna 3 aldeanos a cada jugador al inicio del juego
+    
+    
+    
     
 
     

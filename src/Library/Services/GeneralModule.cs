@@ -211,19 +211,12 @@ public class GeneralModule : ModuleBase<SocketCommandContext>
         }
         
         string userId = Context.User.Id.ToString();
-        await ReplyAsync("Que elemento deseas recolectar " + userId + "?");
+        await ReplyAsync("Que elemento deseas recolectar " + Context.User.Username + "?");
         await ReplyAsync($"Ingrese **!N** donde N = **\n 1 - Recolectar Madera\n 2 - Recolectar Piedra\n 3 - Recolectar Oro\n 4 - Recolectar Comida**" );
         
         
         int numeroAldeanos = jugadores.FirstOrDefault(j => j.Id == userId)?.Units.OfType<Villager>().Count() ?? 0;
-        // foreach (var jugadoractual in jugadores)
-        // {
-        //     if (jugadoractual.Id == userId)
-        //     {
-        //         numeroAldeanos = jugadoractual.Units.OfType<Villager>().Count();
-        //     }
-        // }
-        
+
         var tcs = new TaskCompletionSource<string>();
         selections[userId] = tcs;
 
@@ -258,17 +251,6 @@ public class GeneralModule : ModuleBase<SocketCommandContext>
         selections.Remove(context.User.Id.ToString()); // Elimina la selección pendiente del jugador
     }
     
-    [Command("RecolectarMadera")]
-    public async Task RecolectarMadera()
-    {
-        if (phase < 2)
-        {
-            await ReplyAsync("No hay una partida en curso, usá **!iniciar**.");
-            return;
-        }
-        string userId = Context.User.Id.ToString();
-        await ReplyAsync("Que elemento deseas recolectar " + userId + "?");
-    }
     
         
         

@@ -41,6 +41,7 @@ public class Fachada
         
         engine.CreateNewGameMap(  ); // Crea un nuevo mapa de juego
         engine.PlaceBuilduingsRandomInGameMap(jugadores); // Coloca edificios aleatorios en el mapa del juego, depende de la cantidad de jugadores
+        engine.AsignarTresAldeanosPorJugador(jugadores); // Asigna tres aldeanos por jugador, para que puedan recolectar recursos
 
     }
     
