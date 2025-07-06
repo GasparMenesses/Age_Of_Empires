@@ -77,7 +77,6 @@ public class GeneralModule : ModuleBase<SocketCommandContext>
             "2" => "Romanos",
             "3" => "Vikingos"
         };
-
         jugadores.Add(new Player(userId, civilization));
         await context.Channel.SendMessageAsync($"El jugador {context.User.Username} se ha unido a la partida con la civilización {civilization}.");
         selections.Remove(userId);
