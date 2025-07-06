@@ -2,22 +2,13 @@
 using Library.Core;
 using Facade;
 
-public class GeneralModule : ModuleBase<SocketCommandContext>
+public class GeneralModule :  ModuleBase<SocketCommandContext>
 {
 
     private Fachada fachada = new Fachada();
-    //
-    // [Command("Comenzar")]
-    // public async Task StartNewGameAsync()
-    // {
-    //     var username = Context.User.Username;
-    //     await ReplyAsync($"🎮 Bienvenido a **AGE OF EMPIRES**, {username}! Vamos a configurar la partida ⚔️");
-    //     fachada.Comenzar();
-    //
-    // }
-
     static List<Player> jugadores = new List<Player>();
     static Dictionary<string,TaskCompletionSource<string>> selections = new Dictionary<string,TaskCompletionSource<string>>();
+    
     [Command("Comenzar")]
     public async Task StartNewGameAsync()
     {
@@ -82,7 +73,7 @@ public class GeneralModule : ModuleBase<SocketCommandContext>
         await context.Channel.SendMessageAsync($"El jugador {context.User.Username} se ha unido a la partida con la civilización {civilization}.");
         selections.Remove(userId);
     }
-///    
+  
     
     [Command("sape")]
     public async Task HolaxdAsync()
