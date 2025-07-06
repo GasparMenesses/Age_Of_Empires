@@ -68,21 +68,21 @@ public class Actions
         }
     }
 
-    public async Task Farmear(Player player, Villager villager, string resource)
+    public async Task Farmear(Villager villager, string resource)
     {
-        if (!player.Units.Contains(villager))
+        if (!Player.Units.Contains(villager))
             return;
         await Task.Delay(5000); // Simula el tiempo de recolección
 
         string res = resource.ToLower();
         if (res == "oro")
-            player.Resources.Gold += GoldMine.TasaDeRecoleccion;
+            Player.Resources.Gold += GoldMine.TasaDeRecoleccion;
         else if (res == "piedra")
-            player.Resources.Stone += Quarry.TasaDeRecoleccion;
+            Player.Resources.Stone += Quarry.TasaDeRecoleccion;
         else if (res == "madera")
-            player.Resources.Wood += Woods.TasaDeRecoleccion;
+            Player.Resources.Wood += Woods.TasaDeRecoleccion;
         else if (res == "comida")
-            player.Resources.Food += Farm.TasaDeRecoleccion;
+            Player.Resources.Food += Farm.TasaDeRecoleccion;
     }
     
 }

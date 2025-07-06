@@ -302,7 +302,7 @@ public class Engine
         var actions = new Actions(jugador); // Crea una instancia de la clase Actions para realizar acciones con los aldeanos
         foreach (var aldeano in aldeanos)
         {
-             await actions.Farmear(jugador, aldeano, recursos); // Asigna cada aldeano a la recolección del recurso seleccionado
+             await actions.Farmear(aldeano, recursos); // Asigna cada aldeano a la recolección del recurso seleccionado
         }
         Console.WriteLine($"\n{cantidad} aldeano/s asignado/s a la recolección de {recursos}.");
         Console.WriteLine($"\nRecursos actuales de {jugador.Nombre}: Oro: {jugador.Resources.Gold}, Madera: {jugador.Resources.Wood}, Comida: {jugador.Resources.Food}, Piedra: {jugador.Resources.Stone}");
