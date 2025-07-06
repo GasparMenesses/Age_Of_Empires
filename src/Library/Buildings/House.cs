@@ -6,7 +6,7 @@ namespace Library.Buildings;
 // Cumple con SRP ya que se encarga exclusivamente de la lógica relacionada con la casa y el aumento de población
 public class House : Building
 {
-
+    public override string Symbol => "🏠🏠";
     public House(Player player, (int x, int y) position)
         : base(position, 0, 0, 60)
     {

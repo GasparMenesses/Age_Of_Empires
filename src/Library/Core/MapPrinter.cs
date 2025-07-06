@@ -4,19 +4,47 @@
 public static class MapPrinter
 {
     private static string _map = "";// Mapa que se va a imprimir en la consola(como string)
-    private static string _html1 = "<!doctype html> <html lang=\"en\"> <head> <meta charset=\"UTF-8\"> <meta name=\"viewport\" content=\"width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0\"> <meta http-equiv=\"X-UA-Compatible\" content=\"ie=edge\"> <title>Document</title> <link rel=\"stylesheet\" href=\"styles.css\"> </head> <body> <div class=\"border\"><h1 class=\"encabezado\"> 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79 80 81 82 83 84 85 86 87 88 89 90 91 92 93 94 95 96 97 98 99 100</h1><h1>";
-    private static string _html2 = "</h1><h1 class=\"encabezado\">1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79 80 81 82 83 84 85 86 87 88 89 90 91 92 93 94 95 96 97 98 99 100</h1></div></body></html>";
+    private static string _html1 = "<!doctype html>\n<html lang=\"en\">\n<head>\n    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\"\n          content=\"width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0\">\n    <meta http-equiv=\"X-UA-Compatible\" content=\"ie=edge\">\n    <link rel=\"stylesheet\" href=\"styles.css\">\n    <title>AgeOfEmpiresMap</title>\n</head>\n<body>\n<table class=\"tabla\">";
+    private static string _html2 = "</table>\n</body>\n</html>";
     public static string PrintMap() // Este metodo devuelve el mapa como una matriz de strings
     {
-        _map = ""; // Reinicia el mapa antes de imprimir
-        for (int i = 0; i < Map.ReturnLength0(); i++) // Recorre las filas del mapa
+        _map = "";
+
+        int filas = Map.ReturnLength0();
+        int columnas = Map.ReturnLength1();
+
+        // Fila superior con índices de columnas y celdas vacías en los extremos
+        _map += "<tr><td></td>"; // esquina superior izquierda vacía
+        for (int col = 0; col < columnas; col++)
         {
-            for (int j = 0; j < Map.ReturnLength1(); j++) // Recorre las columnas del mapa
-            {
-                _map += (Map.CheckMap(i, j) + " "); // Coloca el simbolo del mapa en la posicion actual
-            }
-            _map += "<br>"; // Añade un salto de línea al final de cada fila
+            _map += "<td>" + (col + 1) + "</td>";
         }
-        return _html1 + _map + _html2; // Devuelve el mapa
+        _map += "<td></td></tr>"; // esquina superior derecha vacía
+
+        // Filas con índices laterales y datos del mapa
+        for (int fila = 0; fila < filas; fila++)
+        {
+            _map += "<tr>";
+            _map += "<td>" + (fila + 1) + "</td>"; // índice izquierdo
+
+            for (int col = 0; col < columnas; col++)
+            {
+                _map += "<td>" + Map.CheckMap(fila, col) + "</td>";
+            }
+
+            _map += "<td>" + (fila + 1) + "</td>"; // índice derecho
+            _map += "</tr>";
+        }
+
+        // Fila inferior con índices de columnas y celdas vacías en los extremos
+        _map += "<tr><td></td>";
+        for (int col = 0; col < columnas; col++)
+        {
+            _map += "<td>" + (col + 1) + "</td>";
+        }
+        _map += "<td></td></tr>";
+
+        // Devolver el HTML completo
+        return _html1 + _map + _html2;
     }
 }
