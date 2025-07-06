@@ -14,7 +14,7 @@ public class GeneralModule : ModuleBase<SocketCommandContext>
     //     fachada.Comenzar();
     //
     // }
-
+    private int phase = 1; // Fase del juego, 1: Generacion de la partida, 2: Construcción de edificios, 3: Recolección de recursos
     static List<Player> jugadores = new List<Player>();
     static Dictionary<string,TaskCompletionSource<string>> selections = new Dictionary<string,TaskCompletionSource<string>>();
     [Command("Comenzar")]
@@ -26,7 +26,7 @@ public class GeneralModule : ModuleBase<SocketCommandContext>
     }
 
     
-    [Command("PrintMapa")]
+    [Command("Mapa")]
     public async Task HolaAsync()
     {
         await ReplyAsync(("http://localhost:63342/Age_Of_Empires/src/Library/html/index.html?_ijt=gj5tbh1o5snvg6rnpkjdm1u0bo&_ij_reload=RELOAD_ON_SAVE"));
@@ -42,7 +42,7 @@ public class GeneralModule : ModuleBase<SocketCommandContext>
     }
 
     ///
-    [Command("Join")]
+    [Command("Unirse")]
     public async Task JoinAsync()
     {
         string userId = Context.User.Id.ToString();
