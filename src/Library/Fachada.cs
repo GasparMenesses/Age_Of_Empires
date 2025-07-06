@@ -49,8 +49,18 @@ public class Fachada
         
     }
 
-    public void Recolectar(string resource)
+    public void Recolectar(string selection , Player player)
     {
+        
+        string resource = selection switch
+        {
+            "1" => "madera",
+            "2" => "piedra",
+            "3" => "oro",
+            "4" => "comida",
+            _ => throw new InvalidOperationException("Recurso no válido")
+        };
+        
         var villager = _player.Units.OfType<Villager>().FirstOrDefault();
         if (villager != null)
         {

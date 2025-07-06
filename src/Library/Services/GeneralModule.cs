@@ -231,7 +231,7 @@ public class GeneralModule : ModuleBase<SocketCommandContext>
         _ = WaitRecolectarAsync(Context, tcs, numeroAldeanos);
         
         await ReplyAsync(
-            $"El jugador {Context.User.Username} dispone de los recursos:\n" + jugadores.FirstOrDefault(j => j.Id == Context.User.Id.ToString()).Resources.
+            $"El jugador {Context.User.Username} dispone de los recursos:\n" + jugadores.FirstOrDefault(j => j.Id == Context.User.Id.ToString()).Resources
         );
     }
     
@@ -241,7 +241,7 @@ public class GeneralModule : ModuleBase<SocketCommandContext>
         if (numeroAldeanos <= 0)
         {
             await context.Channel.SendMessageAsync(
-                $"El jugador {context.User.Username} no tiene aldeanos disponibles para recolectar recursos."
+                $"El jugador {context.User.Username} no tiene aldeanos disponibles para recolectar recursos, dispone de {numeroAldeanos} aldeanos."
             );
             selections.Remove(context.User.Id.ToString());
             return;
@@ -249,13 +249,13 @@ public class GeneralModule : ModuleBase<SocketCommandContext>
         
         // Espera la selección del usuario  
         string selection = await tcs.Task;
-        fachada.RecolectarRecursos(selection, jugadores.FirstOrDefault(j => j.Id == context.User.Id.ToString()));
+        fachada.Recolectar(selection, jugadores.FirstOrDefault(j => j.Id == context.User.Id.ToString()));
 
         await context.Channel.SendMessageAsync(
             $"El jugador {context.User.Username} ha seleccionado recolectar recursos con la opción: {selection}."
         );
 
-        selections.Remove(context.User.Id.ToString());
+        selections.Remove(context.User.Id.ToString()); // Elimina la selección pendiente del jugador
     }
     
     [Command("RecolectarMadera")]
