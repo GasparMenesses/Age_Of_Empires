@@ -20,7 +20,73 @@ public class Engine
     public List<Quarry> MinasDePiedra { get; private set; } = new List<Quarry>(); // Lista de minas de piedra en el mapa
     
     public List<Farm> Granjas { get; private set; } = new List<Farm>(); // Lista de granjas en el mapa
+    
+    
+    public void CreateNewGameMap()
+    {
+        new Map();
+    }
+    
+    
+    public void PlaceBuilduingsRandomInGameMap( List<Player> jugadores) 
+    {
+        
+        foreach (var jugador in jugadores)
+        {
 
+            // Cada jugador comienza con un centro cívico
+            Map.PlaceRandom(jugador.Buildings[0].Symbol, jugador.Buildings[0]);
+            
+            // Por cada jugador agrego 3 minas de oro al mapa
+            for (int i = 0; i < 3; i++)
+            {
+                var minaoro = new GoldMine((0, 0), 500); 
+                Map.PlaceRandom(GoldMine.Symbol);
+                MinasDeOro.Add(minaoro);
+            }
+            
+            // Por cada jugador agrego 5 woods al mapa
+            for (int i = 0; i < 5; i++)
+            {
+                var wood = new Woods((0, 0), 500); 
+                Map.PlaceRandom(Woods.Symbol);
+                Bosques.Add(wood);
+            }
+            
+            // Por cada jugador agrego 5 minas de piedra al mapa
+            for (int i = 0; i < 5; i++)
+            {
+                var minapiedra = new Quarry((0, 0), 500); 
+                Map.PlaceRandom(Quarry.Symbol);
+                MinasDePiedra.Add(minapiedra);
+            }
+            
+            // Por cada jugador agrego 5 granjas al mapa
+            for (int i = 0; i < 5; i++)
+            {
+                var granja = new Farm((0, 0), 500);
+                Map.PlaceRandom(Farm.Symbol);
+                Granjas.Add(granja);
+            }
+        }
+        
+        string mapaComoTexto = MapPrinter.PrintMap();
+        string ruta = @"C:\proyectosP2\Age_Of_Empires\MapaHtml\mapa_generado.html";
+        File.WriteAllText(ruta, mapaComoTexto);
+        Console.WriteLine("✅ Mapa generado en mapa_generado");
+        
+    } // Crea un nuevo mapa para el juego, colocando los edificios y recursos iniciales
+    
+    
+    
+    
+
+    
+    
+ ///////////////////////////////////////////////////////////////////////////////////////////////////////
+ //////////////////////////////////////////////////////////////////////////////////////////////////////
+ //////////////////////////////////////////////////////////////////////////////////////////////////////  
+ 
     
     
     // FUNCIONES
@@ -114,60 +180,9 @@ public class Engine
     /// Crea un nuevo mapa de juego, colocando edificios y recursos iniciales para cada jugador.
     /// </summary>
     
-    public void CreateNewGameMap()
-    {
-        new Map();
-    }
-    
-    public void PlaceBuilduingsRandomInGameMap( List<Player> jugadores) 
-    {
-        
-        foreach (var jugador in jugadores)
-        {
 
-            // Cada jugador comienza con un centro cívico
-            Map.PlaceRandom(jugador.Buildings[0].Symbol, jugador.Buildings[0]);
-            
-            // Por cada jugador agrego 3 minas de oro al mapa
-            for (int i = 0; i < 3; i++)
-            {
-                var minaoro = new GoldMine((0, 0), 500); 
-                Map.PlaceRandom(GoldMine.Symbol);
-                MinasDeOro.Add(minaoro);
-            }
-            
-            // Por cada jugador agrego 5 woods al mapa
-            for (int i = 0; i < 5; i++)
-            {
-                var wood = new Woods((0, 0), 500); 
-                Map.PlaceRandom(Woods.Symbol);
-                Bosques.Add(wood);
-            }
-            
-            // Por cada jugador agrego 5 minas de piedra al mapa
-            for (int i = 0; i < 5; i++)
-            {
-                var minapiedra = new Quarry((0, 0), 500); 
-                Map.PlaceRandom(Quarry.Symbol);
-                MinasDePiedra.Add(minapiedra);
-            }
-            
-            // Por cada jugador agrego 5 granjas al mapa
-            for (int i = 0; i < 5; i++)
-            {
-                var granja = new Farm((0, 0), 500);
-                Map.PlaceRandom(Farm.Symbol);
-                Granjas.Add(granja);
-            }
-        }
-        
-        string mapaComoTexto = MapPrinter.PrintMap();
-        string ruta = @"C:\proyectosP2\Age_Of_Empires\MapaHtml\mapa_generado.html";
-        File.WriteAllText(ruta, mapaComoTexto);
-        Console.WriteLine("✅ Mapa generado en mapa_generado");
-        
-    } // Crea un nuevo mapa para el juego, colocando los edificios y recursos iniciales
     
+   
     
     /// <summary>
     /// Inicia el bucle principal del juego, gestionando los turnos y acciones de los jugadores.

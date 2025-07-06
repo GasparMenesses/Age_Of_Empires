@@ -4,26 +4,43 @@ using Facade;
 using Library.Exceptions;
 using Microsoft.VisualBasic;
 
-namespace GeneralModule; 
+namespace GeneralModule;
+
 public class GeneralModule : ModuleBase<SocketCommandContext>
 {
-    private static Fachada fachada = new Fachada();
-    private List<Player> jugadores => Fachada.jugadores; // Lista de jugadores, se obtiene de la fachada
-    private static int phase = 0; // Fases del juego, 1: Generacion de la partida, 2: Acciones en partida, 3: Finalizacion de la partida
-    static Dictionary<string,TaskCompletionSource<string>> selections = new Dictionary<string,TaskCompletionSource<string>>();
-    static Dictionary<string,bool> boolPlayers = new Dictionary<string,bool>();
+    // ----------------------------
+    // Variables y estructuras del juego
+    // ----------------------------
+    
+    private static Fachada fachada = new Fachada(); // Fachada para manejar lógica del juego
+    private List<Player> jugadores => Fachada.jugadores; // Jugadores actuales en la partida
+    private static int phase = 0; // 0: Sin partida, 1: Esperando jugadores, 2: Juego en curso, 3: Finalizado
+
+    // Diccionarios para manejar selecciones y validaciones
+    static Dictionary<string, TaskCompletionSource<string>> selections = new();
+    static Dictionary<string, bool> boolPlayers = new();
+
+    // Comandos disponibles por fase
     static Dictionary<int, List<string>> commands = new Dictionary<int, List<string>>()
     {
         {0, new List<string>{"CrearPartida"}},
         {1, new List<string>{"Unirse", "Iniciar"}},
-        {2, new List<string>{"Mapa" , "Add"}},
+        {2, new List<string>{"Mapa", "Add"}},
         {3, new List<string>{"Resumen"}}
     };
 
-    private static string RelativeMapURL = "../../../../../MapaHtml/mapa_generado.html"; // URL relativa del mapa generado
+    // Ruta del archivo HTML del mapa
+    private static string RelativeMapURL = "../../../../../MapaHtml/mapa_generado.html";
     private static string AbstoluteMapURL = Path.GetFullPath(RelativeMapURL).Replace("\\", "/");
     
     
+    //////////////////////////////////////////////////////////////
+    //////////////////// Configuarción incial ////////////////////
+    //////////////////////////////////////////////////////////////
+    
+    // ----------------------------
+    // Comando: CrearPartida
+    // ----------------------------
     [Command("CrearPartida")]
     public async Task CrearJuegoAsync()
     {
@@ -32,78 +49,90 @@ public class GeneralModule : ModuleBase<SocketCommandContext>
             await ReplyAsync("Ya hay una partida en curso, por favor, espere a que finalice.");
             return;
         }
-        phase += 1; // Cambia la fase a 1, indicando que se está creando una partida
+
+        phase += 1;
         await ReplyAsync(
-            $"Bienvenidos a **⚔️AGE OF EMPIRES⚔️**\n🎮Es hora de preparar el juego...\nCuentan con los siguientes comandos:\n" +
-            $"{string.Join("\n", commands[1])}\n");
+            $"Bienvenidos a **⚔️AGE OF EMPIRES⚔️**\n🎮 Es hora de preparar el juego...\n" +
+            $"Comandos disponibles:\n{string.Join("\n", commands[1])}"
+        );
     }
-    
+
+    // ----------------------------
+    // Comando: Iniciar
+    // ----------------------------
     [Command("Iniciar")]
     public async Task IniciarJuegoAsync()
     {
-
         if (phase < 1)
         {
-            await ReplyAsync("No hay una partida creada, por favor, crea una partida primero: **!crearpartida**");
+            await ReplyAsync("No hay una partida creada, usá **!crearpartida** primero.");
             return;
         }
-        else if (jugadores.Count == 0)
+
+        if (jugadores.Count == 0)
         {
-            await ReplyAsync("Debe unirse al menos un jugador, por favor, crea un jugador primero: **!unirse**");
-            return;
-        } 
-        else if (phase > 1)
-        {
-            await ReplyAsync("Ya hay una partida en curso, por favor, espere a que finalice.");
+            await ReplyAsync("Debe unirse al menos un jugador. Usá **!unirse**.");
             return;
         }
-        else
+
+        if (phase > 1)
         {
-            // Código para phase == 1
-            phase += 1; // Cambia la fase a 2, indicando que se está iniciando una partida
-            await ReplyAsync("Cargando entonrno de juego...");
-            Thread.Sleep(1000);
-            fachada.CrearEntornoJuego(); // Crea el entorno del juego, incluyendo el mapa y los edificios
-            await ReplyAsync("Accede al nuevo mapa, recuerda que debes recargarlo con F5");
-            await ReplyAsync("Pega esta URL en tu navegador: **" + AbstoluteMapURL + "**");
-            
+            await ReplyAsync("Ya hay una partida en curso.");
+            return;
         }
+
+        // Si todo está bien, arrancamos
+        phase += 1;
+        await ReplyAsync("Cargando entorno de juego...");
+        Thread.Sleep(1000);
+        fachada.CrearEntornoJuego();
+
+        await ReplyAsync("Accede al nuevo mapa (recordá recargar con F5 si ya lo abriste antes):");
+        await ReplyAsync("Pega esta URL en tu navegador: **" + AbstoluteMapURL + "**");
     }
 
-    
+    // ----------------------------
+    // Comando: Mapa
+    // ----------------------------
     [Command("Mapa")]
-    public async Task HolaAsync()
+    public async Task MostrarMapaAsync()
     {
         await ReplyAsync("Pega esta URL en tu navegador: " + AbstoluteMapURL);
     }
-    
-    
+
+    // ----------------------------
+    // Comando: Add (testeo, suma dos números)
+    // ----------------------------
     [Command("Add")]
-    
     public async Task Add(int n1, int n2)
     {
         int result = n1 + n2;
         await ReplyAsync($"El resultado es: {result}");
     }
 
-    ///
+    // ----------------------------
+    // Comando: Unirse
+    // ----------------------------
     [Command("Unirse")]
     public async Task UnirseAsync()
     {
         switch (phase)
         {
             case 0:
-                await ReplyAsync("No hay una partida creada, por favor, crea una partida primero: **!crearpartida**");
+                await ReplyAsync("No hay una partida creada, usá **!crearpartida**.");
                 return;
             case 2:
-                await ReplyAsync("La partida esta en curso, no puedes unirte.");
+                await ReplyAsync("La partida ya está en curso, no podés unirte ahora.");
                 return;
             case 3:
-                await ReplyAsync("La partida ha finalizado, espera a que se cree una nueva partida.");
+                await ReplyAsync("La partida ya terminó, esperá a que empiece una nueva.");
                 return;
         }
+
         string userId = Context.User.Id.ToString();
-        try 
+
+        // Verificamos si tiene una selección pendiente
+        try
         {
             await RespuestaPendiente(Context);
         }
@@ -112,62 +141,129 @@ public class GeneralModule : ModuleBase<SocketCommandContext>
             await ReplyAsync(e.Message);
             return;
         }
+
+        // Verificamos si ya está unido
         foreach (Player player in jugadores)
         {
             if (player.Id == userId)
             {
-                await ReplyAsync($"El jugador {Context.User.Username} ya se encuentra en la partida.");
+                await ReplyAsync($"El jugador {Context.User.Username} ya está en la partida.");
                 return;
             }
         }
+
+        // Enviar mensaje de bienvenida y pedido de civilización
         await ReplyAsync(
-            $"Bienvenido {Context.User.Username} a **AGE OF EMPIRES**, por favor, selecciona una civilización:\n" +
-            "1.Cordobeses\n2.Romanos\n3.Vikingos\n(Por favor, ingrese su número)");
+            $"Bienvenido {Context.User.Username} a **AGE OF EMPIRES**!\n" +
+            "Por favor, seleccioná una civilización:\n" +
+            "1. Cordobeses 🕌\n2. Romanos 🏛️\n3. Vikingos 🛶\n*(Ingresá solo el número)*"
+        );
 
         var tcs = new TaskCompletionSource<string>();
         selections[userId] = tcs;
 
-        // Lanzamos la tarea que espera la selección sin bloquear JoinAsync
+        // Espera la selección del usuario
         WaitUnirseAsync(Context, tcs);
     }
 
+    // ----------------------------
+    // Espera la selección de civilización
+    // ----------------------------
     private async Task WaitUnirseAsync(SocketCommandContext context, TaskCompletionSource<string> tcs)
     {
         string selection = await tcs.Task;
         fachada.CrearJugador(context, selection);
-        await context.Channel.SendMessageAsync($"El jugador {context.User.Username} se ha unido a la partida con la civilización {jugadores[jugadores.Count-1].Civilization.NombreCivilizacion}.");
+
+        await context.Channel.SendMessageAsync(
+            $"El jugador {context.User.Username} se ha unido con la civilización " +
+            $"{jugadores[jugadores.Count - 1].Civilization.NombreCivilizacion}."
+        );
+
         selections.Remove(context.User.Id.ToString());
     }
-///    
     
-    [Command("sape")]
-    public async Task HolaxdAsync()
+    //////////////////////////////////////////////////////////////
+    ///////////////////// Post Configuarción /////////////////////
+    //////////////////////////////////////////////////////////////
+    
+    // ----------------------------
+    // Comando: Recolectar
+    // ----------------------------
+    [Command("Recolectar")]
+    public async Task RecolectarAsync()
     {
-        await ReplyAsync("Mama");
+        if (phase < 2)
+        {
+            await ReplyAsync("No hay una partida en curso, usá **!iniciar**.");
+            return;
+        }
+        string userId = Context.User.Id.ToString();
+        await ReplyAsync("Que elemento deseas recolectar " + userId + "?");
+        foreach (var jugadoractual in jugadores)
+        {
+            if (jugadoractual.Id == userId)
+            {
+                
+            }
+        }
+        
+        await ReplyAsync($"Puede utlizar los siguientes comandos **\n !RecolectarMadera + cantidad aldeanos\n !RecolectarPiedra + cantidad aldeanos\n  !RecolectarOro + cantidad aldeanos\n !RecolectarComida + cantidad aldeanos**" );
     }
-
-
+    
+    [Command("RecolectarMadera")]
+    public async Task RecolectarMadera()
+    {
+        if (phase < 2)
+        {
+            await ReplyAsync("No hay una partida en curso, usá **!iniciar**.");
+            return;
+        }
+        string userId = Context.User.Id.ToString();
+        await ReplyAsync("Que elemento deseas recolectar " + userId + "?");
+    }
+    
+        
+        
+    //////////////////////////////////////////////////////////////
+    ////////////////// Manejadores de selección //////////////////
+    //////////////////////////////////////////////////////////////
+    
+    // ----------------------------
+    // Comandos de selección: 1, 2, 3
+    // ----------------------------
     [Command("1")]
     public async Task Selection1() => await Selection("1");
+
     [Command("2")]
     public async Task Selection2() => await Selection("2");
+
     [Command("3")]
     public async Task Selection3() => await Selection("3");
+
+    // Manejo genérico de selección de civilización
     private async Task Selection(string selection)
     {
         string userId = Context.User.Id.ToString();
-        if (!selections.ContainsKey(Context.User.Id.ToString()))
+
+        if (!selections.ContainsKey(userId))
         {
-            await ReplyAsync("No tiene nada por elegir");
+            await ReplyAsync("No tenés ninguna selección pendiente.");
+            return;
         }
-        selections[Context.User.Id.ToString()].SetResult(selection);
+
+        selections[userId].SetResult(selection);
     }
 
+    // ----------------------------
+    // Validación de selección pendiente
+    // ----------------------------
     private async Task RespuestaPendiente(SocketCommandContext context)
     {
         if (selections.ContainsKey(context.User.Id.ToString()))
         {
-            throw new SeleccionPendienteException($"El jugador {Context.User.Username} tiene una seleccion pendiente por elegir");
+            throw new SeleccionPendienteException(
+                $"El jugador {context.User.Username} ya tiene una selección pendiente."
+            );
         }
     }
 }

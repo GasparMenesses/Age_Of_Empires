@@ -9,6 +9,7 @@ public class Fachada
 {
     static public List<Player> jugadores = new();
     public Engine engine;
+    
     public Fachada() // Constructor de la fachada que inicializa el motor del juego
     {
         
@@ -29,16 +30,6 @@ public class Fachada
         };
         Player player = new Player(context.User.Username, civilization,context.User.Id.ToString()); // Crea los jugadores y devuelve un mensaje de bienvenida);
         jugadores.Add(player); // Agrega el jugador a la lista de jugadores
-        // Console.WriteLine("Creando entorno de juego...");
-        // Thread.Sleep(2000);
-        //
-        // Console.WriteLine("Cargando mapa...");
-        // Thread.Sleep(2000);
-        //
-        // engine.CreateNewGameMap(); // Llama al método para crear un nuevo mapa de juego
-        //
-        // engine.EmpezarLoop(); // Inicia el bucle del juego, donde se desarrollará la partida
-
     }
     
     public void CrearEntornoJuego()
