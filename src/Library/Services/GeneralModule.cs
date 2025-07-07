@@ -571,6 +571,9 @@ public class GeneralModule : ModuleBase<SocketCommandContext>
         }
 
         await ReplyAsync($"🏗 Almacén de {tipoAlmacen[selection]} construyéndose en ({x},{y}).");
+        await ReplyAsync(Map.CheckMap(x, y));
+        var key = jugador.Buildings.Keys.Last(b => b.GetType().Name == tipoAlmacen[selection]);
+        await ReplyAsync(jugador.Buildings.ToString());
         fachada.ActualizarMapa(); // Actualiza el mapa después de construir
         selections.Remove(userId);
     }
