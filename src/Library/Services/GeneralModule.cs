@@ -85,9 +85,8 @@ public class GeneralModule : ModuleBase<SocketCommandContext>
         // Si todo está bien, arrancamos
         phase += 1;
         await ReplyAsync("Cargando entorno de juego...");
-        Thread.Sleep(1000);
+        Thread.Sleep(1000); 
         fachada.CrearEntornoJuego();
-
         await ReplyAsync("Accede al nuevo mapa (recordá recargar con F5 si ya lo abriste antes):");
         await ReplyAsync("Pega esta URL en tu navegador: **" + AbstoluteMapURL + "**");
     }
@@ -167,7 +166,6 @@ public class GeneralModule : ModuleBase<SocketCommandContext>
 
         var tcs = new TaskCompletionSource<string>();
         selections[userId] = tcs;
-
         // Espera la selección del usuario
         WaitUnirseAsync(Context, tcs);
     }
@@ -178,8 +176,15 @@ public class GeneralModule : ModuleBase<SocketCommandContext>
     private async Task WaitUnirseAsync(SocketCommandContext context, TaskCompletionSource<string> tcs)
     {
         string selection = await tcs.Task;
-        fachada.CrearJugador(context, selection);
-
+        try
+        {
+            await fachada.CrearJugador(context, selection);///////////////////////////////////////////////////////////////////////ElError
+        }
+        catch (Exception e)
+        {
+            await ReplyAsync(e.Message);
+            return;
+        }
         await context.Channel.SendMessageAsync(
             $"El jugador {context.User.Username} se ha unido con la civilización " +
             $"{jugadores[jugadores.Count - 1].Civilization.NombreCivilizacion}."
@@ -229,15 +234,19 @@ public class GeneralModule : ModuleBase<SocketCommandContext>
     
     private async Task WaitRecolectarAsync(SocketCommandContext context, TaskCompletionSource<string> tcs )
     {
-        await ReplyAsync("crotolamo");
         // Espera la selección del usuario  
         string selection = await tcs.Task;
         Player jugador = jugadores.FirstOrDefault(j => j.Id == Context.User.Id.ToString());
         try
         {
-            fachada.Recolectar(selection , jugador );
+            fachada.Recolectar(selection, jugador);
         }
         catch (UnidadNoDisponibleException e)
+        {
+            await ReplyAsync(e.Message);
+            return;
+        }
+        catch (InvalidOperationException e)
         {
             await ReplyAsync(e.Message);
             return;
@@ -245,7 +254,6 @@ public class GeneralModule : ModuleBase<SocketCommandContext>
         await context.Channel.SendMessageAsync(
             $"El jugador {context.User.Username} ha seleccionado recolectar recursos con la opción: {selection}."
         );
-
         selections.Remove(context.User.Id.ToString()); // Elimina la selección pendiente del jugador
         
     }
@@ -317,7 +325,7 @@ public class GeneralModule : ModuleBase<SocketCommandContext>
         // Verifica que el input sea un número válido y dentro del rango de unidades del jugador
         if (!int.TryParse(input, out int indiceAtacante) || indiceAtacante < 0 || indiceAtacante >= jugador.Units.Count)
         {
-            await context.Channel.SendMessageAsync("❌ Índice de atacante inválido.");
+            await context.Channel.SendMessageAsync(" Índice de atacante inválido.");
             selections.Remove(userId);
             return;
         }
@@ -363,7 +371,7 @@ public class GeneralModule : ModuleBase<SocketCommandContext>
         // Verifica que el input sea un número válido y dentro del rango de enemigos
         if (!int.TryParse(input, out int indiceObjetivo) || indiceObjetivo < 0 || indiceObjetivo >= enemigos.Count)
         {
-            await context.Channel.SendMessageAsync("❌ Índice de objetivo inválido.");
+            await context.Channel.SendMessageAsync(" Índice de objetivo inválido.");
             selections.Remove(userId);
             return;
         }
@@ -374,12 +382,12 @@ public class GeneralModule : ModuleBase<SocketCommandContext>
         fachada.AtacarUnidades(new List<IUnit> { atacante }, new List<IUnit> { objetivo });
 
         // Muestra el resultado del ataque
-        await context.Channel.SendMessageAsync($"✅ ¡Ataque realizado! La unidad enemiga ahora tiene {objetivo.Life} de vida.");
+        await context.Channel.SendMessageAsync($" ¡Ataque realizado! La unidad enemiga ahora tiene {objetivo.Life} de vida.");
 
         // Si la vida del objetivo llegó a 0 o menos, se eliminó
         if (objetivo.Life <= 0)
         {
-            await context.Channel.SendMessageAsync($"💀 La unidad enemiga ha sido eliminada.");
+            await context.Channel.SendMessageAsync($" La unidad enemiga ha sido eliminada.");
         }
 
         // Limpia la selección pendiente del jugador
@@ -446,7 +454,7 @@ public class GeneralModule : ModuleBase<SocketCommandContext>
 
         try
         {
-            fachada.ConstruirAlmacenPiedra(x, y, jugadores.FirstOrDefault(j => j.Id == Context.User.Id.ToString()));
+            //fachada.ConstruirAlmacenPiedra(x, y, jugadores.FirstOrDefault(j => j.Id == Context.User.Id.ToString()));
         }
         catch (RecursosInsuficientesException e)
         {
@@ -454,7 +462,7 @@ public class GeneralModule : ModuleBase<SocketCommandContext>
             return;
         }
         
-        fachada.ActualizarMapa();
+        //fachada.ActualizarMapa();
 
         await ReplyAsync($"🏗️ Almacén de Piedra constuyéndose en ({x},{y}).");
         

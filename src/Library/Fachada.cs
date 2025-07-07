@@ -6,6 +6,8 @@ using Library.Exceptions;
 using Library.Units;
 using Library.Interfaces;
 using Library.Actions;
+using Library.Farming;
+using Library.Buildings;
 
 // esta clase representa la fachada del juego, que es la interfaz principal para interactuar con el motor del juego
 // La fachada simplifica la interacción con el motor, encapsulando la lógica de creación de jugadores y el entorno del juego.
@@ -15,6 +17,7 @@ namespace Facade;
 public class Fachada
 {
     static public List<Player> jugadores = new();
+    public Dictionary<Recolection, (int x, int y)> recolection = new();
     public Engine engine;
     
     public Fachada() // Constructor de la fachada que inicializa el motor del juego
@@ -26,29 +29,37 @@ public class Fachada
 
     }
 
-    public void CrearJugador(SocketCommandContext context , string selection ) // Método para iniciar el juego
+    public async Task CrearJugador(SocketCommandContext context , string selection ) // Método para iniciar el juego
     {
-        
         string civilization = selection switch
         {
             "1" => "Cordobeses",
             "2" => "Romanos",
-            "3" => "Vikingos"
+            "3" => "Vikingos",
+            _ => throw new ArgumentException("Selección inválida de civilización.")
         };
         Player player = new Player(context.User.Username, civilization,context.User.Id.ToString()); // Crea los jugadores y devuelve un mensaje de bienvenida);
+        player.Resources.AddLimitResources(true, true, true, true); // Aumenta el límite de cada recurso
+        var rand = new Random();
+        int x, y;
+        do
+        {
+            x = rand.Next(1, 100);
+            y = rand.Next(1, 100);
+        } while (Map.CheckMap(x,y) != "..");
+        player.Buildings[player.Buildings.Keys.First()] = (x,y);
         jugadores.Add(player); // Agrega el jugador a la lista de jugadores
     }
     
     public void CrearEntornoJuego()
     {
-        
         engine.CreateNewGameMap(  ); // Crea un nuevo mapa de juego
-        engine.PlaceBuilduingsRandomInGameMap(jugadores); // Coloca edificios aleatorios en el mapa del juego, depende de la cantidad de jugadores
-        engine.RefreshMap();
+        engine.PlaceResourcesRandomInGameMap(jugadores, recolection); // Coloca edificios aleatorios en el mapa del juego, depende de la cantidad de jugadores
         engine.AsignarTresAldeanosPorJugador(jugadores); // Asigna tres aldeanos por jugador, para que puedan recolectar recursos
+        engine.RefreshMap();
 
     }
-    
+
     public void Recolectar(string selection, Player _player) // Método para recolectar recursos según la selección del jugador
     {
         string resource = selection switch
@@ -59,16 +70,7 @@ public class Fachada
             "4" => "comida",
             _ => throw new InvalidOperationException("Recurso no válido")
         };
-        
-        var villager = _player.Units.OfType<Villager>().FirstOrDefault();
-        if (villager != null)
-        {
-            _player.Actions.Farmear(villager, resource);//Recolecta el recurso especificado por un aldeano
-        }
-        else
-        {
-            throw new UnidadNoDisponibleException("No tienes ningun aldeano disponible para farmear.");
-        }
+        engine.Recolectar(_player, resource);
     }
 
 

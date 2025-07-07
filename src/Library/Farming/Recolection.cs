@@ -8,16 +8,10 @@ public  abstract class Recolection : IRecolection
 {
     public  static int CantidadRecursoDisponible { get; set; }
     public  static int TasaDeRecoleccion { get; set; }
-    public Dictionary<string, int> Position { get; set; }
+    public virtual string Symbol { get; set; }
     
-    public Recolection((int x, int y )position, int cantidadinicial, int tasarecoleccion)
+    public Recolection(int cantidadinicial, int tasarecoleccion)
     {
-        
-        Position = new Dictionary<string, int>
-        {
-            { "x", position.x },
-            { "y", position.y }
-        };
         CantidadRecursoDisponible = cantidadinicial;
         TasaDeRecoleccion = tasarecoleccion;
     }

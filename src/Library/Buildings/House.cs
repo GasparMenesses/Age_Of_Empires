@@ -8,7 +8,7 @@ public class House : Building
 {
     public override string Symbol => "🏠🏠";
     public House(Player player, (int x, int y) position)
-        : base(position, 0, 0, 60)
+        : base(0, 0, 60)
     {
     }
     

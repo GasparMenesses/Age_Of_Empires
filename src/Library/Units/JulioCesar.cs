@@ -1,4 +1,5 @@
 using Library.Buildings;
+using Library.Core;
 
 namespace Library.Units;
 
@@ -7,7 +8,7 @@ namespace Library.Units;
 
 public class JulioCesar : Unit
 {
-    public JulioCesar(Building building) : base(building)
+    public JulioCesar(Player player,Building building) : base(player,building)
     {
         Speed = 2;
         Attack = 9;

@@ -21,13 +21,13 @@ public class Resources
     public Resources()
     {
         Wood = 100;
-        WoodLimit = 1000;
+        WoodLimit = 0;
         Stone = 0;
-        StoneLimit = 1000;
+        StoneLimit = 0;
         Gold = 0;
-        GoldLimit = 1000;
+        GoldLimit = 0;
         Food = 100;
-        FoodLimit = 1000;
+        FoodLimit = 0;
     }
 
     public bool AddResources(int wood = 0, int stone = 0, int gold = 0, int food = 0)
@@ -64,10 +64,5 @@ public class Resources
             GoldLimit += 1000;
         if (food)
             FoodLimit += 1000;
-    }
-
-    public Resources ShowResources(Player player)
-    {
-        return player.Resources;
     }
 }

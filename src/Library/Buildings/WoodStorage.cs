@@ -13,7 +13,7 @@ public class WoodStorage : Building
 
 
     public WoodStorage(Player player, (int x, int y) position) :
-        base(position, woodCost: 25, stoneCost: 55,
+        base(woodCost: 25, stoneCost: 55,
             constructionTime: 30) //constructor que define los costos de construccion del almacén, gastando piedra y madera.
     //Tambien define el tiempo que demora
     {
@@ -21,7 +21,7 @@ public class WoodStorage : Building
         Wood = 0; //inicializa la cantidad de food almacenado en 0
         Capacity = 1000; //define la capacidad del almacén
         player.Resources.AddLimitResources(wood: true); //aumenta el limite de food en 1000
-        player.Buildings.Add(this); //agrega el edificio al jugador
+        player.Buildings.Add(this,position); //agrega el edificio al jugador
     }
 
     public void AddWood(int wood)
@@ -40,4 +40,5 @@ public class WoodStorage : Building
 
         _player.Resources.AddResources(wood: wood);
     }
+    
 }

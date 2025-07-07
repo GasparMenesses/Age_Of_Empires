@@ -5,13 +5,12 @@ namespace Library.Farming;
 
 public class GoldMine: Recolection
 {
-    public static string Symbol => "⛏️💰";
+    public override string Symbol => "⛏️💰";
 
     
 
     public GoldMine((int x, int y) posicion, int cantidadinicial)
-        : base(posicion, cantidadinicial,120) 
+        : base(cantidadinicial,120) 
     {
-        
     }
 }

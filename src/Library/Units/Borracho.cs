@@ -1,4 +1,6 @@
 using Library.Buildings;
+using Library.Core;
+
 namespace Library.Units;
 
 // Esta clase representa una unidad de tipo Borracho en el juego, que hereda de la clase base Unit.
@@ -6,7 +8,7 @@ namespace Library.Units;
 
 public class Borracho : Unit
 {
-    public Borracho(Building building) : base(building)
+    public Borracho(Player player,Building building) : base(player,building)
     {
         Speed = 5;
         Attack = 5;

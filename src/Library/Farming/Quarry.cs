@@ -5,12 +5,11 @@ namespace Library.Farming;
 
 public class Quarry: Recolection
 {
-    public static string Symbol => "⛏️🪨";
-    public Dictionary<string, int> Position { get; set; }
+    public override string Symbol => "⛏️🪨";
+    
 
     public Quarry((int x, int y) posicion, int cantidadinicial)
-        : base(posicion, cantidadinicial,120) 
+        : base(cantidadinicial,120) 
     {
-        
     }
 }
