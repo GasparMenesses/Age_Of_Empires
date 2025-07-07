@@ -13,14 +13,14 @@ public class GoldStorage : Building //herdea de la clase building
     
 
     public GoldStorage(Player player,(int x, int y)position) :
-        base(position, woodCost:25, stoneCost:55,constructionTime:30) //constructor que define los costos de construccion del almacén, gastando piedra y madera.
+        base(woodCost:25, stoneCost:55,constructionTime:30) //constructor que define los costos de construccion del almacén, gastando piedra y madera.
                                                                     //Tambien define el tiempo que demora
     {
         _player = player;
         Gold = 0; //inicializa la cantidad de oro almacenado en 0
         Capacity = 1000; //define la capacidad del almacén
         player.Resources.AddLimitResources(gold: true); //aumenta el limite de oro en 1000
-        player.Buildings.Add(this); //agrega el edificio al jugador
+        player.Buildings.Add(this,position); //agrega el edificio al jugador
     }
     public void AddGold(int gold)
     {

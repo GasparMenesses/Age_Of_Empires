@@ -5,16 +5,10 @@ namespace Library.Farming;
 
 public class Woods: Recolection
 {
-    public static string Symbol => "🌳🌳";
-    public Dictionary<string, int> Position { get; set; }
+    public override string Symbol => "🌳🌳";
 
     public Woods((int x, int y) posicion, int cantidadinicial)
-        : base(posicion, cantidadinicial,120) 
+        : base(cantidadinicial,120) 
     {
-        Position = new Dictionary<string, int>
-        {
-            { "x", posicion.x },
-            { "y", posicion.y }
-        };
     }
 }

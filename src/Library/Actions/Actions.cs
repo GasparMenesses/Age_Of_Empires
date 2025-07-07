@@ -39,8 +39,8 @@ public class Actions
         {
             await Task.Delay(10000);
             Player.Resources.RemoveResources(wood: Building.WoodCost, stone: Building.StoneCost);
-            Player.Buildings.Add(Building);
-            Map.ChangeMap(position, Building.Symbol, Building);
+            Player.Buildings.Add(Building, position);
+            Map.ChangeMap(position, Building.Symbol);
             return true;
         }
 
@@ -73,16 +73,15 @@ public class Actions
         if (!Player.Units.Contains(villager))
             return;
         await Task.Delay(5000); // Simula el tiempo de recolección
-
         string res = resource.ToLower();
         if (res == "oro")
-            Player.Resources.Gold += GoldMine.TasaDeRecoleccion;
+            Player.Resources.AddResources(food:Farm.TasaDeRecoleccion);
         else if (res == "piedra")
-            Player.Resources.Stone += Quarry.TasaDeRecoleccion;
+            Player.Resources.AddResources(food:Farm.TasaDeRecoleccion);
         else if (res == "madera")
-            Player.Resources.Wood += Woods.TasaDeRecoleccion;
+            Player.Resources.AddResources(food:Farm.TasaDeRecoleccion);
         else if (res == "comida")
-            Player.Resources.Food += Farm.TasaDeRecoleccion;
+            Player.Resources.AddResources(food:Farm.TasaDeRecoleccion);
     }
 
     public void AtacarUnidades(List<IUnit> atacantes, List<IUnit> atacados)
@@ -97,7 +96,7 @@ public class Actions
                     if (atacado.Life <= 0)
                     {
                         Player.Units.Remove(atacado);
-                        Map.ChangeMap((atacado.Position["x"], atacado.Position["y"]), "..", null);
+                        Map.ChangeMap((atacado.Position["x"], atacado.Position["y"]), "..");
                     }
                 }
             }
@@ -109,8 +108,8 @@ public class Actions
         {
             foreach (var edificio in edificios.ToList())
             {
-                if (edificio.Position["x"] == atacante.Position["x"] &&
-                    edificio.Position["y"] == atacante.Position["y"])
+                if (Player.Buildings[edificio].x == atacante.Position["x"] &&
+                    Player.Buildings[edificio].y == atacante.Position["y"])
                 {
                     edificio.Health -= atacante.Attack;
                     if (edificio.Health <= 0)

@@ -3,6 +3,7 @@ using Library.Exceptions;
 using Library.Core;
 using Library.Farming;
 using Library.Units;
+using Library.Buildings;
 
 
 public class Engine
@@ -12,65 +13,68 @@ public class Engine
     public DateTime HoraInicio { get; private set; }  // Hora de inicio del juego
     public int CantidadJugadores { get; private set; } // Cantidad de jugadores en la partida
     public List<Player> Jugadores { get; private set; } = new List<Player>(); // Lista de jugadores en la partida
-    
-    public List<GoldMine> MinasDeOro { get; private set; } = new List<GoldMine>();  // Lista de minas de oro en el mapa
-    
-    public List<Woods> Bosques { get; private set; } = new List<Woods>(); // Lista de bosques en el mapa
-    
-    public List<Quarry> MinasDePiedra { get; private set; } = new List<Quarry>(); // Lista de minas de piedra en el mapa
-    
-    public List<Farm> Granjas { get; private set; } = new List<Farm>(); // Lista de granjas en el mapa
-    
-    
+    private static Random rand = new Random();
+
     public void CreateNewGameMap()
     {
         new Map();
     }
-    
-    public void PlaceBuilduingsRandomInGameMap( List<Player> jugadores) 
+/// 
+/// 
+///
+    public void PlaceResourcesRandomInGameMap(List<Player> jugadores, Dictionary<Recolection, (int x, int y)> recolection) 
     {
         
         foreach (var jugador in jugadores)
         {
-
-            // Cada jugador comienza con un centro cívico
-            Map.PlaceRandom(jugador.Buildings[0].Symbol, jugador.Buildings[0]);
-            
             // Por cada jugador agrego 3 minas de oro al mapa
             for (int i = 0; i < 3; i++)
             {
                 var minaoro = new GoldMine((0, 0), 500); 
-                Map.PlaceRandom(GoldMine.Symbol);
-                MinasDeOro.Add(minaoro);
+                PlaceRandom(recolection, minaoro);
             }
             
             // Por cada jugador agrego 5 woods al mapa
             for (int i = 0; i < 5; i++)
             {
                 var wood = new Woods((0, 0), 500); 
-                Map.PlaceRandom(Woods.Symbol);
-                Bosques.Add(wood);
+                PlaceRandom(recolection, wood);
             }
             
             // Por cada jugador agrego 5 minas de piedra al mapa
             for (int i = 0; i < 5; i++)
             {
                 var minapiedra = new Quarry((0, 0), 500); 
-                Map.PlaceRandom(Quarry.Symbol);
-                MinasDePiedra.Add(minapiedra);
+                PlaceRandom(recolection, minapiedra);
             }
             
             // Por cada jugador agrego 5 granjas al mapa
             for (int i = 0; i < 5; i++)
             {
                 var granja = new Farm((0, 0), 500);
-                Map.PlaceRandom(Farm.Symbol);
-                Granjas.Add(granja);
+                PlaceRandom(recolection, granja);
             }
         }
         
-    } // Crea un nuevo mapa para el juego, colocando los edificios y recursos iniciales
+    } // Crea un nuevo mapa para el juego, colocando los recursos iniciales
 
+
+    private static void PlaceRandom(Dictionary<Recolection, (int x, int y)> recolection, Recolection resource)
+    {
+        int x, y;
+        do
+        {
+            x = rand.Next(1, 100);
+            y = rand.Next(1, 100);
+        } while (Map.CheckMap(x,y) != "..");
+
+        Map.ChangeMap((x, y), resource.Symbol);
+        
+        recolection[resource] = (x, y); // Asigna la posición del recurso en el diccionario de recolección
+    }
+///
+///
+/// 
 
     public void RefreshMap()
     {
@@ -80,14 +84,14 @@ public class Engine
     }
     
     
-    public void AsignarTresAldeanosPorJugador( List<Player> jugadores) // Asigna 3 aldeanos a cada jugador al inicio del juego
+    public void AsignarTresAldeanosPorJugador(List<Player> jugadores) // Asigna 3 aldeanos a cada jugador al inicio del juego
     {
         foreach (Player jugador in jugadores)
         {
             // Cada jugador comienza con 3 aldeanos
             for (int i = 0; i < 3; i++)
             {
-                jugador.Units.Add(new Villager(jugador.Buildings[0])); // Asigna un aldeano al centro cívico del jugador
+                jugador.Units.Add(new Villager(jugador,jugador.Buildings.Keys.First())); // Asigna un aldeano al centro cívico del jugador
             }
         }
  
@@ -107,7 +111,6 @@ public class Engine
         {
             throw new UnidadNoDisponibleException("No tienes ningun aldeano disponible para farmear.");
         }
-        _player.Actions.Farmear(villager, resource);//Recolecta el recurso especificado por un aldeano
     }
     
     
@@ -127,65 +130,6 @@ public class Engine
         Jugadores.Add(new Player(username, civilization));
         return "Se ha creado el jugador " + username + " con la civilización " + civilization + ".";
     }
-     
-    
-    /// <summary>
-    /// Crea los jugadores de la partida, solicitando sus nombres y civilizaciones.
-    /// Asigna recursos iniciales y unidades iniciales a cada jugador.
-    /// </summary>
-    public void CrearJugadores1()
-    {
-        Console.WriteLine("Indique cuántos jugadores van a participar (2-4): ");
-        int cantidad;
-        while (!int.TryParse(Console.ReadLine(), out  cantidad) || cantidad < 2 || cantidad > 4)
-        {
-            Console.WriteLine("\nNúmero inválido. Ingrese entre 2 y 4 jugadores.");
-        }
-
-        CantidadJugadores = cantidad;
-
-        for (int i = 0; i < CantidadJugadores; i++)
-        {
-            Console.WriteLine($"\nEs turno del jugador N°{i + 1}");
-            string nombre;
-            bool nombreValido;
-            do
-            {
-                Console.WriteLine("Ingrese su nombre:");
-                nombre = Console.ReadLine();
-                nombreValido = !Jugadores.Exists(j => j.Nombre == nombre);
-
-                if (!nombreValido)
-                {
-                    Console.WriteLine("\nNombre ya usado, elija otro.\n");
-                }
-            } while (!nombreValido);
-
-            string civilizacion = SeleccionarCivilizacion();
-
-            Jugadores.Add(new Player(nombre, civilizacion));
-            Console.WriteLine($"\nBienvenido {nombre}, ¡elegiste la civilización {civilizacion}!");
-            Console.WriteLine($"\n{nombre}, {Jugadores.Last().Civilization.DescripcionBonificacion}");
-            
-        }
-        
-        foreach (var jugador in Jugadores)
-        {
-            // Cada civilización tiene una bonificación inicial de recursos
-            jugador.Resources.AddResources( 
-                wood: jugador.Civilization.Bonificacion.Item1,
-                stone: jugador.Civilization.Bonificacion.Item2,
-                gold: jugador.Civilization.Bonificacion.Item3,
-                food: jugador.Civilization.Bonificacion.Item4
-            );
-            
-            // Cada jugador empieza con 3 aldeanos
-            for (int i = 0; i < 3; i++)
-            {
-                jugador.Units.Add(new Villager(jugador.Buildings[0])); 
-            }
-        }
-    } // Se encarga de la creación de los jugadores
     
     /// <summary>
     /// Permite al jugador seleccionar una civilización de entre las disponibles.

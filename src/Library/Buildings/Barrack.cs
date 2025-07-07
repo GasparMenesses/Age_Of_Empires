@@ -12,19 +12,19 @@ public class Barrack : Building
     private Player _player;
     public Dictionary<string, Unit> Unit { get; set; }
 
-    public Barrack(Player player, (int x, int y) position) : base(position, woodCost: 25, stoneCost: 55, constructionTime: 30)
+    public Barrack(Player player, (int x, int y) position) : base(woodCost: 25, stoneCost: 55, constructionTime: 30)
     {
         // Representa un edificio cuartel en el juego
         //cumple con srp porque solo se encarga de la lógica del cuartel    
         _player = player;
         Unit = new Dictionary<string, Unit>
         {
-            { "Archer", new Archer(this) },
-            { "Cavalry", new Cavalry(this) },
-            { "Infantry", new Infantry(this) },
-            {"Thor",  new Thor(this)},
-            {"Borracho", new Borracho(this)},
-            {"JulioCesar", new JulioCesar(this)}
+            { "Archer", new Archer(_player,this) },
+            { "Cavalry", new Cavalry(_player,this) },
+            { "Infantry", new Infantry(_player,this) },
+            {"Thor",  new Thor(_player,this)},
+            {"Borracho", new Borracho(_player,this)},
+            {"JulioCesar", new JulioCesar(_player,this)}
         };
     }
 
@@ -38,12 +38,12 @@ public class Barrack : Building
             {
                 Unit newUnit = unit switch
                 {
-                    "Archer" => new Archer(this),
-                    "Cavalry" => new Cavalry(this),
-                    "Infantry" => new Infantry(this),
-                    "Thor" => new Thor(this),
-                    "Borracho" => new Borracho(this),
-                    "JulioCesar" => new JulioCesar(this),
+                    "Archer" => new Archer(_player,this),
+                    "Cavalry" => new Cavalry(_player,this),
+                    "Infantry" => new Infantry(_player,this),
+                    "Thor" => new Thor(_player,this),
+                    "Borracho" => new Borracho(_player,this),
+                    "JulioCesar" => new JulioCesar(_player,this),
                 };
                 _player.Units.Add(newUnit);
             }

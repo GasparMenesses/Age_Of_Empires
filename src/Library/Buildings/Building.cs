@@ -13,22 +13,16 @@ public class Building : IConstructionInfo, IBuildable
 
     // Indica si el edificio ya está completamente construido
     public bool IsBuilt => TimeElapsed >= ConstructionTime;
-    public virtual string Symbol { get; set; } 
-    public Dictionary<string, int> Position { get; set; }
+    public virtual string Symbol { get; set; }
 
     // Constructor protegido que inicializa los valores principales del edificio
-    public Building((int x, int y) position, int woodCost, int stoneCost, int constructionTime, int health =100)
+    public Building(int woodCost, int stoneCost, int constructionTime, int health = 100)
     {
         WoodCost = woodCost;
         StoneCost = stoneCost;
         ConstructionTime = constructionTime;
         TimeElapsed = 0;
         Health = health; 
-        Position = new Dictionary<string, int>
-        {
-            { "x", position.x },
-            { "y", position.y }
-        };
     }
 
     // Avanza la construcción del edificio sumando segundos al tiempo transcurrido

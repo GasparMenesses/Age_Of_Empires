@@ -1,4 +1,6 @@
 ﻿using Library.Buildings;
+using Library.Core;
+
 namespace Library.Units;
 
 // Esta clase representa una unidad de tipo arquero en el juego, que hereda de la clase base Unit.
@@ -11,7 +13,7 @@ public class Archer : Unit
     public int Defense { get; set; }
     public int TimeTraining { get; set; }
 
-    public Archer(Building building) : base(building)
+    public Archer(Player player,Building building) : base(player,building)
     {
         Speed = 1;
         Attack = 3;

@@ -10,10 +10,9 @@ using Actions;
 public class Player
 {
      public string Nombre { get; set; }
-     
      public string Id { get; set; }
      public Resources Resources { get; }
-     public List<Building> Buildings { get; }
+     public Dictionary<Building, (int x, int y)> Buildings { get; }
      public Civilization Civilization { get; set; }
      public List<IUnit> Units { get; set; }
      
@@ -37,15 +36,14 @@ public class Player
              default:
                  throw new Exception("Civilización desconocida");
          }
-
          Id = id;
          Nombre = nombre;
-         Buildings = new List<Building>();
+         Buildings = new Dictionary<Building, (int x, int y)>();
          Resources = new Resources();
          Civilization = _society;
          Units = new List<IUnit>();
          Actions = new Actions(this);
          PoblacionLimite = 10;
-         Buildings.Add(new CivicCenter(this));
+         Buildings.Add(new CivicCenter(),(0, 0));    
      }
 }

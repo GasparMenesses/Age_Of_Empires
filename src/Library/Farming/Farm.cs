@@ -6,13 +6,12 @@ using System.Timers;
 
 public class Farm: Recolection 
 {
-    public static string Symbol => "🌾🌾";
+    public override string Symbol => "🌾🌾";
     
   
 
     public Farm((int x, int y) posicion, int cantidadinicial)
-        : base(posicion, cantidadinicial,120) 
+        : base(cantidadinicial,120) 
     {
-        
     }
 }   
