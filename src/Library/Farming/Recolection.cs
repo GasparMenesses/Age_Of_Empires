@@ -16,7 +16,10 @@ public  abstract class Recolection : IRecolection
         TasaDeRecoleccion = tasarecoleccion;
     }
  
-
+/// <summary>
+///   //Evalúa si la cantidad solicitada es menor o igual a la disponible; si es así, permite recolectar la tasa máxima de recolección. 
+///Si no, permite extraer solo lo que queda. Luego, descuenta lo extraído del total disponible y retorna la cantidad recolectada.
+////// </summary>
  
     public int Recolectar(int cantidad)
     {
