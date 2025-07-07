@@ -70,18 +70,23 @@ public class Actions
 
     public async Task Farmear(Villager villager, string resource)
     {
-        if (!Player.Units.Contains(villager))
-            return;
         await Task.Delay(5000); // Simula el tiempo de recolección
         string res = resource.ToLower();
-        if (res == "oro")
-            Player.Resources.AddResources(food:Farm.TasaDeRecoleccion);
-        else if (res == "piedra")
-            Player.Resources.AddResources(food:Farm.TasaDeRecoleccion);
-        else if (res == "madera")
-            Player.Resources.AddResources(food:Farm.TasaDeRecoleccion);
-        else if (res == "comida")
-            Player.Resources.AddResources(food:Farm.TasaDeRecoleccion);
+        switch (resource)
+        {
+            case "madera":
+                Player.Resources.AddResources(wood:Woods.TasaDeRecoleccion);
+                break;
+            case "piedra":  
+                Player.Resources.AddResources(stone:Quarry.TasaDeRecoleccion);
+                break;
+            case "oro":
+                Player.Resources.AddResources(gold:GoldMine.TasaDeRecoleccion);
+                break;
+            case "comida":
+                Player.Resources.AddResources(food:Farm.TasaDeRecoleccion);
+                break;
+        }
     }
 
     public void AtacarUnidades(List<IUnit> atacantes, List<IUnit> atacados)

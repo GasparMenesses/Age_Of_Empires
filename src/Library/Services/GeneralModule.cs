@@ -239,9 +239,14 @@ public class GeneralModule : ModuleBase<SocketCommandContext>
         Player jugador = jugadores.FirstOrDefault(j => j.Id == Context.User.Id.ToString());
         try
         {
-            fachada.Recolectar(selection , jugador);
+            fachada.Recolectar(selection, jugador);
         }
         catch (UnidadNoDisponibleException e)
+        {
+            await ReplyAsync(e.Message);
+            return;
+        }
+        catch (InvalidOperationException e)
         {
             await ReplyAsync(e.Message);
             return;
