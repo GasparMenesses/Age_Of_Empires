@@ -24,15 +24,49 @@ public class GeneralModule : ModuleBase<SocketCommandContext>
     // Comandos disponibles por fase
     static Dictionary<int, List<string>> commands = new Dictionary<int, List<string>>()
     {
-        {0, new List<string>{"CrearPartida"}},
-        {1, new List<string>{"Unirse", "Iniciar"}},
-        {2, new List<string>{"Mapa", "Add"}},
-        {3, new List<string>{"Resumen"}}
+        {0, new List<string>{"!CrearPartida"}},
+        {1, new List<string>{"!Unirse", "!Iniciar"}},
+        {2, new List<string>{"!Mapa", ""}},
+        {3, new List<string>{"!Resumen"}}
     };
 
     // Ruta del archivo HTML del mapa
     private static string RelativeMapURL = "../../../../../MapaHtml/mapa_generado.html";
     private static string AbstoluteMapURL = Path.GetFullPath(RelativeMapURL).Replace("\\", "/");
+    
+    //////////////////////////////////////////////////////////////
+    //////////////////// Comandos universales ////////////////////
+    //////////////////////////////////////////////////////////////
+    //
+    // Comando: Comandos
+    //
+    [Command("Comandos")]
+    public async Task ComandosAsync()
+    {
+        if (phase == 0)
+        {
+            await ReplyAsync("No hay una partida creada, usá **!crearpartida**.");
+            return;
+        }
+
+        if (phase == 1)
+        {
+            await ReplyAsync($"Comandos disponibles:\n{string.Join("\n", commands[1])}");
+            return;
+        }
+
+        if (phase == 2)
+        {
+            await ReplyAsync($"Comandos disponibles:\n{string.Join("\n", commands[2])}");
+            return;
+        }
+
+        if (phase == 3)
+        {
+            await ReplyAsync($"Comandos disponibles:\n{string.Join("\n", commands[3])}");
+            return;
+        }
+    }
     
     
     //////////////////////////////////////////////////////////////
@@ -53,9 +87,8 @@ public class GeneralModule : ModuleBase<SocketCommandContext>
 
         phase += 1;
         await ReplyAsync(
-            $"Bienvenidos a **⚔️AGE OF EMPIRES⚔️**\n🎮 Es hora de preparar el juego...\n" +
-            $"Comandos disponibles:\n{string.Join("\n", commands[1])}"
-        );
+            $"Bienvenidos a **⚔️AGE OF EMPIRES⚔️**\n🎮 Es hora de preparar el juego...\n");
+        ComandosAsync();
     }
 
     // ----------------------------
@@ -81,11 +114,27 @@ public class GeneralModule : ModuleBase<SocketCommandContext>
             await ReplyAsync("Ya hay una partida en curso.");
             return;
         }
-
+        
+        boolPlayers[Context.User.Id.ToString()] = true; // Marca al jugador como listo
+        
+        foreach (var boolPlayer in boolPlayers)
+        {
+            if (boolPlayer.Value == false)
+            {
+                await ReplyAsync("Aun hay jugadores que no estan listos para iniciar la partida.");
+                return;
+            }
+        }
+        var keys = boolPlayers.Keys.ToList();
+        foreach (var key in keys)
+        {
+            boolPlayers[key] = false;
+        }
         // Si todo está bien, arrancamos
         phase += 1;
         await ReplyAsync("Cargando entorno de juego...");
         Thread.Sleep(1000); 
+        
         fachada.CrearEntornoJuego();
         await ReplyAsync("Accede al nuevo mapa (recordá recargar con F5 si ya lo abriste antes):");
         await ReplyAsync("Pega esta URL en tu navegador: **" + AbstoluteMapURL + "**");
@@ -103,16 +152,6 @@ public class GeneralModule : ModuleBase<SocketCommandContext>
             return;
         }
         await ReplyAsync("Pega esta URL en tu navegador: " + AbstoluteMapURL);
-    }
-
-    // ----------------------------
-    // Comando: Add (testeo, suma dos números)
-    // ----------------------------
-    [Command("Add")]
-    public async Task Add(int n1, int n2)
-    {
-        int result = n1 + n2;
-        await ReplyAsync($"El resultado es: {result}");
     }
 
     // ----------------------------
@@ -163,7 +202,7 @@ public class GeneralModule : ModuleBase<SocketCommandContext>
             "Por favor, seleccioná una civilización:\n" +
             "1. Cordobeses 🕌\n2. Romanos 🏛️\n3. Vikingos 🛶\n*(Ingresá solo el número)*"
         );
-
+        boolPlayers.Add(userId, false); // Marca al jugador como no listo
         var tcs = new TaskCompletionSource<string>();
         selections[userId] = tcs;
         // Espera la selección del usuario
@@ -176,9 +215,20 @@ public class GeneralModule : ModuleBase<SocketCommandContext>
     private async Task WaitUnirseAsync(SocketCommandContext context, TaskCompletionSource<string> tcs)
     {
         string selection = await tcs.Task;
+        List<string> options = new List<string>{"1", "2", "3"};
+        if (!options.Contains(selection))
+        {
+            await ReplyAsync("Opción inválida. Por favor, ingresá 1, 2 o 3.");
+    
+            // Vuelvo a crear otra espera para que elija bien
+            var nuevoTCS = new TaskCompletionSource<string>();
+            selections[context.User.Id.ToString()] = nuevoTCS;
+            WaitUnirseAsync(context, nuevoTCS); // <-- reintento
+            return;
+        }
         try
         {
-            await fachada.CrearJugador(context, selection);///////////////////////////////////////////////////////////////////////ElError
+            await fachada.CrearJugador(context, selection);
         }
         catch (Exception e)
         {
@@ -423,65 +473,110 @@ public class GeneralModule : ModuleBase<SocketCommandContext>
 
         await ReplyAsync(mensaje);
     }
-    
 
     // ----------------------------
-    // Comando: Construir Almacén de Piedra
+    // Comando: Construir
     // ----------------------------
-    
-    [Command("ConstruirAlmacenPiedra")]
-    public async Task ConstruirAlmacenPiedraAsync([Remainder] string coords = null)
+    [Command("Construir")]
+    public async Task ConstruirAsync([Remainder] string coords = null)
     {
-        
         if (phase != 2)
         {
-            await ReplyAsync("Todavía no puedes construir un almacén, usá **!iniciar** para comenzar la partida.");
-            return;
-        }
-        
-        if (coords == null)
-        {
-            await ReplyAsync("Usá: `!ConstruirAlmacenPiedra x,y` (ej: `!ConstruirAlmacenPiedra 3,8`).");
+            await ReplyAsync("Todavía no podés construir, usá *!iniciar* para comenzar la partida.");
             return;
         }
 
+        if (coords == null)
+        {
+            await ReplyAsync("Faltan las coordenadas. Usá !Construir x,y (ej: !Construir 4,6).");
+            return;
+        }
         var parts = coords.Split(',');
         if (parts.Length != 2 || !int.TryParse(parts[0], out var x) || !int.TryParse(parts[1], out var y))
         {
-            await ReplyAsync("Formato inválido. Usá: `!ConstruirAlmacenPiedra x,y` (ej: `!ConstruirAlmacenPiedra 3,8`).");
+            await ReplyAsync("Formato inválido. Usá: !Construir x,y (ej: !Construir 4,6).");
             return;
         }
 
         try
         {
-            //fachada.ConstruirAlmacenPiedra(x, y, jugadores.FirstOrDefault(j => j.Id == Context.User.Id.ToString()));
+            await RespuestaPendiente(Context);
         }
-        catch (RecursosInsuficientesException e)
+        catch (SeleccionPendienteException e)
         {
             await ReplyAsync(e.Message);
             return;
         }
-        
-        //fachada.ActualizarMapa();
 
-        await ReplyAsync($"🏗️ Almacén de Piedra constuyéndose en ({x},{y}).");
-        
+        string userId = Context.User.Id.ToString();
+        await ReplyAsync("¿Qué tipo de almacén querés construir?\n" +
+                         "*1* - Almacén de Madera 🌲\n" +
+                         "*2* - Almacén de Piedra 🪨\n" +
+                         "*3* - Almacén de Oro 🪙");
+
+        var tcs = new TaskCompletionSource<string>();
+        selections[userId] = tcs;
+        _ = WaitTipoAlmacenAsync(Context, tcs, x, y);
     }
-    
-    // Oro
-    [Command("ConstruirAlmacenOro")]
-    public async Task ConstruirAlmacenOroAsync()
+
+    private async Task WaitTipoAlmacenAsync(SocketCommandContext context, TaskCompletionSource<string> tcs, int x, int y)
     {
-        await ReplyAsync("Pega esta URL en tu navegador: " + AbstoluteMapURL);
+        string selection = await tcs.Task;
+        string userId = context.User.Id.ToString();
+
+        Dictionary<string, string> tipoAlmacen = new()
+        {
+            {"1", "Madera"},
+            {"2", "Piedra"},
+            {"3", "Oro"}
+        };
+
+        if (!tipoAlmacen.ContainsKey(selection))
+        {
+            await ReplyAsync("Selección inválida. Ingresá 1, 2 o 3.");
+            var nuevoTcs = new TaskCompletionSource<string>();
+            selections[userId] = nuevoTcs;
+            _ = WaitTipoAlmacenAsync(context, nuevoTcs, x, y);
+            return;
+        }
+
+        var jugador = jugadores.FirstOrDefault(j => j.Id == userId);
+
+        try
+        {
+            switch (tipoAlmacen[selection])
+            {
+                case "Madera":
+                    jugador.Actions.Build("WoodStorage", (x, y));
+                    break;
+                case "Piedra":
+                    jugador.Actions.Build("StoneStorage", (x, y));
+                    break;
+                case "Oro":
+                    jugador.Actions.Build("GoldStorage", (x, y));
+                    break;
+            }
+        }
+        catch (RecursosInsuficientesException e)
+        {
+            await ReplyAsync(e.Message);
+            selections.Remove(userId);
+            return;
+        }
+        catch (Exception e)
+        {
+            await ReplyAsync("Error al construir: " + e.Message);
+            selections.Remove(userId);
+            return;
+        }
+
+        await ReplyAsync($"🏗 Almacén de {tipoAlmacen[selection]} construyéndose en ({x},{y}).");
+        await ReplyAsync(Map.CheckMap(x, y));
+        var key = jugador.Buildings.Keys.Last(b => b.GetType().Name == tipoAlmacen[selection]);
+        await ReplyAsync(jugador.Buildings.ToString());
+        fachada.ActualizarMapa(); // Actualiza el mapa después de construir
+        selections.Remove(userId);
     }
-    
-    // Madera
-    [Command("ConstruirAlmacenMadera")]
-    public async Task ConstruirAlmacenMaderaAsync()
-    {
-        await ReplyAsync("Pega esta URL en tu navegador: " + AbstoluteMapURL);
-    }
-    
     
     //////////////////////////////////////////////////////////////
     ////////////////// Manejadores de selección //////////////////
@@ -524,7 +619,7 @@ public class GeneralModule : ModuleBase<SocketCommandContext>
         if (selections.ContainsKey(context.User.Id.ToString()))
         {
             throw new SeleccionPendienteException(
-                $"El jugador {context.User.Username} ya tiene una selección pendiente."
+                $"El jugador {context.User.Username} tiene una selección pendiente."
             );
         }
     }

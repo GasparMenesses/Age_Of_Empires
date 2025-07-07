@@ -14,6 +14,10 @@ public class Engine
     public int CantidadJugadores { get; private set; } // Cantidad de jugadores en la partida
     public List<Player> Jugadores { get; private set; } = new List<Player>(); // Lista de jugadores en la partida
     private static Random rand = new Random();
+    
+    // Ruta del archivo HTML del mapa
+    private static string RelativeMapURL = "../../../../../MapaHtml/mapa_generado.html";
+    private static string AbstoluteMapURL = Path.GetFullPath(RelativeMapURL).Replace("\\", "/");
 
     public void CreateNewGameMap()
     {
@@ -54,6 +58,7 @@ public class Engine
                 var granja = new Farm((0, 0), 500);
                 PlaceRandom(recolection, granja);
             }
+            
         }
         
     } // Crea un nuevo mapa para el juego, colocando los recursos iniciales
@@ -79,7 +84,7 @@ public class Engine
     public void RefreshMap()
     {
         string mapaComoTexto = MapPrinter.PrintMap();
-        string ruta = @"C:\proyectosP2\Age_Of_Empires\MapaHtml\mapa_generado.html";
+        string ruta = AbstoluteMapURL;
         File.WriteAllText(ruta, mapaComoTexto);
     }
     
@@ -113,138 +118,5 @@ public class Engine
         }
     }
     
-    
 
-    
-    
- ///////////////////////////////////////////////////////////////////////////////////////////////////////
- //////////////////////////////////////////////////////////////////////////////////////////////////////
- //////////////////////////////////////////////////////////////////////////////////////////////////////  
- 
-    
-    
-    // FUNCIONES
-    
-     public string CrearJugadores( string username, string civilization = "Cordobeses") // Crea un jugador con el nombre y civilización especificados
-    {
-        Jugadores.Add(new Player(username, civilization));
-        return "Se ha creado el jugador " + username + " con la civilización " + civilization + ".";
-    }
-    
-    /// <summary>
-    /// Permite al jugador seleccionar una civilización de entre las disponibles.
-    /// </summary>
-    private string SeleccionarCivilizacion()
-    {
-        while (true)
-        {
-            Console.WriteLine("\nSeleccione su civilización:\n1 - Cordobeses\n2 - Romanos\n3 - Vikingos");
-            string op = Console.ReadLine();
-            switch (op)
-            {
-                case "1": return "Cordobeses";
-                case "2": return "Romanos";
-                case "3": return "Vikingos";
-                default: Console.WriteLine("Opción inválida.\n"); break;
-            }
-        }
-    }  // Permite al jugador seleccionar su civilización
-
-
-    /// <summary>
-    /// Crea un nuevo mapa de juego, colocando edificios y recursos iniciales para cada jugador.
-    /// </summary>
-    
-    
-    /// <summary>
-    /// Permite al jugador mover sus unidades a una nueva posición ingresada por coordenadas.
-    /// </summary>
-    public void MoverUnidadees(Player jugador) // Permite al jugador mover sus unidades a una nueva posición en el mapa
-    {
-        Console.WriteLine("\nIngrese la posición (x, y) a la que desea mover sus unidades:");
-        int x = -1, y = -1;
-        bool posicionValida = false;
-
-        // Validación de la posición ingresada, asegurando que sea un par de números enteros separados por coma
-        while (!posicionValida)
-        {
-            string input = Console.ReadLine();
-            string[] posicion = input.Split(','); // Separa la entrada por coma
-
-            if (posicion.Length == 2 &&
-                int.TryParse(posicion[0], out x) &&
-                int.TryParse(posicion[1], out y))
-            {
-                posicionValida = true;
-            }
-            else
-            {
-                Console.WriteLine("Posición inválida, ingrese una posición válida (x, y) separada por coma.");
-            }
-        }
-        
-        
-        // Acá movemos unidades
-        Console.WriteLine($"Unidades movidas a la posición ({x}, {y}).");
-    }
-    
-    /// <summary>
-    /// Permite al jugador construir un edificio especificando el tipo y la ubicación.
-    /// </summary>
-    public async Task ConstruirEdificios(Player jugador)
-    {
-        Console.WriteLine("Construyendo edificios...");
-        
-        Console.WriteLine("Edificios disponibles:\n 1 - Centro Cívico\n 2 - Cuartel\n 3 - Establo");
-        string edificio = "0";
-        
-        
-        while (edificio!= "1" && edificio != "2" && edificio != "3" && edificio != "4")
-        {
-            Console.WriteLine("\nIngrese el edificio a construir:\n 1 - Almacen de oro\n 2 - Almacen de piedra\n 3 - Almacen de madera\n 4 - Molino \n 5 - Cuartel \n 6 - Casa");
-            edificio = Console.ReadLine();
-            if (edificio != "1" && edificio != "2" && edificio != "3" && edificio != "4" && edificio != "5" && edificio != "6")
-            {
-                Console.WriteLine("\nEdificio inválido. Por favor, ingrese un número del 1 al 6.");
-            }
-            
-        }
-        string nombreedificio= edificio switch
-        {
-            "1" => "GoldStorage",
-            "2" => "StoneStorage",
-            "3" => "WoodStorage",
-            "4" => "Mill",
-            "5" => "Barracks",
-            "6" => "House",
-            _ => throw new InvalidOperationException("Edificio no válido")
-        };
-        Console.WriteLine("ingrese la posición (x, y) donde desea construir el edificio:");
-        int x= int.Parse(Console.ReadLine());
-        int y = int.Parse(Console.ReadLine());
-        var actions = new Actions(jugador);
-        Console.WriteLine("\nConstruyendo edificio...");
-        bool construido =  await actions.Build(nombreedificio, (x, y)); // Llama al método Build de la clase Actions para construir el edificio en la posición especificada
-        if (construido)
-        {
-            Console.WriteLine($"\nEdificio {nombreedificio} construido exitosamente en la posición ({x}, {y}).");
-        }
-        else
-        {
-            Console.WriteLine("\nNo se pudo construir el edificio. Verifique los recursos o la posición.");
-        }
-        
-        
-    } // Permite al jugador construir edificios en el mapa, verificando los recursos necesarios y la posición
-    
-    
-    
-    /// <summary>
-    /// Acción de atacar unidades enemigas. No implementado.
-    /// </summary>
-    public void AtacarUnidades(Player jugador)
-    {
-        Console.WriteLine("Atacando unidades..."); // En desarrollo...
-    } // Permite al jugador atacar unidades enemigas, aunque en esta versión no se implementa la lógica de ataque
-    
 }

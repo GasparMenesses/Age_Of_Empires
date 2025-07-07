@@ -21,7 +21,6 @@ public class Actions
     {
         if (position.x >= 100 || position.x < 0 || position.y >= 100 || position.y < 0 || Map.CheckMap(position.x, position.y) != "..")
             return false;
-
         if (_building == "Barrack")
             Building = new Barrack(Player, position);
         else if (_building == "GoldStorage")
