@@ -2,6 +2,8 @@
 using Library.Core;
 using Library.Exceptions;
 using Library.Units;
+using Library.Interfaces;
+using Library.Actions;
 
 // esta clase representa la fachada del juego, que es la interfaz principal para interactuar con el motor del juego
 // La fachada simplifica la interacción con el motor, encapsulando la lógica de creación de jugadores y el entorno del juego.
@@ -56,4 +58,16 @@ public class Fachada
         };
         engine.Recolectar(_player, resource);
     }
+    
+    public void AtacarUnidades(List<IUnit> atacantes, List<IUnit> atacados)
+    {
+        var jugador = jugadores.FirstOrDefault(j => atacantes.All(a => j.Units.Contains(a)));
+        if (jugador != null)
+        {
+            var actions = new Actions(jugador);
+            actions.AtacarUnidades(atacantes, atacados);
+        }
+    }
+
+    
 }

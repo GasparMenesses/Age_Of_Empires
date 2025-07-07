@@ -32,16 +32,16 @@ public class Building : IConstructionInfo, IBuildable
     }
 
     // Avanza la construcción del edificio sumando segundos al tiempo transcurrido
-    public void Construyendo(int seconds)
+    public void Construyendo(int segundos)
     {
-        if (!IsBuilt) // Si el edificio no está construido aún, avanzamos con la construcción
+        if (IsBuilt || segundos <= 0)
+            return;
+
+        TimeElapsed += segundos;
+        if (TimeElapsed >= ConstructionTime)
         {
-            TimeElapsed += seconds; // Se suma el tiempo transcurrido al progreso
-            if (TimeElapsed > ConstructionTime)
-            {
-                // Si el tiempo transcurrido supera el tiempo de construcción, lo ajustamos
-                TimeElapsed = ConstructionTime;
-            }
+            TimeElapsed = ConstructionTime;
+       
         }
     }
 }
