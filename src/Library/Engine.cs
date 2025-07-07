@@ -14,6 +14,10 @@ public class Engine
     public int CantidadJugadores { get; private set; } // Cantidad de jugadores en la partida
     public List<Player> Jugadores { get; private set; } = new List<Player>(); // Lista de jugadores en la partida
     private static Random rand = new Random();
+    
+    // Ruta del archivo HTML del mapa
+    private static string RelativeMapURL = "../../../../../MapaHtml/mapa_generado.html";
+    private static string AbstoluteMapURL = Path.GetFullPath(RelativeMapURL).Replace("\\", "/");
 
     public void CreateNewGameMap()
     {
@@ -80,7 +84,7 @@ public class Engine
     public void RefreshMap()
     {
         string mapaComoTexto = MapPrinter.PrintMap();
-        string ruta = @"C:\proyectosP2\Age_Of_Empires\MapaHtml\mapa_generado.html";
+        string ruta = AbstoluteMapURL;
         File.WriteAllText(ruta, mapaComoTexto);
     }
     
