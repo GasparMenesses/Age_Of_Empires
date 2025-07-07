@@ -70,9 +70,9 @@ public class Tests
         Assert.That(result, Is.True);
         
         
-        Assert.That(Map.CheckMap(x,y), Is.EqualTo("Bk"));
+        Assert.That(Map.CheckMap(x,y), Is.EqualTo("\ud83c\udfef\u2694\ufe0f"));
         Assert.That(_player.Buildings.Count, Is.EqualTo(2));
-        Assert.That(_player.Buildings[1].Symbol, Is.EqualTo("Bk"));
+        Assert.That(_player.Buildings[1].Symbol, Is.EqualTo("\ud83c\udfef\u2694\ufe0f"));
         Assert.That(_player.Resources.Wood, Is.LessThan(woodQuantity));
         Assert.That(_player.Resources.Stone, Is.LessThan(stoneQuantity));
     }
