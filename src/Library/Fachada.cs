@@ -1,9 +1,9 @@
 ﻿using Discord.Commands;
-using Library;
-using Library.Buildings;
 using Library.Core;
 using Library.Exceptions;
 using Library.Units;
+using Library.Interfaces;
+using Library.Actions;
 
 // esta clase representa la fachada del juego, que es la interfaz principal para interactuar con el motor del juego
 // La fachada simplifica la interacción con el motor, encapsulando la lógica de creación de jugadores y el entorno del juego.
@@ -42,11 +42,15 @@ public class Fachada
         
         engine.CreateNewGameMap(  ); // Crea un nuevo mapa de juego
         engine.PlaceBuilduingsRandomInGameMap(jugadores); // Coloca edificios aleatorios en el mapa del juego, depende de la cantidad de jugadores
-        engine.RefreshMap();
         engine.AsignarTresAldeanosPorJugador(jugadores); // Asigna tres aldeanos por jugador, para que puedan recolectar recursos
 
     }
     
+    public void RecolectarRecursos (string selection , Player player) // Método para recolectar recursos
+    {
+        
+    }
+
     public void Recolectar(string selection, Player _player) // Método para recolectar recursos según la selección del jugador
     {
         string resource = selection switch
@@ -68,25 +72,16 @@ public class Fachada
             throw new UnidadNoDisponibleException("No tienes ningun aldeano disponible para farmear.");
         }
     }
-
-    public void ConstruirAlmacenPiedra( int x, int y, Player _player) // Método para construir un almacén de piedra
+    
+    public void AtacarUnidades(List<IUnit> atacantes, List<IUnit> atacados)
     {
-        if (_player.Resources.Stone >= StoneStorage.StoneCost && _player.Resources.Wood >= StoneStorage.WoodCost) // Verifica si el jugador tiene suficientes recursos para construir un almacén de piedra
+        var jugador = jugadores.FirstOrDefault(j => atacantes.All(a => j.Units.Contains(a)));
+        if (jugador != null)
         {
-            _player.Actions.Build("StoneStorage", (x, y)); // Construye un almacén de piedra en la posición especificada
-        }
-        else
-        {
-            throw new RecursosInsuficientesException("No tienes suficientes recursos para construir un almacén de piedra. Cuesta 55 de piedra y 50 de madera.");
+            var actions = new Actions(jugador);
+            actions.AtacarUnidades(atacantes, atacados);
         }
     }
 
-
-
-    public void ActualizarMapa()
-    {
-        engine.RefreshMap();
-    }
-
+    
 }
-

@@ -13,5 +13,6 @@ public class Borracho : Unit
         Defense = 1;
         TimeTraining = 90;
         Cost = 90;
+        Life = 100;
     }
 }

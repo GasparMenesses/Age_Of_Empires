@@ -11,6 +11,10 @@ public class Woods: Recolection
     public Woods((int x, int y) posicion, int cantidadinicial)
         : base(posicion, cantidadinicial,120) 
     {
-        
+        Position = new Dictionary<string, int>
+        {
+            { "x", posicion.x },
+            { "y", posicion.y }
+        };
     }
 }

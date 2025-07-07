@@ -1,20 +1,24 @@
 using Library.Core;
 using Library.Buildings;
 using Library.Farming;
+using Library.Interfaces;
+using Library.Buildings;
 
 namespace Library.Tests;
 
 public class Tests
 {
-    private Player player;
-    private CivicCenter civicCenter;
+    private Player _player;
+    private CivicCenter _civicCenter;
+
     [SetUp]
     public void Setup()
     {
-        Map map = new Map();
-        player = new Player("MiniMago", "Cordobeses");
-        civicCenter  = (CivicCenter)player.Buildings[0];
+
+        _player = new Player("MiniMago", "Cordobeses");
+        _civicCenter = (CivicCenter)_player.Buildings[0];
     }
+
     /// <summary>
     /// Verifica que el mapa se crea con las dimensiones correctas (100x100).
     /// </summary>
@@ -22,10 +26,10 @@ public class Tests
     [Test]
     public void BoardCreated()
     {
-        int Length = Map.ReturnLength0() * Map.ReturnLength1();
-        Assert.That(Length, Is.EqualTo(100 * 100));
+        int length = Map.ReturnLength0() * Map.ReturnLength1();
+        Assert.That(length, Is.EqualTo(100 * 100));
     }
-    
+
     /// <summary>
     /// Verifica que el jugador se crea correctamente con los valores iniciales esperados:
     /// Nombre, civilización, edificios, unidades, acciones y población límite.
@@ -33,14 +37,15 @@ public class Tests
     [Test]
     public void PlayerCreated()
     {
-        Assert.That(player.Nombre, Is.EqualTo("MiniMago"));
-        Assert.That(player.Civilization.NombreCivilizacion, Is.EqualTo("Cordobeses"));
-        Assert.That(player.Buildings.Count, Is.EqualTo(1));
-        Assert.That(player.Units.Count, Is.EqualTo(0));
-        Assert.That(player.Actions, Is.Not.Null);
-        Assert.That(player.Civilization, Is.Not.Null);
-        Assert.That(player.PoblacionLimite, Is.EqualTo(10));
+        Assert.That(_player.Nombre, Is.EqualTo("MiniMago"));
+        Assert.That(_player.Civilization.NombreCivilizacion, Is.EqualTo("Cordobeses"));
+        Assert.That(_player.Buildings.Count, Is.EqualTo(1));
+        Assert.That(_player.Units.Count, Is.EqualTo(0));
+        Assert.That(_player.Actions, Is.Not.Null);
+        Assert.That(_player.Civilization, Is.Not.Null);
+        Assert.That(_player.PoblacionLimite, Is.EqualTo(10));
     }
+
     /// <summary>
     /// Este test verifica que el centro cívico del jugador se coloque en una posición aleatoria válida dentro del mapa
     /// con PlaceRandom.
@@ -48,12 +53,13 @@ public class Tests
     [Test]
     public void PlayerCivicCenterPositionIsInRange()
     {
-        Map.PlaceRandom(player.Buildings[0].Symbol, player.Buildings[0]);
-        Assert.That(player.Buildings[0].Position["x"], Is.Not.GreaterThanOrEqualTo(99));
-        Assert.That(player.Buildings[0].Position["y"], Is.Not.GreaterThanOrEqualTo(99));
-        Assert.That(player.Buildings[0].Position["x"], Is.Not.LessThanOrEqualTo(0));
-        Assert.That(player.Buildings[0].Position["y"], Is.Not.LessThanOrEqualTo(0));
+        Map.PlaceRandom(_player.Buildings[0].Symbol, _player.Buildings[0]);
+        Assert.That(_player.Buildings[0].Position["x"], Is.Not.GreaterThanOrEqualTo(99));
+        Assert.That(_player.Buildings[0].Position["y"], Is.Not.GreaterThanOrEqualTo(99));
+        Assert.That(_player.Buildings[0].Position["x"], Is.Not.LessThanOrEqualTo(0));
+        Assert.That(_player.Buildings[0].Position["y"], Is.Not.LessThanOrEqualTo(0));
     }
+
     /// <summary>
     /// Este test verifica que el jugador pueda construir un edificio en una posición válida del mapa(se hace con barrack como ejemplo), 
     /// </summary>
@@ -62,21 +68,21 @@ public class Tests
     {
         int x = 10;
         int y = 10;
-        player.Resources.Wood = 1000;
-        player.Resources.Stone = 1000;
-        int woodQuantity = player.Resources.Wood;
-        int stoneQuantity = player.Resources.Stone;
-        bool result = player.Actions.Build("Barrack", (x, y)).Result;
+        _player.Resources.Wood = 1000;
+        _player.Resources.Stone = 1000;
+        int woodQuantity = _player.Resources.Wood;
+        int stoneQuantity = _player.Resources.Stone;
+        bool result = _player.Actions.Build("Barrack", (x, y)).Result;
         Assert.That(result, Is.True);
-        string symbol = player.Buildings[1].Symbol;
-        string [,] Board = Map.ReturnBoard();
-        Assert.That(Map.CheckMap(x,y), Is.EqualTo("Bk"));
-        Assert.That(player.Buildings.Count, Is.EqualTo(2));
-        Assert.That(player.Buildings[1].Symbol, Is.EqualTo("Bk"));
-        Assert.That(player.Resources.Wood, Is.LessThan(woodQuantity));
-        Assert.That(player.Resources.Stone, Is.LessThan(stoneQuantity));
+
+
+        Assert.That(Map.CheckMap(x, y), Is.EqualTo("\ud83c\udfef\u2694\ufe0f"));
+        Assert.That(_player.Buildings.Count, Is.EqualTo(2));
+        Assert.That(_player.Buildings[1].Symbol, Is.EqualTo("\ud83c\udfef\u2694\ufe0f"));
+        Assert.That(_player.Resources.Wood, Is.LessThan(woodQuantity));
+        Assert.That(_player.Resources.Stone, Is.LessThan(stoneQuantity));
     }
-    
+
     /// <summary>
     /// Confirma que no se puede construir un edificio fuera de los límites del mapa.
     /// (posiciones mayores a 99
@@ -86,9 +92,10 @@ public class Tests
     {
         int x = 101;
         int y = 101;
-        bool result = player.Actions.Build("Barrack", (x, y)).Result;
+        bool result = _player.Actions.Build("Barrack", (x, y)).Result;
         Assert.That(result, Is.False);
     }
+
     /// <summary>
     /// Comprueba que el jugador no puede construir un edificio en una posición ya ocupada por otro edificio.
     /// </summary>
@@ -97,14 +104,14 @@ public class Tests
     {
         int x = 10;
         int y = 10;
-        Map.ChangeMap((x, y),player.Buildings[0].Symbol, player.Buildings[0]);
-        bool result = player.Actions.Build("Barrack", (x, y)).Result;
+        Map.ChangeMap((x, y), _player.Buildings[0].Symbol, _player.Buildings[0]);
+        bool result = _player.Actions.Build("Barrack", (x, y)).Result;
         Assert.That(result, Is.False);
         Assert.That(Map.CheckMap(x, y), Is.Not.EqualTo("Bk"));
-        Assert.That(player.Buildings.Count, Is.EqualTo(1));
+        Assert.That(_player.Buildings.Count, Is.EqualTo(1));
     }
 
-    
+
     /// <summary>
     /// Este test verifica que el jugador no puede construir un edificio si no tiene suficientes recursos.
     /// </summary>
@@ -113,15 +120,15 @@ public class Tests
     {
         int x = 20;
         int y = 20;
-        player.Resources.Wood = 0;
-        player.Resources.Stone = 0;
-        bool result = player.Actions.Build("Barrack", (x, y)).Result;
+        _player.Resources.Wood = 0;
+        _player.Resources.Stone = 0;
+        bool result = _player.Actions.Build("Barrack", (x, y)).Result;
         Assert.That(result, Is.False);
         Assert.That(Map.CheckMap(x, y), Is.Not.EqualTo("Bk"));
-        Assert.That(player.Buildings.Count, Is.EqualTo(1));
+        Assert.That(_player.Buildings.Count, Is.EqualTo(1));
     }
-    
-    
+
+
     /// <summary>
     /// Este test verifica que el jugador no puede construir un edificio con un nombre inválido.
     /// </summary>
@@ -130,14 +137,14 @@ public class Tests
     {
         int x = 15;
         int y = 15;
-        player.Resources.Wood = 1000;
-        player.Resources.Stone = 1000;
-        bool result = player.Actions.Build("EdificioInexistente", (x, y)).Result;
+        _player.Resources.Wood = 1000;
+        _player.Resources.Stone = 1000;
+        bool result = _player.Actions.Build("EdificioInexistente", (x, y)).Result;
         Assert.That(result, Is.False);
         Assert.That(Map.CheckMap(x, y), Is.Not.EqualTo("EdificioInexistente"));
-        Assert.That(player.Buildings.Count, Is.EqualTo(1));
+        Assert.That(_player.Buildings.Count, Is.EqualTo(1));
     }
-    
+
     /// <summary>
     /// Este test verifica que el jugador no puede construir dos edificios en la misma posición del mapa.
     /// </summary>
@@ -146,17 +153,17 @@ public class Tests
     {
         int x = 25;
         int y = 25;
-        player.Resources.Wood = 2000;
-        player.Resources.Stone = 2000;
+        _player.Resources.Wood = 2000;
+        _player.Resources.Stone = 2000;
         // Construye el primer edificio
-        bool firstBuild = player.Actions.Build("Barrack", (x, y)).Result;
+        bool firstBuild = _player.Actions.Build("Barrack", (x, y)).Result;
         // Intenta construir otro edificio en la misma posición
-        bool secondBuild = player.Actions.Build("Barrack", (x, y)).Result;
+        bool secondBuild = _player.Actions.Build("Barrack", (x, y)).Result;
         Assert.That(firstBuild, Is.True);
         Assert.That(secondBuild, Is.False);
-        Assert.That(player.Buildings.Count, Is.EqualTo(2));
+        Assert.That(_player.Buildings.Count, Is.EqualTo(2));
     }
-    
+
     /// <summary>
     /// Este test verifica que el jugador no puede construir un edificio en una posición negativa del mapa.
     /// </summary>
@@ -165,16 +172,16 @@ public class Tests
     {
         int x = -5;
         int y = -10;
-        player.Resources.Wood = 1000;
-        player.Resources.Stone = 1000;
-        bool result = player.Actions.Build("Barrack", (x, y)).Result;
+        _player.Resources.Wood = 1000;
+        _player.Resources.Stone = 1000;
+        bool result = _player.Actions.Build("Barrack", (x, y)).Result;
         Assert.That(result, Is.False);
         Assert.That(Map.CheckMap(x, y), Is.Not.EqualTo("Bk"));
-        Assert.That(player.Buildings.Count, Is.EqualTo(1));
+        Assert.That(_player.Buildings.Count, Is.EqualTo(1));
     }
-  
-    
-    // <summary>
+
+
+    /// <summary>
     /// Verifica que la civilización Cordobeses se inicializa con los valores correctos:
     /// nombre, tipo de unidad única, bonificación de recursos y descripción de bonificación.
     /// </summary>
@@ -190,7 +197,7 @@ public class Tests
         Assert.That(cordobeses.Bonificacion, Is.EqualTo(new Tuple<int, int, int, int>(0, 0, 0, 100)));
         Assert.That(cordobeses.DescripcionBonificacion, Does.Contain("bonus de 100 de comida"));
     }
-    
+
     /// <summary>
     /// Verifica que la civilización Romanos se inicializa con los valores correctos:
     /// nombre, tipo de unidad única, bonificación de recursos y descripción de bonificación.
@@ -207,7 +214,7 @@ public class Tests
         Assert.That(romanos.Bonificacion, Is.EqualTo(new Tuple<int, int, int, int>(0, 0, 50, 0)));
         Assert.That(romanos.DescripcionBonificacion.ToLower(), Does.Contain("bonus de 50 de oro"));
     }
-    
+
     /// <summary>
     /// Verifica que la civilización Vikingos se inicializa con los valores correctos:
     /// nombre, tipo de unidad única, bonificación de recursos y descripción de bonificación.
@@ -224,8 +231,8 @@ public class Tests
         Assert.That(vikingos.Bonificacion, Is.EqualTo(new Tuple<int, int, int, int>(100, 0, 0, 0)));
         Assert.That(vikingos.DescripcionBonificacion.ToLower(), Does.Contain("bonus de 100 de madera"));
     }
-    
-    
+
+
     /// <summary>
     /// Verifica que ninguna civilización tenga campos nulos al ser creada.
     /// </summary>
@@ -247,9 +254,9 @@ public class Tests
             Assert.That(c.DescripcionBonificacion, Is.Not.Null);
         }
     }
-    
-    
-    
+
+
+
     /// <summary>
     /// Verifica que los valores de bonificación sean coherentes (entre 0 y 100).
     /// </summary>
@@ -271,41 +278,41 @@ public class Tests
             Assert.That(c.Bonificacion.Item4, Is.InRange(0, 100));
         }
     }
-    
+
     /// <summary>
     /// Verifica que se puedan agregar recursos al centro cívico del jugador y que se actualicen correctamente los valores de recursos.
     /// </summary>
     [Test]
     public void PlayerCanAddResourcesToCivicCenter()
     {
-        int initialWood = civicCenter.Wood;
-        int initialStone = civicCenter.Stone;
-        int initialFood = civicCenter.Food;
-        int initialGold = civicCenter.Gold;
+        int initialWood = _civicCenter.Wood;
+        int initialStone = _civicCenter.Stone;
+        int initialFood = _civicCenter.Food;
+        int initialGold = _civicCenter.Gold;
 
-        civicCenter.AddWood(50);
-        civicCenter.AddStone(30);
-        civicCenter.AddFood(20);
-        civicCenter.AddGold(10);
+        _civicCenter.AddWood(50);
+        _civicCenter.AddStone(30);
+        _civicCenter.AddFood(20);
+        _civicCenter.AddGold(10);
 
-        Assert.That(civicCenter.Wood, Is.EqualTo(initialWood + 50));
-        Assert.That(civicCenter.Stone, Is.EqualTo(initialStone + 30));
-        Assert.That(civicCenter.Food, Is.EqualTo(initialFood + 20));
-        Assert.That(civicCenter.Gold, Is.EqualTo(initialGold + 10));
+        Assert.That(_civicCenter.Wood, Is.EqualTo(initialWood + 50));
+        Assert.That(_civicCenter.Stone, Is.EqualTo(initialStone + 30));
+        Assert.That(_civicCenter.Food, Is.EqualTo(initialFood + 20));
+        Assert.That(_civicCenter.Gold, Is.EqualTo(initialGold + 10));
     }
-    
+
     public class BuildingTests
     {
-        private Building building;
+        private Building _building;
 
         [SetUp]
         public void Setup()
         {
             // Creamos un edificio en la posición (5,10) con costos y tiempo de construcción
-            building = new Building((5, 10), woodCost: 100, stoneCost: 50, constructionTime: 60);
+            _building = new Building((5, 10), woodCost: 100, stoneCost: 50, constructionTime: 60);
         }
 
-        
+
         /// <summary>
         ///Verifica que los valores iniciales del edificio sean correctos.
         /// se inicializa correctamente los costos de madera y piedra, el tiempo de construcción es el esperado
@@ -315,13 +322,13 @@ public class Tests
         [Test]
         public void Building_InitialValues_AreCorrect()
         {
-            Assert.That(building.WoodCost, Is.EqualTo(100));
-            Assert.That(building.StoneCost, Is.EqualTo(50));
-            Assert.That(building.ConstructionTime, Is.EqualTo(60));
-            Assert.That(building.TimeElapsed, Is.EqualTo(0));
-            Assert.That(building.IsBuilt, Is.False);
-            Assert.That(building.Position["x"], Is.EqualTo(5));
-            Assert.That(building.Position["y"], Is.EqualTo(10));
+            Assert.That(_building.WoodCost, Is.EqualTo(100));
+            Assert.That(_building.StoneCost, Is.EqualTo(50));
+            Assert.That(_building.ConstructionTime, Is.EqualTo(60));
+            Assert.That(_building.TimeElapsed, Is.EqualTo(0));
+            Assert.That(_building.IsBuilt, Is.False);
+            Assert.That(_building.Position["x"], Is.EqualTo(5));
+            Assert.That(_building.Position["y"], Is.EqualTo(10));
             // Como Symbol es virtual y no está inicializado, puede ser null o vacío (depende de implementación)
         }
 
@@ -333,17 +340,17 @@ public class Tests
         [Test]
         public void Construyendo_IncrementsTimeElapsed()
         {
-            building.Construyendo(30);
-            Assert.That(building.TimeElapsed, Is.EqualTo(30));
-            Assert.That(building.IsBuilt, Is.False);
+            _building.Construyendo(30);
+            Assert.That(_building.TimeElapsed, Is.EqualTo(30));
+            Assert.That(_building.IsBuilt, Is.False);
 
-            building.Construyendo(20);
-            Assert.That(building.TimeElapsed, Is.EqualTo(50));
-            Assert.That(building.IsBuilt, Is.False);
+            _building.Construyendo(20);
+            Assert.That(_building.TimeElapsed, Is.EqualTo(50));
+            Assert.That(_building.IsBuilt, Is.False);
 
-            building.Construyendo(15); // Suma 15 pero no debe superar ConstructionTime
-            Assert.That(building.TimeElapsed, Is.EqualTo(60));
-            Assert.That(building.IsBuilt, Is.True);
+            _building.Construyendo(15); // Suma 15 pero no debe superar ConstructionTime
+            Assert.That(_building.TimeElapsed, Is.EqualTo(60));
+            Assert.That(_building.IsBuilt, Is.True);
         }
 
         /// <summary>
@@ -353,14 +360,76 @@ public class Tests
         [Test]
         public void Construyendo_DoesNotIncrementAfterBuilt()
         {
+            _building.Construyendo(60);
+            Assert.That(_building.IsBuilt, Is.True);
+
+            _building.Construyendo(10);
+            // TimeElapsed no debe aumentar porque ya está construido
+            Assert.That(_building.TimeElapsed, Is.EqualTo(60));
+        }
+
+        [Test]
+        public void Health_CanBeSetToDifferentValues()
+        {
+            var building = new Building((0, 0), 100, 50, 60, health: 150);
+            Assert.That(building.Health, Is.EqualTo(150));
+
+            building.Health = 80;
+            Assert.That(building.Health, Is.EqualTo(80));
+        }
+
+        [Test]
+        public void Construyendo_WithZeroSeconds_DoesNotChangeTimeElapsed()
+        {
+            var building = new Building((0, 0), 100, 50, 60);
+            building.Construyendo(0);
+            Assert.That(building.TimeElapsed, Is.EqualTo(0));
+            Assert.That(building.IsBuilt, Is.False);
+        }
+
+        [Test]
+        public void Construyendo_WithNegativeSeconds_DoesNotDecreaseTimeElapsed()
+        {
+            var building = new Building((0, 0), 100, 50, 60);
+            building.Construyendo(30);
+            building.Construyendo(-10); // Verifica que no disminuya el tiempo transcurrido
+
+            Assert.That(building.TimeElapsed, Is.EqualTo(30));
+        }
+
+        [Test]
+        public void Construyendo_DoesNotIncreaseAfterBuilt()
+        {
+            var building = new Building((0, 0), 100, 50, 60);
             building.Construyendo(60);
             Assert.That(building.IsBuilt, Is.True);
 
             building.Construyendo(10);
-            // TimeElapsed no debe aumentar porque ya está construido
             Assert.That(building.TimeElapsed, Is.EqualTo(60));
         }
+
+        private class TestBuilding : Building
+        {
+            public override string Symbol { get; set; } = "TB";
+
+            public TestBuilding() : base((0, 0), 0, 0, 1)
+            {
+            }
+        }
+
+        [Test]
+        public void Symbol_CanBeOverridden()
+        {
+            var testBuilding = new TestBuilding();
+            Assert.That(testBuilding.Symbol, Is.EqualTo("TB"));
+
+            testBuilding.Symbol = "XX";
+            Assert.That(testBuilding.Symbol, Is.EqualTo("XX"));
+        }
+
+
     }
+
 
 
     // Clase concreta para testeo
@@ -374,13 +443,14 @@ public class Tests
 
     public class RecolectionTests
     {
-        private TestRecolection recolection;
+        private TestRecolection _recolection;
 
         [SetUp]
         public void Setup()
         {
-            recolection = new TestRecolection((10, 20), cantidadinicial: 100, tasarecoleccion: 15);
+            _recolection = new TestRecolection((10, 20), cantidadinicial: 100, tasarecoleccion: 15);
         }
+
         /// <summary>
         /// Verifica que los valores iniciales de la recolección, posicion,cantidad de recurso disponible y tasa de recoleccion se establezcan correctamente.
         /// 
@@ -389,11 +459,12 @@ public class Tests
         [Test]
         public void InitialValues_AreSetCorrectly()
         {
-            Assert.That(recolection.Position["x"], Is.EqualTo(10));
-            Assert.That(recolection.Position["y"], Is.EqualTo(20));
+            Assert.That(_recolection.Position["x"], Is.EqualTo(10));
+            Assert.That(_recolection.Position["y"], Is.EqualTo(20));
             Assert.That(Recolection.CantidadRecursoDisponible, Is.EqualTo(100));
             Assert.That(Recolection.TasaDeRecoleccion, Is.EqualTo(15));
         }
+
         /// <summary>
         /// Confirma que al recolectar menor o igual cantidad que la disponible, se retorne la tasa de recolección y se actualice la cantidad de recurso disponible.
         /// </summary>
@@ -402,11 +473,12 @@ public class Tests
         {
             int cantidadSolicitada = 10;
 
-            int recolectado = recolection.Recolectar(cantidadSolicitada);
+            int recolectado = _recolection.Recolectar(cantidadSolicitada);
 
             Assert.That(recolectado, Is.EqualTo(Recolection.TasaDeRecoleccion));
             Assert.That(Recolection.CantidadRecursoDisponible, Is.EqualTo(100 - recolectado));
         }
+
         /// <summary>
         /// Verifica que al recolectar más cantidad que la disponible, se retorne la cantidad restante y se actualice a 0.
         /// </summary>
@@ -415,11 +487,12 @@ public class Tests
         {
             int cantidadSolicitada = 200; // Más que disponible
 
-            int recolectado = recolection.Recolectar(cantidadSolicitada);
+            int recolectado = _recolection.Recolectar(cantidadSolicitada);
 
             Assert.That(recolectado, Is.EqualTo(100)); // debería recolectar lo que queda
             Assert.That(Recolection.CantidadRecursoDisponible, Is.EqualTo(0));
         }
+
         /// <summary>
         /// Asegura que tras varias veces de recolección, la cantidad de recurso disponible nunca sea negativa.
         /// </summary>
@@ -427,47 +500,50 @@ public class Tests
         public void CantidadRecursoDisponible_NeverNegative()
         {
             // Recolectar más veces de lo que hay
-            recolection.Recolectar(50); // -15
-            recolection.Recolectar(50); // -15
-            recolection.Recolectar(50); // -15
-            recolection.Recolectar(50); // -15
-            recolection.Recolectar(50); // -15
-            recolection.Recolectar(50); // Debería quedar 100 - 15*6 = 10
-            recolection.Recolectar(50); // -10 restantes
+            _recolection.Recolectar(50); // -15
+            _recolection.Recolectar(50); // -15
+            _recolection.Recolectar(50); // -15
+            _recolection.Recolectar(50); // -15
+            _recolection.Recolectar(50); // -15
+            _recolection.Recolectar(50); // Debería quedar 100 - 15*6 = 10
+            _recolection.Recolectar(50); // -10 restantes
 
             Assert.That(Recolection.CantidadRecursoDisponible, Is.GreaterThanOrEqualTo(0));
         }
     }
-  
-    
+
+
     public class WoodsTests
     {
-        private Woods woods;
+        private Woods _woods;
 
         [SetUp]
         public void Setup()
         {
-            woods = new Woods((5, 10), cantidadinicial: 300);
+            _woods = new Woods((5, 10), cantidadinicial: 300);
         }
+
         /// <summary>
         /// Verifica que los valores iniciales del bosque se establezcan correctamente, que la tasa de recolección sea 120 y la cantidad de recurso disponible sea 300.
         /// </summary>
         [Test]
         public void Woods_InitialValues_AreSetCorrectly()
         {
-            Assert.That(woods.Position["x"], Is.EqualTo(5));
-            Assert.That(woods.Position["y"], Is.EqualTo(10));
+            Assert.That(_woods.Position["x"], Is.EqualTo(5));
+            Assert.That(_woods.Position["y"], Is.EqualTo(10));
             Assert.That(Recolection.CantidadRecursoDisponible, Is.EqualTo(300));
             Assert.That(Recolection.TasaDeRecoleccion, Is.EqualTo(120));
         }
+
         /// <summary>
         /// Confirma que el símbolo del bosque sea "Wd", como se espera.
         /// </summary>
         [Test]
         public void Woods_Symbol_ReturnsWd()
         {
-            Assert.That(Woods.Symbol, Is.EqualTo("Wd"));
+            Assert.That(Woods.Symbol, Is.EqualTo("🌳🌳"));
         }
+
         /// <summary>
         /// Testea que el metodo Recolectar del bosque funcione correctamente, recolectando la tasa de recolección y actualizando la cantidad de recurso disponible.
         /// </summary>
@@ -475,50 +551,55 @@ public class Tests
         public void Recolectar_Woods_ReturnsCorrectAmount()
         {
             int cantidadSolicitada = 50;
-            int recolectado = woods.Recolectar(cantidadSolicitada);
+            int recolectado = _woods.Recolectar(cantidadSolicitada);
 
             Assert.That(recolectado, Is.EqualTo(Recolection.TasaDeRecoleccion));
             Assert.That(Recolection.CantidadRecursoDisponible, Is.EqualTo(300 - recolectado));
         }
+
+        [Test]
+        public void AddWood_AddsCorrectly_WhenUnderCapacity_AndBuilt()
+        {
+            var player = new Player("Tester", "Cordobeses");
+            var storage = new WoodStorage(player, (10, 10));
+
+            // Simular que el edificio está terminado
+            storage.Construyendo(999);
+
+            storage.AddWood(200);
+
+            Assert.That(storage.Wood, Is.EqualTo(200));
+            Assert.That(player.Resources.Wood, Is.GreaterThanOrEqualTo(200)); // depende de lógica en AddResources
+        }
+
+        [Test]
+        public void AddWood_ThrowsException_IfNotBuilt()
+        {
+            var player = new Player("Tester", "Cordobeses");
+            var storage = new WoodStorage(player, (5, 5));
+
+            // No lo construyo, así que IsBuilt debe ser false
+            var ex = Assert.Throws<InvalidOperationException>(() => storage.AddWood(100));
+            Assert.That(ex.Message, Is.EqualTo("El almacén aún no está construido."));
+        }
+
+        [Test]
+        public void AddWood_DoesNotExceedCapacity()
+        {
+            var player = new Player("Tester", "Cordobeses");
+            var storage = new WoodStorage(player, (1, 1));
+            storage.Construyendo(999); // simula edificio terminado
+
+            storage.AddWood(1200); // mayor que capacidad
+
+            Assert.That(storage.Wood, Is.EqualTo(1000));
+        }
+
     }
-    [Test]
-    public void AddWood_AddsCorrectly_WhenUnderCapacity_AndBuilt()
-    {
-        var player = new Player("Tester", "Cordobeses");
-        var storage = new WoodStorage(player, (10, 10));
-    
-        // Simular que el edificio está terminado
-        storage.Construyendo(999);
-
-        storage.AddWood(200);
-
-        Assert.That(storage.Wood, Is.EqualTo(200));
-        Assert.That(player.Resources.Wood, Is.GreaterThanOrEqualTo(200)); // depende de lógica en AddResources
-    }
-    [Test]
-    public void AddWood_ThrowsException_IfNotBuilt()
-    {
-        var player = new Player("Tester", "Cordobeses");
-        var storage = new WoodStorage(player, (5, 5));
-
-        // No lo construyo, así que IsBuilt debe ser false
-        var ex = Assert.Throws<InvalidOperationException>(() => storage.AddWood(100));
-        Assert.That(ex.Message, Is.EqualTo("El almacén aún no está construido."));
-    }
-    [Test]
-    public void AddWood_DoesNotExceedCapacity()
-    {
-        var player = new Player("Tester", "Cordobeses");
-        var storage = new WoodStorage(player, (1, 1));
-        storage.Construyendo(999); // simula edificio terminado
-
-        storage.AddWood(1200); // mayor que capacidad
-
-        Assert.That(storage.Wood, Is.EqualTo(1000));
-    }
-
-
 }
+    
+
+
 
 
 

@@ -8,8 +8,8 @@ public class Building : IConstructionInfo, IBuildable
     public int WoodCost { get; set; }
     public   int StoneCost { get; set; }
     public int ConstructionTime { get; }
-
     public int TimeElapsed { get; private set; }
+    public int Health { get; set; } // Vida del edificio, por defecto 100
 
     // Indica si el edificio ya está completamente construido
     public bool IsBuilt => TimeElapsed >= ConstructionTime;
@@ -17,12 +17,13 @@ public class Building : IConstructionInfo, IBuildable
     public Dictionary<string, int> Position { get; set; }
 
     // Constructor protegido que inicializa los valores principales del edificio
-    public Building((int x, int y) position, int woodCost, int stoneCost, int constructionTime)
+    public Building((int x, int y) position, int woodCost, int stoneCost, int constructionTime, int health =100)
     {
         WoodCost = woodCost;
         StoneCost = stoneCost;
         ConstructionTime = constructionTime;
         TimeElapsed = 0;
+        Health = health; 
         Position = new Dictionary<string, int>
         {
             { "x", position.x },
@@ -31,16 +32,16 @@ public class Building : IConstructionInfo, IBuildable
     }
 
     // Avanza la construcción del edificio sumando segundos al tiempo transcurrido
-    public void Construyendo(int seconds)
+    public void Construyendo(int segundos)
     {
-        if (!IsBuilt) // Si el edificio no está construido aún, avanzamos con la construcción
+        if (IsBuilt || segundos <= 0)
+            return;
+
+        TimeElapsed += segundos;
+        if (TimeElapsed >= ConstructionTime)
         {
-            TimeElapsed += seconds; // Se suma el tiempo transcurrido al progreso
-            if (TimeElapsed > ConstructionTime)
-            {
-                // Si el tiempo transcurrido supera el tiempo de construcción, lo ajustamos
-                TimeElapsed = ConstructionTime;
-            }
+            TimeElapsed = ConstructionTime;
+       
         }
     }
 }

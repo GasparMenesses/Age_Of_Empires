@@ -11,35 +11,36 @@ namespace Library.Actions;
 public class Actions
 {
     private Player Player { get; set; }
-    private Building building { get; set; }
+    private Building Building { get; set; }
     public Actions(Player player)
     {
         Player = player;
     }
 
-    public async Task<bool> Build(string _building, (int x, int y) position)
+    public async Task<bool> Build(string building, (int x, int y) position)
     {
         if (position.x >= 100 || position.x < 0 || position.y >= 100 || position.y < 0 || Map.CheckMap(position.x, position.y) != "..")
             return false;
-        if (_building == "Barrack")
-            building = new Barrack(Player, position);
-        else if (_building == "GoldStorage")
-            building = new GoldStorage(Player, position);
-        else if (_building == "Mill")
-            building = new Mill(Player, position);
-        else if (_building == "StoneStorage")
-            building = new StoneStorage(Player, position);
-        else if (_building == "WoodStorage")
-            building = new WoodStorage(Player, position);
+
+        if (building == "Barrack")
+            Building = new Barrack(Player, position);
+        else if (building == "GoldStorage")
+            Building = new GoldStorage(Player, position);
+        else if (building == "Mill")
+            Building = new Mill(Player, position);
+        else if (building == "StoneStorage")
+            Building = new StoneStorage(Player, position);
+        else if (building == "WoodStorage")
+            Building = new WoodStorage(Player, position);
         else
             return false;
 
-        if (Player.Resources.Wood >= building.WoodCost && Player.Resources.Stone >= building.StoneCost)
+        if (Player.Resources.Wood >= Building.WoodCost && Player.Resources.Stone >= Building.StoneCost)
         {
-            Player.Resources.RemoveResources(wood: building.WoodCost, stone: building.StoneCost);
-            Player.Buildings.Add(building);
-            
-            Map.ChangeMap(position, building.Symbol, building);
+            await Task.Delay(10000);
+            Player.Resources.RemoveResources(wood: Building.WoodCost, stone: Building.StoneCost);
+            Player.Buildings.Add(Building);
+            Map.ChangeMap(position, Building.Symbol, Building);
             return true;
         }
 
@@ -82,6 +83,43 @@ public class Actions
             Player.Resources.Wood += Woods.TasaDeRecoleccion;
         else if (res == "comida")
             Player.Resources.Food += Farm.TasaDeRecoleccion;
+    }
+
+    public void AtacarUnidades(List<IUnit> atacantes, List<IUnit> atacados)
+    {
+        foreach (var atacante in atacantes)
+        {
+            foreach (var atacado in atacados)
+            {
+                if (atacado.Position["x"] == atacante.Position["x"] && atacado.Position["y"] == atacante.Position["y"])
+                {
+                    atacado.Life -= atacado.Attack;
+                    if (atacado.Life <= 0)
+                    {
+                        Player.Units.Remove(atacado);
+                        Map.ChangeMap((atacado.Position["x"], atacado.Position["y"]), "..", null);
+                    }
+                }
+            }
+        }
+    }
+    public void AtacarEdificios(List<IUnit> atacantes, List<Building> edificios)
+    {
+        foreach (var atacante in atacantes)
+        {
+            foreach (var edificio in edificios.ToList())
+            {
+                if (edificio.Position["x"] == atacante.Position["x"] &&
+                    edificio.Position["y"] == atacante.Position["y"])
+                {
+                    edificio.Health -= atacante.Attack;
+                    if (edificio.Health <= 0)
+                    {
+                        edificios.Remove(edificio);
+                    }
+                }
+            }
+        }
     }
     
 }

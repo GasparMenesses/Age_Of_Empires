@@ -3,7 +3,7 @@ using Library.Core;
 using Facade;
 using Library.Exceptions;
 using Library.Units;
-using Microsoft.VisualBasic;
+using Library.Interfaces;
 
 namespace GeneralModule;
 
@@ -247,9 +247,8 @@ public class GeneralModule : ModuleBase<SocketCommandContext>
         );
 
         selections.Remove(context.User.Id.ToString()); // Elimina la selección pendiente del jugador
+        
     }
-    
-    
     // ----------------------------
     // Comando: Ver Recursos
     // ----------------------------
@@ -261,6 +260,160 @@ public class GeneralModule : ModuleBase<SocketCommandContext>
             $"El jugador {Context.User.Username} dispone de los recursos:\n " +
             $"ORO: {jugador.Resources.Gold.ToString()}\n MADERA: {jugador.Resources.Wood.ToString()}\n PIEDRA: {jugador.Resources.Stone.ToString()}\n COMIDA: {jugador.Resources.Food.ToString()}\n "
         );
+    }
+    // ----------------------------
+    // Comando: Atacar unidades
+    // ----------------------------
+    [Command("Atacar")]
+    public async Task AtacarAsync()
+    {
+        // Verifica que la partida esté en curso
+        if (phase < 2)
+        {
+            await ReplyAsync("No hay una partida en curso. Usá **!iniciar**.");
+            return;
+        }
+
+        string userId = Context.User.Id.ToString();
+
+        // Busca al jugador según su ID de Discord
+        var jugador = jugadores.FirstOrDefault(j => j.Id == userId);
+        if (jugador == null)
+        {
+            await ReplyAsync("No estás en la partida.");
+            return;
+        }
+
+        // Verifica si el jugador tiene unidades
+        if (jugador.Units.Count == 0)
+        {
+            await ReplyAsync("No tenés unidades disponibles para atacar.");
+            return;
+        }
+
+        // Muestra las unidades disponibles del jugador para elegir como atacante
+        await ReplyAsync("Seleccioná la unidad atacante. Usá **!N** donde N es el índice de tu unidad:");
+        for (int i = 0; i < jugador.Units.Count; i++)
+        {
+            var unidad = jugador.Units[i];
+            await ReplyAsync($"**{i}** - Unidad con vida: {unidad.Life}, posición: ({unidad.Position["x"]},{unidad.Position["y"]})");
+        }
+
+        // Crea una tarea pendiente de respuesta y la guarda por ID de usuario
+        var tcs = new TaskCompletionSource<string>();
+        selections[userId] = tcs;
+
+        // Espera que el jugador elija el atacante
+        _ = WaitIndiceAtacanteAsync(Context, jugador, tcs);
+    }
+
+    private async Task WaitIndiceAtacanteAsync(SocketCommandContext context, Player jugador, TaskCompletionSource<string> tcs)
+    {
+        string userId = context.User.Id.ToString();
+
+        // Espera la respuesta del jugador (índice del atacante)
+        string input = await tcs.Task;
+
+        // Verifica que el input sea un número válido y dentro del rango de unidades del jugador
+        if (!int.TryParse(input, out int indiceAtacante) || indiceAtacante < 0 || indiceAtacante >= jugador.Units.Count)
+        {
+            await context.Channel.SendMessageAsync("❌ Índice de atacante inválido.");
+            selections.Remove(userId);
+            return;
+        }
+
+        var atacante = jugador.Units[indiceAtacante];
+
+        // Busca todas las unidades enemigas (de otros jugadores)
+        var enemigos = jugadores
+            .Where(j => j != jugador)
+            .SelectMany(j => j.Units)
+            .ToList();
+
+        if (enemigos.Count == 0)
+        {
+            await context.Channel.SendMessageAsync("No hay unidades enemigas para atacar.");
+            selections.Remove(userId);
+            return;
+        }
+
+        // Muestra las unidades enemigas disponibles para atacar
+        await context.Channel.SendMessageAsync("Seleccioná al objetivo enemigo. Usá **!N** donde N es el índice:");
+        for (int i = 0; i < enemigos.Count; i++)
+        {
+            var u = enemigos[i];
+            await context.Channel.SendMessageAsync($"**{i}** - Enemigo con vida: {u.Life}, posición: ({u.Position["x"]},{u.Position["y"]})");
+        }
+
+        // Crea otra tarea pendiente para que el jugador elija al objetivo
+        var tcsObjetivo = new TaskCompletionSource<string>();
+        selections[userId] = tcsObjetivo;
+
+        // Espera la selección del objetivo
+        _ = WaitIndiceObjetivoAsync(context, jugador, atacante, enemigos, tcsObjetivo);
+    }
+
+    private async Task WaitIndiceObjetivoAsync(SocketCommandContext context, Player jugador, IUnit atacante, List<IUnit> enemigos, TaskCompletionSource<string> tcs)
+    {
+        string userId = context.User.Id.ToString();
+
+        // Espera la respuesta del jugador (índice del objetivo)
+        string input = await tcs.Task;
+
+        // Verifica que el input sea un número válido y dentro del rango de enemigos
+        if (!int.TryParse(input, out int indiceObjetivo) || indiceObjetivo < 0 || indiceObjetivo >= enemigos.Count)
+        {
+            await context.Channel.SendMessageAsync("❌ Índice de objetivo inválido.");
+            selections.Remove(userId);
+            return;
+        }
+
+        var objetivo = enemigos[indiceObjetivo];
+
+        // Ejecuta el ataque usando la fachada
+        fachada.AtacarUnidades(new List<IUnit> { atacante }, new List<IUnit> { objetivo });
+
+        // Muestra el resultado del ataque
+        await context.Channel.SendMessageAsync($"✅ ¡Ataque realizado! La unidad enemiga ahora tiene {objetivo.Life} de vida.");
+
+        // Si la vida del objetivo llegó a 0 o menos, se eliminó
+        if (objetivo.Life <= 0)
+        {
+            await context.Channel.SendMessageAsync($"💀 La unidad enemiga ha sido eliminada.");
+        }
+
+        // Limpia la selección pendiente del jugador
+        selections.Remove(userId);
+    }
+
+    
+    // ----------------------------
+    // Comando: VerUnidades
+    // ----------------------------
+    [Command("MisUnidades")]
+    public async Task MostrarUnidadesAsync()
+    {
+        var jugador = jugadores.FirstOrDefault(j => j.Id == Context.User.Id.ToString());
+        if (jugador == null)
+        {
+            await ReplyAsync("No estás en la partida.");
+            return;
+        }
+
+        if (jugador.Units.Count == 0)
+        {
+            await ReplyAsync("No tenés unidades disponibles.");
+            return;
+        }
+
+        var mensaje = "Tus unidades:\n";
+        for (int i = 0; i < jugador.Units.Count; i++)
+        {
+            var unidad = jugador.Units[i];
+            mensaje += $"[{i}] {unidad.GetType().Name} - Vida: {unidad.Life}, Ataque: {unidad.Attack}, Defensa: {unidad.Defense}\n";
+        }
+
+        await ReplyAsync(mensaje);
     }
     
     

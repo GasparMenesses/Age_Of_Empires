@@ -13,6 +13,7 @@ public class Unit : IUnit
     public int Speed { get; set; }
     public int Attack { get; set; }
     public int Defense { get; set; }
+    public int Life { get; set; }
 
     public Unit(Building building)
     {
