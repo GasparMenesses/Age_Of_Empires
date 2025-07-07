@@ -40,4 +40,5 @@ public class WoodStorage : Building
 
         _player.Resources.AddResources(wood: wood);
     }
+    
 }
