@@ -1,4 +1,6 @@
 ﻿using Discord.Commands;
+using Library;
+using Library.Buildings;
 using Library.Core;
 using Library.Exceptions;
 using Library.Units;
@@ -51,9 +53,11 @@ public class Fachada
     
     public void CrearEntornoJuego()
     {
-        engine.CreateNewGameMap(); // Crea un nuevo mapa de juego
+        engine.CreateNewGameMap(  ); // Crea un nuevo mapa de juego
         engine.PlaceResourcesRandomInGameMap(jugadores, recolection); // Coloca edificios aleatorios en el mapa del juego, depende de la cantidad de jugadores
         engine.AsignarTresAldeanosPorJugador(jugadores); // Asigna tres aldeanos por jugador, para que puedan recolectar recursos
+        engine.RefreshMap();
+
     }
 
     public void Recolectar(string selection, Player _player) // Método para recolectar recursos según la selección del jugador
@@ -68,6 +72,25 @@ public class Fachada
         };
         engine.Recolectar(_player, resource);
     }
+
+
+    public void ConstruirAlmacenPiedra( int x, int y, Player _player) // Método para construir un almacén de piedra
+    {
+        if (_player.Resources.Stone >= StoneStorage.StoneCost && _player.Resources.Wood >= StoneStorage.WoodCost) // Verifica si el jugador tiene suficientes recursos para construir un almacén de piedra
+        {
+            _player.Actions.Build("StoneStorage", (x, y)); // Construye un almacén de piedra en la posición especificada
+        }
+        else
+        {
+            throw new RecursosInsuficientesException("No tienes suficientes recursos para construir un almacén de piedra. Cuesta 55 de piedra y 50 de madera.");
+        }
+    }
+    
+
+    public void ActualizarMapa()
+    {
+        engine.RefreshMap();
+    }
     
     public void AtacarUnidades(List<IUnit> atacantes, List<IUnit> atacados)
     {
@@ -81,3 +104,4 @@ public class Fachada
 
     
 }
+

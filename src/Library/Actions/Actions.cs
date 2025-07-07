@@ -17,25 +17,27 @@ public class Actions
         Player = player;
     }
 
-    public async Task<bool> Build(string building, (int x, int y) position)
+    public async Task<bool> Build(string _building, (int x, int y) position)
     {
         if (position.x >= 100 || position.x < 0 || position.y >= 100 || position.y < 0 || Map.CheckMap(position.x, position.y) != "..")
             return false;
-        if (building == "Barrack")
+        if (_building == "Barrack")
             Building = new Barrack(Player, position);
-        else if (building == "GoldStorage")
+        else if (_building == "GoldStorage")
             Building = new GoldStorage(Player, position);
-        else if (building == "Mill")
+        else if (_building == "Mill")
             Building = new Mill(Player, position);
-        else if (building == "StoneStorage")
+        else if (_building == "StoneStorage")
             Building = new StoneStorage(Player, position);
-        else if (building == "WoodStorage")
+        else if (_building == "WoodStorage")
             Building = new WoodStorage(Player, position);
+
         else
             return false;
 
         if (Player.Resources.Wood >= Building.WoodCost && Player.Resources.Stone >= Building.StoneCost)
         {
+
             await Task.Delay(10000);
             Player.Resources.RemoveResources(wood: Building.WoodCost, stone: Building.StoneCost);
             Player.Buildings.Add(Building, position);
@@ -45,6 +47,9 @@ public class Actions
 
         return false;
     }
+
+
+
     public void Move(List<IUnit> units, (int x, int y) position)
     {
         foreach (IUnit unit in units)

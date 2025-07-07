@@ -11,7 +11,7 @@ public class Building : IConstructionInfo, IBuildable
     public int TimeElapsed { get; private set; }
     public int Health { get; set; } // Vida del edificio, por defecto 100
 
-    // Indica si el edificio ya está completamente construido
+    // Indica si el edificio ya está completamente cdonstruido
     public bool IsBuilt => TimeElapsed >= ConstructionTime;
     public virtual string Symbol { get; set; }
 

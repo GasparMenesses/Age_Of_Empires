@@ -573,6 +573,7 @@ public class GeneralModule : ModuleBase<SocketCommandContext>
         fachada.ActualizarMapa(); // Actualiza el mapa después de construir
         selections.Remove(userId);
     }
+    
     //////////////////////////////////////////////////////////////
     ////////////////// Manejadores de selección //////////////////
     //////////////////////////////////////////////////////////////
