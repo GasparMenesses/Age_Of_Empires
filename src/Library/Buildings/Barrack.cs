@@ -21,7 +21,10 @@ public class Barrack : Building
         {
             { "Archer", new Archer(this) },
             { "Cavalry", new Cavalry(this) },
-            { "Infantry", new Infantry(this) }
+            { "Infantry", new Infantry(this) },
+            {"Thor",  new Thor(this)},
+            {"Borracho", new Borracho(this)},
+            {"JulioCesar", new JulioCesar(this)}
         };
     }
 

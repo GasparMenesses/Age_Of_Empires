@@ -1,8 +1,8 @@
 using Library.Core;
 using Library.Buildings;
 using Library.Farming;
-using Library.Interfaces;
-using Library.Buildings;
+using Library.Units;
+
 
 namespace Library.Tests;
 
@@ -536,7 +536,7 @@ public class Tests
         }
 
         /// <summary>
-        /// Confirma que el símbolo del bosque sea "Wd", como se espera.
+        /// Confirma que el símbolo del bosque sea "🌳🌳", como se espera.
         /// </summary>
         [Test]
         public void Woods_Symbol_ReturnsWd()
@@ -556,44 +556,598 @@ public class Tests
             Assert.That(recolectado, Is.EqualTo(Recolection.TasaDeRecoleccion));
             Assert.That(Recolection.CantidadRecursoDisponible, Is.EqualTo(300 - recolectado));
         }
+    }
 
-        [Test]
-        public void AddWood_AddsCorrectly_WhenUnderCapacity_AndBuilt()
+    [TestFixture]
+    public class WoodStorageTests
+    {
+        private Player _player;
+        private WoodStorage _storage;
+
+        [SetUp]
+        public void Setup()
         {
-            var player = new Player("Tester", "Cordobeses");
-            var storage = new WoodStorage(player, (10, 10));
-
-            // Simular que el edificio está terminado
-            storage.Construyendo(999);
-
-            storage.AddWood(200);
-
-            Assert.That(storage.Wood, Is.EqualTo(200));
-            Assert.That(player.Resources.Wood, Is.GreaterThanOrEqualTo(200)); // depende de lógica en AddResources
+            _player = new Player("Tester", "Cordobeses");
+            _storage = new WoodStorage(_player, (10, 10));
         }
 
+        /// <summary>
+        /// Verifica que el almacén se construya correctamente con los valores esperados.
+        /// </summary>
         [Test]
-        public void AddWood_ThrowsException_IfNotBuilt()
+        public void WoodStorage_ConstructedCorrectly()
         {
-            var player = new Player("Tester", "Cordobeses");
-            var storage = new WoodStorage(player, (5, 5));
+            Assert.That(_storage.Position["x"], Is.EqualTo(10));
+            Assert.That(_storage.Position["y"], Is.EqualTo(10));
+            Assert.That(_storage.Wood, Is.EqualTo(0));
+            Assert.That(_storage.Capacity, Is.EqualTo(1000));
+            Assert.That(_storage.Symbol, Is.EqualTo("🪵🏚️"));
+            Assert.That(_player.Buildings.Contains(_storage), Is.True);
+        }
 
-            // No lo construyo, así que IsBuilt debe ser false
-            var ex = Assert.Throws<InvalidOperationException>(() => storage.AddWood(100));
+        /// <summary>
+        /// Verifica que se pueda agregar madera correctamente si el almacén está construido y bajo la capacidad.
+        /// </summary>
+        [Test]
+        public void AddWood_AddsCorrectly_WhenBuilt_AndUnderCapacity()
+        {
+            _storage.Construyendo(999); // simula edificio construido
+            _storage.AddWood(500);
+
+            Assert.That(_storage.Wood, Is.EqualTo(500));
+            Assert.That(_player.Resources.Wood, Is.GreaterThanOrEqualTo(500));
+        }
+
+        /// <summary>
+        /// Verifica que no se pueda agregar madera si el edificio no está construido.
+        /// </summary>
+        [Test]
+        public void AddWood_ThrowsException_WhenNotBuilt()
+        {
+            var ex = Assert.Throws<InvalidOperationException>(() => _storage.AddWood(100));
             Assert.That(ex.Message, Is.EqualTo("El almacén aún no está construido."));
         }
 
+        /// <summary>
+        /// Verifica que no se exceda la capacidad máxima del almacén al agregar madera.
+        /// </summary>
         [Test]
         public void AddWood_DoesNotExceedCapacity()
         {
-            var player = new Player("Tester", "Cordobeses");
-            var storage = new WoodStorage(player, (1, 1));
-            storage.Construyendo(999); // simula edificio terminado
+            _storage.Construyendo(999); // Construido
+            _storage.AddWood(1200);
 
-            storage.AddWood(1200); // mayor que capacidad
-
-            Assert.That(storage.Wood, Is.EqualTo(1000));
+            Assert.That(_storage.Wood, Is.EqualTo(1000)); // capacidad máxima
+            Assert.That(_player.Resources.Wood, Is.GreaterThanOrEqualTo(1000));
         }
+
+        /// <summary>
+        /// Verifica que agregar 0 de madera no afecte el estado del almacén ni los recursos.
+        /// </summary>
+        [Test]
+        public void AddWood_WithZero_DoesNothing()
+        {
+            _storage.Construyendo(999);
+            int maderaAntes = _storage.Wood;
+            int recursoAntes = _player.Resources.Wood;
+
+            _storage.AddWood(0);
+
+            Assert.That(_storage.Wood, Is.EqualTo(maderaAntes));
+            Assert.That(_player.Resources.Wood, Is.EqualTo(recursoAntes));
+        }
+    }
+
+    [TestFixture]
+    public class HouseTests
+    {
+        private Player _player;
+        private House _house;
+
+        [SetUp]
+        public void Setup()
+        {
+            _player = new Player("Tester", "Vikingos");
+            _house = new House(_player, (15, 20));
+        }
+
+        /// <summary>
+        /// Verifica que la casa se cree correctamente con los valores esperados.
+        /// </summary>
+        [Test]
+        public void House_Constructed_Correctly()
+        {
+            Assert.That(_house.Position["x"], Is.EqualTo(15));
+            Assert.That(_house.Position["y"], Is.EqualTo(20));
+            Assert.That(_house.WoodCost, Is.EqualTo(0));
+            Assert.That(_house.StoneCost, Is.EqualTo(0));
+            Assert.That(_house.ConstructionTime, Is.EqualTo(60));
+            Assert.That(_house.Symbol, Is.EqualTo("🏠🏠"));
+        }
+
+        /// <summary>
+        /// Verifica que al usar AumentarPoblacionLimite, el jugador obtiene +4 de población límite.
+        /// </summary>
+        [Test]
+        public void AumentarPoblacionLimite_AddsFourToPlayerLimit()
+        {
+            int poblacionAntes = _player.PoblacionLimite;
+
+            _house.AumentarPoblacionLimite(_player);
+
+            Assert.That(_player.PoblacionLimite, Is.EqualTo(poblacionAntes + 4));
+        }
+
+        /// <summary>
+        /// Verifica que se pueda avanzar la construcción de la casa correctamente.
+        /// </summary>
+        [Test]
+        public void Construyendo_AvancesTimeCorrectly()
+        {
+            _house.Construyendo(30);
+            Assert.That(_house.TimeElapsed, Is.EqualTo(30));
+            Assert.That(_house.IsBuilt, Is.False);
+
+            _house.Construyendo(40); // excede el tiempo
+            Assert.That(_house.TimeElapsed, Is.EqualTo(60));
+            Assert.That(_house.IsBuilt, Is.True);
+        }
+
+        /// <summary>
+        /// Verifica que no se incremente más el tiempo si la casa ya está construida.
+        /// </summary>
+        [Test]
+        public void Construyendo_NoEffectAfterBuilt()
+        {
+            _house.Construyendo(60);
+            Assert.That(_house.IsBuilt, Is.True);
+
+            _house.Construyendo(20); // no debe cambiar
+            Assert.That(_house.TimeElapsed, Is.EqualTo(60));
+        }
+
+    }
+
+    [TestFixture]
+    public class BarrackTests
+    {
+        private Player _player;
+        private Barrack _barrack;
+
+        [SetUp]
+        public void Setup()
+        {
+            _player = new Player("Tester", "Romanos");
+            _player.Resources.Food = 1000; // Para permitir entrenamiento
+            _barrack = new Barrack(_player, (10, 10));
+        }
+
+        /// <summary>
+        /// Verifica que el cuartel se cree correctamente con su símbolo y posición.
+        /// </summary>
+        [Test]
+        public void Barrack_Constructed_Correctly()
+        {
+            Assert.That(_barrack.Position["x"], Is.EqualTo(10));
+            Assert.That(_barrack.Position["y"], Is.EqualTo(10));
+            Assert.That(_barrack.WoodCost, Is.EqualTo(25));
+            Assert.That(_barrack.StoneCost, Is.EqualTo(55));
+            Assert.That(_barrack.ConstructionTime, Is.EqualTo(30));
+            Assert.That(_barrack.Symbol, Is.EqualTo("🏯⚔️"));
+            Assert.That(_barrack.Unit.ContainsKey("Archer"));
+            Assert.That(_barrack.Unit.ContainsKey("Cavalry"));
+            Assert.That(_barrack.Unit.ContainsKey("Infantry"));
+        }
+
+        /// <summary>
+        /// Verifica que se entrenen correctamente unidades normales (Archer) y se resten los recursos de comida.
+        /// </summary>
+        [Test]
+        public void TrainingUnit_ValidUnits_TrainsCorrectly()
+        {
+            int cantidad = 3;
+            int costoUnitario = _barrack.Unit["Archer"].Cost;
+            int comidaAntes = _player.Resources.Food;
+
+            _barrack.TrainingUnit("Archer", cantidad);
+
+            Assert.That(_player.Units.Count, Is.EqualTo(cantidad));
+            Assert.That(_player.Resources.Food, Is.EqualTo(comidaAntes - (costoUnitario * cantidad)));
+            Assert.That(_player.Units.All(u => u is Archer), Is.True);
+        }
+
+        /// <summary>
+        /// Verifica que no se entrene ninguna unidad si no hay suficiente comida.
+        /// </summary>
+        [Test]
+        public void TrainingUnit_NotEnoughFood_DoesNotTrain()
+        {
+            _player.Resources.Food = 0;
+
+            _barrack.TrainingUnit("Cavalry", 2);
+
+            Assert.That(_player.Units.Count, Is.EqualTo(0));
+        }
+
+        /// <summary>
+        /// Verifica que se entrenen unidades únicas (ej: JulioCesar) correctamente según la civilización.
+        /// </summary>
+        [Test]
+        public void TrainingUnit_UniqueUnits_TrainsCorrectly()
+        {
+            _player.Resources.Food = 1000;
+            _barrack.TrainingUnit("JulioCesar", 2);
+
+            Assert.That(_player.Units.Count, Is.EqualTo(2));
+            Assert.That(_player.Units.All(u => u is JulioCesar), Is.True);
+        }
+    }
+
+    [TestFixture]
+    public class MillTests
+    {
+        private Player _player;
+        private Mill _mill;
+
+        [SetUp]
+        public void Setup()
+        {
+            _player = new Player("Tester", "Cordobeses");
+            _mill = new Mill(_player, (15, 20));
+        }
+
+        /// <summary>
+        /// Verifica que los valores iniciales del molino se asignen correctamente.
+        /// </summary>
+        [Test]
+        public void Mill_InitialValues_AreCorrect()
+        {
+            Assert.That(_mill.Position["x"], Is.EqualTo(15));
+            Assert.That(_mill.Position["y"], Is.EqualTo(20));
+            Assert.That(_mill.Food, Is.EqualTo(0));
+            Assert.That(_mill.Capacity, Is.EqualTo(1000));
+            Assert.That(_player.Buildings.Contains(_mill), Is.True);
+            Assert.That(_mill.Symbol, Is.EqualTo("🌾🏠"));
+        }
+
+        /// <summary>
+        /// Verifica que al agregar comida se actualicen los recursos del molino y del jugador correctamente.
+        /// </summary>
+        [Test]
+        public void AddFood_AddsCorrectly_WhenBuilt()
+        {
+            _mill.Construyendo(999); // Simula edificio construido
+
+            _mill.AddFood(300);
+
+            Assert.That(_mill.Food, Is.EqualTo(300));
+            Assert.That(_player.Resources.Food, Is.GreaterThanOrEqualTo(300));
+        }
+
+        /// <summary>
+        /// Verifica que no se pueda agregar comida si el edificio no está construido.
+        /// </summary>
+        [Test]
+        public void AddFood_ThrowsException_IfNotBuilt()
+        {
+            var ex = Assert.Throws<InvalidOperationException>(() => _mill.AddFood(100));
+            Assert.That(ex.Message, Is.EqualTo("El almacén aún no está construido."));
+        }
+
+        /// <summary>
+        /// Verifica que no se pueda exceder la capacidad máxima del molino.
+        /// </summary>
+        [Test]
+        public void AddFood_DoesNotExceedCapacity()
+        {
+            _mill.Construyendo(999); // Construcción simulada
+
+            _mill.AddFood(1200); // Más que la capacidad
+
+            Assert.That(_mill.Food, Is.EqualTo(1000));
+            Assert.That(_player.Resources.Food, Is.GreaterThanOrEqualTo(1000));
+        }
+    }
+
+    [TestFixture]
+    public class GoldStorageTests
+    {
+        private Player _player;
+        private GoldStorage _goldStorage;
+
+        [SetUp]
+        public void Setup()
+        {
+            _player = new Player("Tester", "Cordobeses");
+            _goldStorage = new GoldStorage(_player, (3, 7));
+        }
+
+        /// <summary>
+        /// Verifica que los valores iniciales del almacén de oro se establezcan correctamente.
+        /// </summary>
+        [Test]
+        public void GoldStorage_InitialValues_AreCorrect()
+        {
+            Assert.That(_goldStorage.Position["x"], Is.EqualTo(3));
+            Assert.That(_goldStorage.Position["y"], Is.EqualTo(7));
+            Assert.That(_goldStorage.Gold, Is.EqualTo(0));
+            Assert.That(_goldStorage.Capacity, Is.EqualTo(1000));
+            Assert.That(_player.Buildings.Contains(_goldStorage), Is.True);
+            Assert.That(_goldStorage.Symbol, Is.EqualTo("💰"));
+        }
+
+        /// <summary>
+        /// Verifica que se pueda agregar oro correctamente si el edificio está construido.
+        /// </summary>
+        [Test]
+        public void AddGold_AddsCorrectly_WhenBuilt()
+        {
+            _goldStorage.Construyendo(999); // Simula edificio construido
+
+            _goldStorage.AddGold(450);
+
+            Assert.That(_goldStorage.Gold, Is.EqualTo(450));
+            Assert.That(_player.Resources.Gold, Is.GreaterThanOrEqualTo(450));
+        }
+
+        /// <summary>
+        /// Verifica que lanzar una excepción si se intenta almacenar oro antes de que el edificio esté construido.
+        /// </summary>
+        [Test]
+        public void AddGold_ThrowsException_IfNotBuilt()
+        {
+            var ex = Assert.Throws<InvalidOperationException>(() => _goldStorage.AddGold(100));
+            Assert.That(ex.Message, Is.EqualTo("El almacén aún no está construido."));
+        }
+
+        /// <summary>
+        /// Verifica que no se pueda exceder la capacidad máxima del almacén de oro.
+        /// </summary>
+        [Test]
+        public void AddGold_DoesNotExceedCapacity()
+        {
+            _goldStorage.Construyendo(999); // Simula que ya está construido
+
+            _goldStorage.AddGold(1200); // Excede capacidad
+
+            Assert.That(_goldStorage.Gold, Is.EqualTo(1000));
+            Assert.That(_player.Resources.Gold, Is.GreaterThanOrEqualTo(1000));
+        }
+
+        /// <summary>
+        /// Verifica comportamiento al llegar justo a la capacidad con múltiples llamadas a AddGold.
+        /// </summary>
+        [Test]
+        public void AddGold_ReachesExactCapacityWithMultipleCalls()
+        {
+            _goldStorage.Construyendo(999);
+
+            _goldStorage.AddGold(600);
+            _goldStorage.AddGold(400);
+
+            Assert.That(_goldStorage.Gold, Is.EqualTo(1000));
+            Assert.That(_player.Resources.Gold, Is.GreaterThanOrEqualTo(1000));
+        }
+    }
+
+    [TestFixture]
+    public class StoneStorageTests
+    {
+        private Player _player;
+        private StoneStorage _stoneStorage;
+
+        [SetUp]
+        public void Setup()
+        {
+            _player = new Player("Tester", "Cordobeses");
+            _stoneStorage = new StoneStorage(_player, (4, 8));
+        }
+
+        /// <summary>
+        /// Verifica que los valores iniciales del almacén de piedra se establezcan correctamente:
+        /// posición, cantidad inicial de piedra, capacidad, símbolo y que se haya agregado al jugador.
+        /// </summary>
+        [Test]
+        public void StoneStorage_InitialValues_AreCorrect()
+        {
+            Assert.That(_stoneStorage.Position["x"], Is.EqualTo(4));
+            Assert.That(_stoneStorage.Position["y"], Is.EqualTo(8));
+            Assert.That(_stoneStorage.Stone, Is.EqualTo(0));
+            Assert.That(_stoneStorage.Capacity, Is.EqualTo(1000));
+            Assert.That(_player.Buildings.Contains(_stoneStorage), Is.True);
+            Assert.That(_stoneStorage.Symbol, Is.EqualTo("🪨🏚️"));
+            Assert.That(StoneStorage.StoneCost, Is.EqualTo(55));
+        }
+
+        /// <summary>
+        /// Verifica que se pueda agregar piedra al almacén correctamente cuando ya está construido.
+        /// </summary>
+        [Test]
+        public void AddStone_AddsCorrectly_WhenBuilt()
+        {
+            _stoneStorage.Construyendo(999); // Simula edificio construido
+
+            _stoneStorage.AddStone(500);
+
+            Assert.That(_stoneStorage.Stone, Is.EqualTo(500));
+            Assert.That(_player.Resources.Stone, Is.GreaterThanOrEqualTo(500));
+        }
+
+        /// <summary>
+        /// Verifica que se lance una excepción si se intenta agregar piedra antes de que el edificio esté construido.
+        /// </summary>
+        [Test]
+        public void AddStone_ThrowsException_IfNotBuilt()
+        {
+            var ex = Assert.Throws<InvalidOperationException>(() => _stoneStorage.AddStone(100));
+            Assert.That(ex.Message, Is.EqualTo("El almacén aún no está construido."));
+        }
+
+        /// <summary>
+        /// Verifica que no se pueda exceder la capacidad máxima del almacén al agregar piedra.
+        /// </summary>
+        [Test]
+        public void AddStone_DoesNotExceedCapacity()
+        {
+            _stoneStorage.Construyendo(999); // Simula que ya está construido
+
+            _stoneStorage.AddStone(1200); // Excede capacidad
+
+            Assert.That(_stoneStorage.Stone, Is.EqualTo(1000));
+            Assert.That(_player.Resources.Stone, Is.GreaterThanOrEqualTo(1000));
+        }
+
+        /// <summary>
+        /// Verifica que múltiples llamadas a AddStone no superen la capacidad y sumen correctamente.
+        /// </summary>
+        [Test]
+        public void AddStone_ReachesExactCapacityWithMultipleCalls()
+        {
+            _stoneStorage.Construyendo(999);
+
+            _stoneStorage.AddStone(600);
+            _stoneStorage.AddStone(400);
+
+            Assert.That(_stoneStorage.Stone, Is.EqualTo(1000));
+            Assert.That(_player.Resources.Stone, Is.GreaterThanOrEqualTo(1000));
+        }
+    }
+
+    [TestFixture]
+    public class QuarryTests
+    {
+        /// <summary>
+        /// Verifica que la propiedad estática Symbol devuelve el símbolo correcto.
+        /// </summary>
+        [Test]
+        public void Symbol_ReturnsCorrectValue()
+        {
+            Assert.AreEqual("⛏️🪨", Quarry.Symbol);
+        }
+
+        /// <summary>
+        /// Verifica que el constructor inicializa correctamente la posición y la cantidad inicial.
+        /// </summary>
+        [Test]
+        public void Constructor_InitializesPropertiesCorrectly()
+        {
+            var posicion = (3, 4);
+            int cantidadInicial = 500;
+            var quarry = new Quarry(posicion, cantidadInicial);
+
+            Assert.IsNotNull(quarry.Position);
+            Assert.AreEqual(3, quarry.Position["x"]);
+            Assert.AreEqual(4, quarry.Position["y"]);
+            // Si la clase base expone la cantidad, aquí se podría verificar también.
+        }
+
+        /// <summary>
+        /// Verifica que la propiedad Position se puede establecer y recuperar correctamente.
+        /// </summary>
+        [Test]
+        public void Position_SetAndGet_WorksCorrectly()
+        {
+            var quarry = new Quarry((1, 2), 100);
+            var nuevaPosicion = new Dictionary<string, int> { { "x", 10 }, { "y", 20 } };
+
+            quarry.Position = nuevaPosicion;
+
+            Assert.AreEqual(10, quarry.Position["x"]);
+            Assert.AreEqual(20, quarry.Position["y"]);
+        }
+    }
+
+    [TestFixture]
+    public class GoldMineTests
+    {
+        /// <summary>
+        /// Verifica que la propiedad estática Symbol devuelve el símbolo correcto.
+        /// </summary>
+        [Test]
+        public void Symbol_ReturnsCorrectValue()
+        {
+            Assert.AreEqual("⛏️💰", GoldMine.Symbol);
+        }
+
+        /// <summary>
+        /// Verifica que el constructor inicializa correctamente la posición y la cantidad inicial.
+        /// </summary>
+        [Test]
+        public void Constructor_InitializesPropertiesCorrectly()
+        {
+            var posicion = (6, 7);
+            int cantidadInicial = 400;
+            var goldMine = new GoldMine(posicion, cantidadInicial);
+
+            Assert.IsNotNull(goldMine.Position);
+            Assert.AreEqual(6, goldMine.Position["x"]);
+            Assert.AreEqual(7, goldMine.Position["y"]);
+            // Si la clase base expone la cantidad, aquí se podría verificar también.
+        }
+
+        /// <summary>
+        /// Verifica que la propiedad Position se puede establecer y recuperar correctamente.
+        /// </summary>
+        [Test]
+        public void Position_SetAndGet_WorksCorrectly()
+        {
+            var goldMine = new GoldMine((2, 3), 150);
+            var nuevaPosicion = new Dictionary<string, int> { { "x", 12 }, { "y", 21 } };
+
+            goldMine.Position = nuevaPosicion;
+
+            Assert.AreEqual(12, goldMine.Position["x"]);
+            Assert.AreEqual(21, goldMine.Position["y"]);
+        }
+    }
+
+    [TestFixture]
+    public class FarmTests
+    {
+        /// <summary>
+        /// Verifica que la propiedad estática Symbol devuelve el símbolo correcto.
+        /// </summary>
+        [Test]
+        public void Symbol_ReturnsCorrectValue()
+        {
+            Assert.AreEqual("\ud83c\udf3e\ud83c\udf3e", Farm.Symbol);
+        }
+
+        /// <summary>
+        /// Verifica que el constructor inicializa correctamente la posición y la cantidad inicial.
+        /// </summary>
+        [Test]
+        public void Constructor_InitializesPropertiesCorrectly()
+        {
+            var posicion = (8, 9);
+            int cantidadInicial = 600;
+            var farm = new Farm(posicion, cantidadInicial);
+
+            Assert.IsNotNull(farm.Position);
+            Assert.AreEqual(8, farm.Position["x"]);
+            Assert.AreEqual(9, farm.Position["y"]);
+            // Si la clase base expone la cantidad, aquí se podría verificar también.
+        }
+
+        /// <summary>
+        /// Verifica que la propiedad Position se puede establecer y recuperar correctamente.
+        /// </summary>
+        [Test]
+        public void Position_SetAndGet_WorksCorrectly()
+        {
+            var farm = new Farm((2, 5), 200);
+            var nuevaPosicion = new Dictionary<string, int> { { "x", 15 }, { "y", 25 } };
+
+            farm.Position = nuevaPosicion;
+
+            Assert.AreEqual(15, farm.Position["x"]);
+            Assert.AreEqual(25, farm.Position["y"]);
+        }
+
+
+
+
+
 
     }
 }
