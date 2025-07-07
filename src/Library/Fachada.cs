@@ -53,11 +53,10 @@ public class Fachada
     
     public void CrearEntornoJuego()
     {
-        engine.CreateNewGameMap(  ); // Crea un nuevo mapa de juego
-        engine.PlaceResourcesRandomInGameMap(jugadores, recolection); // Coloca edificios aleatorios en el mapa del juego, depende de la cantidad de jugadores
-        engine.AsignarTresAldeanosPorJugador(jugadores); // Asigna tres aldeanos por jugador, para que puedan recolectar recursos
-        engine.RefreshMap();
-
+         engine.CreateNewGameMap(  ); // Crea un nuevo mapa de juego
+         engine.PlaceResourcesRandomInGameMap(jugadores, recolection); // Coloca edificios aleatorios en el mapa del juego, depende de la cantidad de jugadores
+         engine.AsignarTresAldeanosPorJugador(jugadores); // Asigna tres aldeanos por jugador, para que puedan recolectar recursos
+         engine.RefreshMap();
     }
 
     public void Recolectar(string selection, Player _player) // Método para recolectar recursos según la selección del jugador

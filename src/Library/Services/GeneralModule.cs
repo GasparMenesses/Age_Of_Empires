@@ -134,6 +134,7 @@ public class GeneralModule : ModuleBase<SocketCommandContext>
         phase += 1;
         await ReplyAsync("Cargando entorno de juego...");
         Thread.Sleep(1000); 
+        
         fachada.CrearEntornoJuego();
         await ReplyAsync("Accede al nuevo mapa (recordá recargar con F5 si ya lo abriste antes):");
         await ReplyAsync("Pega esta URL en tu navegador: **" + AbstoluteMapURL + "**");
