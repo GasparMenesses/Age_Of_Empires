@@ -317,7 +317,7 @@ public class GeneralModule : ModuleBase<SocketCommandContext>
         // Verifica que el input sea un número válido y dentro del rango de unidades del jugador
         if (!int.TryParse(input, out int indiceAtacante) || indiceAtacante < 0 || indiceAtacante >= jugador.Units.Count)
         {
-            await context.Channel.SendMessageAsync("❌ Índice de atacante inválido.");
+            await context.Channel.SendMessageAsync(" Índice de atacante inválido.");
             selections.Remove(userId);
             return;
         }
@@ -363,7 +363,7 @@ public class GeneralModule : ModuleBase<SocketCommandContext>
         // Verifica que el input sea un número válido y dentro del rango de enemigos
         if (!int.TryParse(input, out int indiceObjetivo) || indiceObjetivo < 0 || indiceObjetivo >= enemigos.Count)
         {
-            await context.Channel.SendMessageAsync("❌ Índice de objetivo inválido.");
+            await context.Channel.SendMessageAsync(" Índice de objetivo inválido.");
             selections.Remove(userId);
             return;
         }
@@ -374,12 +374,12 @@ public class GeneralModule : ModuleBase<SocketCommandContext>
         fachada.AtacarUnidades(new List<IUnit> { atacante }, new List<IUnit> { objetivo });
 
         // Muestra el resultado del ataque
-        await context.Channel.SendMessageAsync($"✅ ¡Ataque realizado! La unidad enemiga ahora tiene {objetivo.Life} de vida.");
+        await context.Channel.SendMessageAsync($" ¡Ataque realizado! La unidad enemiga ahora tiene {objetivo.Life} de vida.");
 
         // Si la vida del objetivo llegó a 0 o menos, se eliminó
         if (objetivo.Life <= 0)
         {
-            await context.Channel.SendMessageAsync($"💀 La unidad enemiga ha sido eliminada.");
+            await context.Channel.SendMessageAsync($" La unidad enemiga ha sido eliminada.");
         }
 
         // Limpia la selección pendiente del jugador
