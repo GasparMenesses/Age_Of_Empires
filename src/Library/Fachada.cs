@@ -43,11 +43,6 @@ public class Fachada
         engine.AsignarTresAldeanosPorJugador(jugadores); // Asigna tres aldeanos por jugador, para que puedan recolectar recursos
 
     }
-    
-    public void RecolectarRecursos (string selection , Player player) // Método para recolectar recursos
-    {
-        
-    }
 
     public void Recolectar(string selection, Player _player) // Método para recolectar recursos según la selección del jugador
     {
@@ -59,15 +54,6 @@ public class Fachada
             "4" => "comida",
             _ => throw new InvalidOperationException("Recurso no válido")
         };
-        
-        var villager = _player.Units.OfType<Villager>().FirstOrDefault();
-        if (villager != null)
-        {
-            _player.Actions.Farmear(villager, resource);//Recolecta el recurso especificado por un aldeano
-        }
-        else
-        {
-            throw new UnidadNoDisponibleException("No tienes ningun aldeano disponible para farmear.");
-        }
+        engine.Recolectar(_player, resource);
     }
 }
