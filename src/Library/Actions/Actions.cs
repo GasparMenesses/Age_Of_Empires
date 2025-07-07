@@ -11,36 +11,38 @@ namespace Library.Actions;
 public class Actions
 {
     private Player Player { get; set; }
-    private Building Building { get; set; }
+    private Building building { get; set; }
     public Actions(Player player)
     {
         Player = player;
     }
 
-    public async Task<bool> Build(string building, (int x, int y) position)
+    public async Task<bool> Build(string _building, (int x, int y) position)
     {
         if (position.x >= 100 || position.x < 0 || position.y >= 100 || position.y < 0 || Map.CheckMap(position.x, position.y) != "..")
             return false;
 
-        if (building == "Barrack")
-            Building = new Barrack(Player, position);
-        else if (building == "GoldStorage")
-            Building = new GoldStorage(Player, position);
-        else if (building == "Mill")
-            Building = new Mill(Player, position);
-        else if (building == "StoneStorage")
-            Building = new StoneStorage(Player, position);
-        else if (building == "WoodStorage")
-            Building = new WoodStorage(Player, position);
+        if (_building == "Barrack")
+            building = new Barrack(Player, position);
+        else if (_building == "GoldStorage")
+            building = new GoldStorage(Player, position);
+        else if (_building == "Mill")
+            building = new Mill(Player, position);
+        else if (_building == "StoneStorage")
+            building = new StoneStorage(Player, position);
+        else if (_building == "WoodStorage")
+            building = new WoodStorage(Player, position);
+
         else
             return false;
 
-        if (Player.Resources.Wood >= Building.WoodCost && Player.Resources.Stone >= Building.StoneCost)
+        if (Player.Resources.Wood >= building.WoodCost && Player.Resources.Stone >= building.StoneCost)
         {
+
             await Task.Delay(10000);
-            Player.Resources.RemoveResources(wood: Building.WoodCost, stone: Building.StoneCost);
-            Player.Buildings.Add(Building);
-            Map.ChangeMap(position, Building.Symbol, Building);
+            Player.Resources.RemoveResources(wood: building.WoodCost, stone: building.StoneCost);
+            Player.Buildings.Add(building);
+            Map.ChangeMap(position, building.Symbol, building);
             return true;
         }
 

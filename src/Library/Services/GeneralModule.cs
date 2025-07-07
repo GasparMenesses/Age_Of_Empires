@@ -416,13 +416,6 @@ public class GeneralModule : ModuleBase<SocketCommandContext>
         await ReplyAsync(mensaje);
     }
     
-    
-    
-    // ----------------------------
-    // Comandos: Construir Almacenes
-    // ----------------------------
-    // Diccionario para guardar la ubicación pendiente
-    static Dictionary<string, (int x, int y)> pendingPiedraLocations = new();
 
     // ----------------------------
     // Comando: Construir Almacén de Piedra
@@ -482,8 +475,6 @@ public class GeneralModule : ModuleBase<SocketCommandContext>
     }
     
     
-        
-        
     //////////////////////////////////////////////////////////////
     ////////////////// Manejadores de selección //////////////////
     //////////////////////////////////////////////////////////////
