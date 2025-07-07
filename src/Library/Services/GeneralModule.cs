@@ -98,6 +98,11 @@ public class GeneralModule : ModuleBase<SocketCommandContext>
     [Command("Mapa")]
     public async Task MostrarMapaAsync()
     {
+        if (phase != 2)
+        {
+            await ReplyAsync("Todavía no podés ver el mapa, usá **!iniciar** para comenzar la partida.");
+            return;
+        }
         await ReplyAsync("Pega esta URL en tu navegador: " + AbstoluteMapURL);
     }
 
@@ -256,6 +261,71 @@ public class GeneralModule : ModuleBase<SocketCommandContext>
             $"El jugador {Context.User.Username} dispone de los recursos:\n " +
             $"ORO: {jugador.Resources.Gold.ToString()}\n MADERA: {jugador.Resources.Wood.ToString()}\n PIEDRA: {jugador.Resources.Stone.ToString()}\n COMIDA: {jugador.Resources.Food.ToString()}\n "
         );
+    }
+    
+    
+    
+    // ----------------------------
+    // Comandos: Construir Almacenes
+    // ----------------------------
+    // Diccionario para guardar la ubicación pendiente
+    static Dictionary<string, (int x, int y)> pendingPiedraLocations = new();
+
+    // ----------------------------
+    // Comando: Construir Almacén de Piedra
+    // ----------------------------
+    
+    [Command("ConstruirAlmacenPiedra")]
+    public async Task ConstruirAlmacenPiedraAsync([Remainder] string coords = null)
+    {
+        
+        if (phase != 2)
+        {
+            await ReplyAsync("Todavía no puedes construir un almacén, usá **!iniciar** para comenzar la partida.");
+            return;
+        }
+        
+        if (coords == null)
+        {
+            await ReplyAsync("Usá: `!ConstruirAlmacenPiedra x,y` (ej: `!ConstruirAlmacenPiedra 3,8`).");
+            return;
+        }
+
+        var parts = coords.Split(',');
+        if (parts.Length != 2 || !int.TryParse(parts[0], out var x) || !int.TryParse(parts[1], out var y))
+        {
+            await ReplyAsync("Formato inválido. Usá: `!ConstruirAlmacenPiedra x,y` (ej: `!ConstruirAlmacenPiedra 3,8`).");
+            return;
+        }
+
+        try
+        {
+            fachada.ConstruirAlmacenPiedra(x, y, jugadores.FirstOrDefault(j => j.Id == Context.User.Id.ToString()));
+        }
+        catch (RecursosInsuficientesException e)
+        {
+            await ReplyAsync(e.Message);
+            return;
+        }
+        
+        fachada.ActualizarMapa();
+
+        await ReplyAsync($"🏗️ Almacén de Piedra constuyéndose en ({x},{y}).");
+        
+    }
+    
+    // Oro
+    [Command("ConstruirAlmacenOro")]
+    public async Task ConstruirAlmacenOroAsync()
+    {
+        await ReplyAsync("Pega esta URL en tu navegador: " + AbstoluteMapURL);
+    }
+    
+    // Madera
+    [Command("ConstruirAlmacenMadera")]
+    public async Task ConstruirAlmacenMaderaAsync()
+    {
+        await ReplyAsync("Pega esta URL en tu navegador: " + AbstoluteMapURL);
     }
     
     

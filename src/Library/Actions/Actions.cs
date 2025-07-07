@@ -21,7 +21,6 @@ public class Actions
     {
         if (position.x >= 100 || position.x < 0 || position.y >= 100 || position.y < 0 || Map.CheckMap(position.x, position.y) != "..")
             return false;
-
         if (_building == "Barrack")
             building = new Barrack(Player, position);
         else if (_building == "GoldStorage")
@@ -37,9 +36,9 @@ public class Actions
 
         if (Player.Resources.Wood >= building.WoodCost && Player.Resources.Stone >= building.StoneCost)
         {
-            await Task.Delay(10000);
             Player.Resources.RemoveResources(wood: building.WoodCost, stone: building.StoneCost);
             Player.Buildings.Add(building);
+            
             Map.ChangeMap(position, building.Symbol, building);
             return true;
         }
