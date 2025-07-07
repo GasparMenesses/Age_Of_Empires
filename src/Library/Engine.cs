@@ -54,6 +54,7 @@ public class Engine
                 var granja = new Farm((0, 0), 500);
                 PlaceRandom(recolection, granja);
             }
+            
         }
         
     } // Crea un nuevo mapa para el juego, colocando los recursos iniciales
