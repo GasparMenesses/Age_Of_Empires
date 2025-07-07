@@ -45,134 +45,59 @@
 <body>
 
     <h1>Documentación Técnica:</h1>
-    <h2> Clase <code>Engine</code></h2>
-    <p>Esta clase representa el motor principal del juego. Gestiona la creación de jugadores, el inicio del mapa, y el
-        bucle principal del juego.</p>
 
     <div class="seccion">
-        <h3>Propiedades</h3>
-
-        <div class="propiedad">
-            <p class="firma">DateTime HoraInicio</p>
-            <p>Registra la hora de inicio de la partida.</p>
-        </div>
-
-        <div class="propiedad">
-            <p class="firma">int CantidadJugadores</p>
-            <p>Indica cuántos jugadores participarán en la partida.</p>
-        </div>
-
-        <div class="propiedad">
-            <p class="firma">List&lt;Player&gt; Jugadores</p>
-            <p>Contiene la lista de jugadores activos en la partida.</p>
-        </div>
-
-        <div class="propiedad">
-            <p class="firma">List&lt;GoldMine&gt; MinasDeOro</p>
-            <p>Lista de todas las minas de oro presentes en el mapa.</p>
-        </div>
-
-        <div class="propiedad">
-            <p class="firma">List&lt;Woods&gt; Bosques</p>
-            <p>Lista de zonas de bosque del mapa.</p>
-        </div>
-
-        <div class="propiedad">
-            <p class="firma">List&lt;Quarry&gt; MinasDePiedra</p>
-            <p>Lista de canteras (minas de piedra) disponibles en el juego.</p>
-        </div>
-
-        <div class="propiedad">
-            <p class="firma">List&lt;Farm&gt; Granjas</p>
-            <p>Lista de granjas presentes en el juego.</p>
-        </div>
-    </div>
-
-    <div class="seccion">
-        <h3>Métodos</h3>
-
-        <div class="metodo">
-            <p class="firma">void CrearJugadores()</p>
-            <p>Solicita la cantidad de jugadores y sus datos, como nombre y civilización. Inicializa sus recursos y
-                unidades.</p>
-        </div>
-
-        <div class="metodo">
-            <p class="firma">private string SeleccionarCivilizacion()</p>
-            <p>Permite al jugador elegir una civilización de entre las disponibles. Retorna el nombre de la civilización
-                elegida.</p>
-        </div>
-
-        <div class="metodo">
-            <p class="firma">void CreateNewGameMap()</p>
-            <p>Genera un nuevo mapa para la partida, agregando recursos como minas, bosques y granjas, y coloca el
-                centro cívico.</p>
-        </div>
-
-        <div class="metodo">
-            <p class="firma">void EmpezarLoop()</p>
-            <p>Inicia el ciclo de turnos del juego. Muestra los recursos y unidades del jugador y permite ejecutar
-                acciones.</p>
-        </div>
-
-        <div class="metodo">
-            <p class="firma">void MoverUnidadees(Player jugador)</p>
-            <p>Permite al jugador ingresar coordenadas y mover sus unidades a esa posición.</p>
-        </div>
-
-        <div class="metodo">
-            <p class="firma">Task RecolectarRecursos(Player jugador)</p>
-            <p>Asigna aldeanos disponibles a la recolección de un recurso específico elegido por el jugador.</p>
-        </div>
-
-        <div class="metodo">
-            <p class="firma">Task ConstruirEdificios(Player jugador)</p>
-            <p>Permite al jugador construir un edificio específico en una posición indicada. Verifica recursos y
-                posición.</p>
-        </div>
-
-        <div class="metodo">
-            <p class="firma">void AtacarUnidades(Player jugador)</p>
-            <p>Acción para atacar otras unidades (actualmente no implementado).</p>
-        </div>
-
-        <div class="metodo">
-            <p class="firma">private int SeleccionarCantidadAldeanos(Player jugador, string recurso)</p>
-            <p>Permite elegir cuántos aldeanos se asignan a una tarea determinada (como recolección de recursos).</p>
-        </div>
+        <h2>Clase <code>Engine</code></h2>
+        <p>Clase que representa el motor principal del juego. Se encarga de gestionar la creación de jugadores, el mapa, los recursos y la lógica de recolección inicial.</p>
+        <ul>
+            <li><strong>Propiedades:</strong>
+                <ul>
+                    <li><code>DateTime HoraInicio</code>: Hora de inicio de la partida.</li>
+                    <li><code>int CantidadJugadores</code>: Número de jugadores en la partida.</li>
+                    <li><code>List&lt;Player&gt; Jugadores</code>: Lista de jugadores activos en la partida.</li>
+                </ul>
+            </li>
+            <li><strong>Constructor:</strong> No tiene constructor explícito. Las propiedades se inicializan automáticamente.</li>
+            <li><strong>Métodos:</strong>
+                <ul>
+                    <li><code>void CreateNewGameMap()</code>: Crea una nueva instancia del mapa.</li>
+                    <li><code>void PlaceResourcesRandomInGameMap(List&lt;Player&gt;, Dictionary&lt;Recolection, (int, int)&gt;)</code>: Coloca recursos como oro, piedra, madera y granjas de forma aleatoria para cada jugador.</li>
+                    <li><code>void RefreshMap()</code>: Guarda la versión actual del mapa en un archivo HTML.</li>
+                    <li><code>void AsignarTresAldeanosPorJugador(List&lt;Player&gt;)</code>: Asigna tres aldeanos a cada jugador al comenzar la partida.</li>
+                    <li><code>Task Recolectar(Player, string)</code>: Asigna un aldeano a recolectar un recurso específico. Si no hay aldeanos disponibles, lanza una excepción.</li>
+                </ul>
+            </li>
+        </ul>
     </div>
 
 
     <div class="seccion">
         <h2>Clase <code>Fachada</code></h2>
-        <p>Esta clase representa la <strong>fachada del sistema</strong>, sirviendo como interfaz principal para
-            interactuar con el motor del juego (<code>Engine</code>). Simplifica la inicialización del entorno de juego
-            y la configuración de la partida.</p>
-    </div>
-
-    <div class="seccion">
-        <h3>Propiedades</h3>
-        <div class="propiedad">
-            <p class="firma">Engine engine</p>
-            <p>Instancia del motor del juego, a través del cual se manejan todas las operaciones internas como la
-                creación de jugadores, mapa y bucle de juego.</p>
-        </div>
-    </div>
-
-    <div class="seccion">
-        <h3>Constructor</h3>
-        <div class="metodo">
-            <p class="firma">Fachada()</p>
-            <p>Constructor de la clase <code>Fachada</code>. Encargado de:
+        <p>Esta clase representa la <strong>fachada del juego</strong>, que es la interfaz principal para interactuar con el motor del juego.</p>
+        <ul>
+            <li><strong>SRP:</strong> Simplifica la interacción con el motor del juego, encapsulando la lógica de creación de jugadores y manejo del entorno del juego.</li>
+            <li><strong>Propiedades:</strong></li>
             <ul>
-                <li>Inicializar el motor de juego.</li>
-                <li>Solicitar la configuración de los jugadores.</li>
-                <li>Crear el entorno y el mapa del juego.</li>
-                <li>Iniciar el bucle principal del juego.</li>
+                <li><code>static List&lt;Player&gt; jugadores</code>: Lista estática de jugadores en la partida.</li>
+                <li><code>Dictionary&lt;Recolection, (int x, int y)&gt; recolection</code>: Diccionario que asocia recursos con posiciones en el mapa.</li>
+                <li><code>Engine engine</code>: Instancia del motor principal del juego.</li>
             </ul>
-            </p>
-        </div>
+            <li><strong>Constructor:</strong> <code>Fachada()</code></li>
+            <ul>
+                <li>Inicializa el motor del juego (<code>Engine</code>).</li>
+            </ul>
+            <li><strong>Métodos:</strong></li>
+            <ul>
+                <li><code>Task CrearJugador(SocketCommandContext context, string selection)</code>: Crea un jugador nuevo con la civilización seleccionada y asigna posición inicial aleatoria en el mapa.</li>
+                <li><code>void CrearEntornoJuego()</code>: Inicializa el mapa, coloca recursos aleatorios y asigna aldeanos a cada jugador.</li>
+                <li><code>void Recolectar(string selection, Player _player)</code>: Asigna a un aldeano para recolectar un recurso específico seleccionado.</li>
+                <li><code>void ConstruirAlmacenPiedra(int x, int y, Player _player)</code>: Construye un almacén de piedra si el jugador tiene recursos suficientes; de lo contrario lanza excepción.</li>
+                <li><code>void ActualizarMapa()</code>: Refresca y guarda la versión actual del mapa.</li>
+                <li><code>void AtacarUnidades(List&lt;IUnit&gt; atacantes, List&lt;IUnit&gt; atacados)</code>: Ejecuta ataque entre unidades indicadas.</li>
+            </ul>
+        </ul>
     </div>
+
 
     <div class="seccion">
         <h2>Clase <code>Building</code></h2>
@@ -428,6 +353,65 @@
         </ul>
     </div>
 
+    <div class="seccion">
+        <h2>Clase <code>Bot</code></h2>
+        <p>Representa el bot de Discord. Se encarga de inicializar el cliente, registrar los comandos y manejar eventos.</p>
+        <ul>
+            <li><strong>Componentes principales:</strong> <code>DiscordSocketClient</code>, <code>CommandService</code>, <code>IServiceProvider</code>.</li>
+            <li><strong>Método clave:</strong> <code>StartAsync(string token)</code> para iniciar el bot.</li>
+            <li><strong>Responsabilidades:</strong> conectarse a Discord, registrar módulos de comandos y mantener el bot activo.</li>
+        </ul>
+    </div>
+
+
+    <div class="seccion">
+        <h2>Clase <code>BotLoader</code></h2>
+        <p>Punto de entrada del programa. Configura servicios, carga la configuración desde archivos y ejecuta el bot.</p>
+        <ul>
+            <li><strong>Componentes principales:</strong> <code>IConfiguration</code>, <code>IBot</code>.</li>
+            <li><strong>Constructor:</strong> Se ejecuta en el método <code>Main</code>, donde se llama a <code>ConfigureServices()</code> para armar las dependencias.</li>
+            <li><strong>Responsabilidades:</strong> construir el entorno del bot y lanzar su ejecución.</li>
+        </ul>
+    </div>    
+
+    <div class="seccion">
+        <h2>Clase <code>GeneralModule</code></h2>
+        <p>Módulo de comandos de Discord. Contiene los comandos que los jugadores pueden usar para interactuar con el juego.</p>
+        <ul>
+            <li><strong>Comandos:</strong> <code>Join</code>, <code>StartNewGameAsync</code>, <code>CreateNewGameMapAsync</code>.</li>
+            <li><strong>Dependencia:</strong> Usa una instancia estática de <code>Fachada</code> para conectarse con la lógica del juego.</li>
+            <li><strong>Responsabilidades:</strong> permitir a los jugadores unirse al juego, comenzar una partida, y crear el mapa del juego una sola vez.</li>
+        </ul>
+    </div>
+
+    <h1>Excepciones</h1>
+
+    <div class="seccion">
+        <h2>Clase <code>RecursosInsuficientesException</code></h2>
+        <p>Excepción que se lanza cuando un jugador intenta realizar una acción pero no cuenta con los recursos necesarios.</p>
+        <ul>
+            <li><strong>Constructor:</strong> <code>RecursosInsuficientesException(string mensaje)</code>.</li>
+            <li><strong>Uso típico:</strong> construir edificios o entrenar unidades sin tener suficiente oro, madera, piedra o comida.</li>
+        </ul>
+    </div>
+
+    <div class="seccion">
+        <h2>Clase <code>SeleccionPendienteException</code></h2>
+        <p>Excepción utilizada cuando una acción requiere una selección previa por parte del jugador y esta no ha sido realizada.</p>
+        <ul>
+            <li><strong>Constructor:</strong> <code>SeleccionPendienteException(string mensaje)</code>.</li>
+            <li><strong>Uso típico:</strong> al intentar mover o usar unidades sin haberlas seleccionado primero.</li>
+        </ul>
+    </div>
+
+    <div class="seccion">
+        <h2>Clase <code>UnidadNoDisponibleException</code></h2>
+        <p>Excepción que indica que una unidad solicitada no está disponible para realizar la acción indicada.</p>
+        <ul>
+            <li><strong>Constructor:</strong> <code>UnidadNoDisponibleException(string mensaje)</code>.</li>
+            <li><strong>Uso típico:</strong> al asignar una unidad ocupada o inexistente a una tarea específica.</li>
+        </ul>
+    </div>
 
 
     <h1>Algunas Interfaces</h1>
