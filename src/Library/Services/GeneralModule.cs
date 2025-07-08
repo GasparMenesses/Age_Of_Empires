@@ -616,7 +616,103 @@ public class GeneralModule : ModuleBase<SocketCommandContext>
         await ReplyAsync($"🏗 Almacén de {tipoAlmacen[selection]} construyéndose en ({x},{y}).");
         selections.Remove(userId);
     }
+    // ----------------------------
+    // Comando: Entrenar
+    // ----------------------------
+    [Command("Entrenar")]
+public async Task EntrenarAsync([Remainder] string args = null)
+{
+    if (phase != 2)
+    {
+        await ReplyAsync("Todavía no podés entrenar unidades, usá *!iniciar* para comenzar la partida.");
+        return;
+    }
+
+    if (string.IsNullOrWhiteSpace(args))
+    {
+        await ReplyAsync("Faltan argumentos. Usá: !Entrenar cantidad tipo (ej: !Entrenar 3 Cavalry).");
+        return;
+    }
+
+    var parts = args.Split(' ', 2, StringSplitOptions.RemoveEmptyEntries);
+    if (parts.Length != 2 || !int.TryParse(parts[0], out var cantidad))
+    {
+        await ReplyAsync("Formato inválido. Usá: !Entrenar cantidad tipo (ej: !Entrenar 3 Cavalry).");
+        return;
+    }
+
+    var tipoUnidad = parts[1];
+
+    try
+    {
+        await RespuestaPendiente(Context);
+    }
+    catch (SeleccionPendienteException e)
+    {
+        await ReplyAsync(e.Message);
+        return;
+    }
+
+    string userId = Context.User.Id.ToString();
+
+    // Confirmación del tipo de unidad
+    await ReplyAsync($"¿Querés entrenar {cantidad} unidad(es) de tipo {tipoUnidad}? Respondé con 'sí' o 'no'.");
+
+    var tcs = new TaskCompletionSource<string>();
+    selections[userId] = tcs;
+
+    _ = WaitConfirmacionEntrenarAsync(Context, tcs, cantidad, tipoUnidad);
+}
+
+private async Task WaitConfirmacionEntrenarAsync(SocketCommandContext context, TaskCompletionSource<string> tcs, int cantidad, string tipoUnidad)
+{
+    string respuesta = await tcs.Task;
+    string userId = context.User.Id.ToString();
+
+    if (respuesta.ToLower() == "sí" || respuesta.ToLower() == "si")
+    {
+        var jugador = jugadores.FirstOrDefault(j => j.Id == userId);
+        if (jugador == null)
+        {
+            await ReplyAsync("No se encontró tu jugador en la partida.");
+            selections.Remove(userId);
+            return;
+        }
+        var barrack = jugador.Buildings.Keys.OfType<Barrack>().FirstOrDefault();
+        if (barrack == null)
+        {
+            await ReplyAsync("No tenés ningún cuartel (Barrack) construido para entrenar unidades.");
+            selections.Remove(userId);
+            return;
+        }
     
+        try
+        {
+            fachada.EntrenarUnidad(jugador, tipoUnidad, cantidad);
+            await ReplyAsync($"Se están entrenando {cantidad} unidad(es) de tipo {tipoUnidad}.");
+        }
+        catch (RecursosInsuficientesException e)
+        {
+            await ReplyAsync(e.Message);
+        }
+        catch (ArgumentException e)
+        {
+            await ReplyAsync(e.Message);
+        }
+        catch (Exception e)
+        {
+            await ReplyAsync("Error inesperado: " + e.Message);
+        }
+    }
+    else
+    {
+        await ReplyAsync("Entrenamiento cancelado.");
+    }
+
+    selections.Remove(userId);
+    
+}
+
     //////////////////////////////////////////////////////////////
     ////////////////// Manejadores de selección //////////////////
     //////////////////////////////////////////////////////////////
