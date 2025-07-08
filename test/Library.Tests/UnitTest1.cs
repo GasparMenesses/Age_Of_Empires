@@ -792,8 +792,8 @@ public class Tests
         {
             Assert.That(_player.Buildings[_barrack].x, Is.EqualTo(10));
             Assert.That(_player.Buildings[_barrack].y, Is.EqualTo(10));
-            Assert.That(_barrack.WoodCost, Is.EqualTo(25));
-            Assert.That(_barrack.StoneCost, Is.EqualTo(55));
+            Assert.That(Barrack.WoodCost, Is.EqualTo(25));
+            Assert.That(Barrack.StoneCost, Is.EqualTo(55));
             Assert.That(_barrack.ConstructionTime, Is.EqualTo(30));
             Assert.That(_barrack.Symbol, Is.EqualTo("🏯⚔️"));
             Assert.That(_barrack.Unit.ContainsKey("Archer"));

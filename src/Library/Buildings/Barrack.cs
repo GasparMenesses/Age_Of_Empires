@@ -23,7 +23,8 @@ public class Barrack : Building
     /// Diccionario que contiene los tipos de unidades disponibles para entrenar en el cuartel.
     /// </summary>
     public Dictionary<string, Unit> Unit { get; set; }
-
+    public static new int WoodCost => 25; // Costo de madera para construir el cuartel
+    public static new int StoneCost => 55; // Costo de piedra para construir el cuartel
     /// <summary>
     /// Constructor de la clase Barrack.
     /// </summary>
