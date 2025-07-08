@@ -35,7 +35,7 @@ public class Building : IConstructionInfo, IBuildable
         if (TimeElapsed >= ConstructionTime)
         {
             TimeElapsed = ConstructionTime;
-       
+           
         }
     }
 }
