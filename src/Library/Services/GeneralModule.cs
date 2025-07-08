@@ -13,7 +13,7 @@ public class GeneralModule : ModuleBase<SocketCommandContext>
     // ----------------------------
     // Variables y estructuras del juego
     // ----------------------------
-    
+
     private static Fachada fachada = new Fachada(); // Fachada para manejar lógica del juego
     private List<Player> jugadores => Fachada.jugadores; // Jugadores actuales en la partida
     private static int phase = 0; // 0: Sin partida, 1: Esperando jugadores, 2: Juego en curso, 3: Finalizado
@@ -25,27 +25,32 @@ public class GeneralModule : ModuleBase<SocketCommandContext>
     // Comandos disponibles por fase
     static Dictionary<int, List<string>> commands = new Dictionary<int, List<string>>()
     {
-        {0, new List<string>{ "!CrearPartida" }},
-        {1, new List<string>{ "!Unirse", "!Iniciar" }},
-        {2, new List<string>{
-            "!Mapa",
-            "!RecolectarRecursos",
-            "!RecursosDisponibles",
-            "!Atacar",
-            "!MisUnidades",
-            "!Construir",
-            "!Resumen"
-        }},
-        {3, new List<string>{ "!Resumen" }}
+        { 0, new List<string> { "!CrearPartida" } },
+        { 1, new List<string> { "!Unirse", "!Iniciar" } },
+        {
+            2, new List<string>
+            {
+                "!Mapa",
+                "!RecolectarRecursos",
+                "!RecursosDisponibles",
+                "!Atacar",
+                "!MisUnidades",
+                "!Construir",
+                "!ConstruirAlmacenPiedra",
+                "!ConstruirAlmacenOro",
+                "!Entrenar",
+                "!Resumen"
+            }
+        },
+        { 3, new List<string> { "!Resumen" } }
     };
-
     // Ruta del archivo HTML del mapa
     private static string RelativeMapURL = "../../../../../MapaHtml/mapa_generado.html";
     private static string AbstoluteMapURL = Path.GetFullPath(RelativeMapURL).Replace("\\", "/");
-    
+
     // Resumen de la partida
     private static string Resume = "";
-    
+
     //////////////////////////////////////////////////////////////
     //////////////////// Comandos universales ////////////////////
     //////////////////////////////////////////////////////////////
@@ -79,12 +84,12 @@ public class GeneralModule : ModuleBase<SocketCommandContext>
             return;
         }
     }
-    
-    
+
+
     //////////////////////////////////////////////////////////////
     //////////////////// Configuarción incial ////////////////////
     //////////////////////////////////////////////////////////////
-    
+
     [Command("Resumen")]
     public async Task ResumenAsync()
     {
@@ -93,16 +98,14 @@ public class GeneralModule : ModuleBase<SocketCommandContext>
             await ReplyAsync("Todavía no hay una partida creada, usá **!crearpartida**.");
             return;
         }
-        
+
         await ReplyAsync($"**Resumen de partida:**\n{Resume}\n" +
                          $"Jugadores:\n{string.Join("\n", jugadores.Select(j => $"{j.Nombre} - Civilización: {j.Civilization.NombreCivilizacion}"))}\n" +
                          $"Fase actual: {phase}\n" +
                          $"URL del mapa: {AbstoluteMapURL}");
-        
-        
     }
 
-    
+
     // ----------------------------
     // Comando: CrearPartida
     // ----------------------------
@@ -145,9 +148,9 @@ public class GeneralModule : ModuleBase<SocketCommandContext>
             await ReplyAsync("Ya hay una partida en curso.");
             return;
         }
-        
+
         boolPlayers[Context.User.Id.ToString()] = true; // Marca al jugador como listo
-        
+
         foreach (var boolPlayer in boolPlayers)
         {
             if (boolPlayer.Value == false)
@@ -156,17 +159,19 @@ public class GeneralModule : ModuleBase<SocketCommandContext>
                 return;
             }
         }
+
         var keys = boolPlayers.Keys.ToList();
         foreach (var key in keys)
         {
             boolPlayers[key] = false;
         }
+
         // Si todo está bien, arrancamos
         phase += 1;
         Resume += $"{DateTime.Now.ToString()}:  Partida iniciada por: " + Context.User.Username + "\n";
         await ReplyAsync("Cargando entorno de juego...");
-        Thread.Sleep(1000); 
-        
+        Thread.Sleep(1000);
+
         fachada.CrearEntornoJuego();
         await ReplyAsync("Accede al nuevo mapa (recordá recargar con F5 si ya lo abriste antes):");
         await ReplyAsync("Pega esta URL en tu navegador: **" + AbstoluteMapURL + "**");
@@ -183,6 +188,7 @@ public class GeneralModule : ModuleBase<SocketCommandContext>
             await ReplyAsync("Todavía no podés ver el mapa, usá **!iniciar** para comenzar la partida.");
             return;
         }
+
         await ReplyAsync("Pega esta URL en tu navegador: " + AbstoluteMapURL);
     }
 
@@ -248,17 +254,18 @@ public class GeneralModule : ModuleBase<SocketCommandContext>
     private async Task WaitUnirseAsync(SocketCommandContext context, TaskCompletionSource<string> tcs)
     {
         string selection = await tcs.Task;
-        List<string> options = new List<string>{"1", "2", "3"};
+        List<string> options = new List<string> { "1", "2", "3" };
         if (!options.Contains(selection))
         {
             await ReplyAsync("Opción inválida. Por favor, ingresá 1, 2 o 3.");
-    
+
             // Vuelvo a crear otra espera para que elija bien
             var nuevoTCS = new TaskCompletionSource<string>();
             selections[context.User.Id.ToString()] = nuevoTCS;
             WaitUnirseAsync(context, nuevoTCS); // <-- reintento
             return;
         }
+
         try
         {
             await fachada.CrearJugador(context, selection);
@@ -268,6 +275,7 @@ public class GeneralModule : ModuleBase<SocketCommandContext>
             await ReplyAsync(e.Message);
             return;
         }
+
         await context.Channel.SendMessageAsync(
             $"El jugador {context.User.Username} se ha unido con la civilización " +
             $"{jugadores[jugadores.Count - 1].Civilization.NombreCivilizacion}."
@@ -276,11 +284,11 @@ public class GeneralModule : ModuleBase<SocketCommandContext>
                   $"{jugadores[jugadores.Count - 1].Civilization.NombreCivilizacion}.\n";
         selections.Remove(context.User.Id.ToString());
     }
-    
+
     //////////////////////////////////////////////////////////////
     ///////////////////// Post Configuarción /////////////////////
     //////////////////////////////////////////////////////////////
-    
+
     // ----------------------------
     // Comando: Recolectar
     // ----------------------------
@@ -292,7 +300,7 @@ public class GeneralModule : ModuleBase<SocketCommandContext>
             await ReplyAsync("No hay una partida en curso, usá **!iniciar**.");
             return;
         }
-        
+
         // Verificamos si tiene una selección pendiente
         try
         {
@@ -303,10 +311,11 @@ public class GeneralModule : ModuleBase<SocketCommandContext>
             await ReplyAsync(e.Message);
             return;
         }
-        
+
         string userId = Context.User.Id.ToString();
         await ReplyAsync("Que elemento deseas recolectar " + Context.User.Username + "?");
-        await ReplyAsync($"Ingrese **!N** donde N = **\n 1 - Recolectar Madera\n 2 - Recolectar Piedra\n 3 - Recolectar Oro\n 4 - Recolectar Comida**" );
+        await ReplyAsync(
+            $"Ingrese **!N** donde N = **\n 1 - Recolectar Madera\n 2 - Recolectar Piedra\n 3 - Recolectar Oro\n 4 - Recolectar Comida**");
 
         var tcs = new TaskCompletionSource<string>();
         selections[userId] = tcs;
@@ -315,8 +324,8 @@ public class GeneralModule : ModuleBase<SocketCommandContext>
         _ = WaitRecolectarAsync(Context, tcs);
         Resume += $"{DateTime.Now.ToString()}:  {Context.User.Username} ha iniciado la recolección de recursos.\n";
     }
-    
-    private async Task WaitRecolectarAsync(SocketCommandContext context, TaskCompletionSource<string> tcs )
+
+    private async Task WaitRecolectarAsync(SocketCommandContext context, TaskCompletionSource<string> tcs)
     {
         // Espera la selección del usuario  
         string selection = await tcs.Task;
@@ -335,12 +344,13 @@ public class GeneralModule : ModuleBase<SocketCommandContext>
             await ReplyAsync(e.Message);
             return;
         }
+
         await context.Channel.SendMessageAsync(
             $"El jugador {context.User.Username} ha seleccionado recolectar recursos con la opción: {selection}."
         );
         selections.Remove(context.User.Id.ToString()); // Elimina la selección pendiente del jugador
-        
     }
+
     // ----------------------------
     // Comando: Ver Recursos
     // ----------------------------
@@ -348,12 +358,14 @@ public class GeneralModule : ModuleBase<SocketCommandContext>
     public async Task MostrarRecursosAsync()
     {
         Player jugador = jugadores.FirstOrDefault(j => j.Id == Context.User.Id.ToString());
-        Resume += $"{DateTime.Now.ToString()}: El jugador {Context.User.Username} ha consultado sus recursos disponibles.\n";
-        await ReplyAsync( 
+        Resume +=
+            $"{DateTime.Now.ToString()}: El jugador {Context.User.Username} ha consultado sus recursos disponibles.\n";
+        await ReplyAsync(
             $"El jugador {Context.User.Username} dispone de los recursos:\n " +
             $"ORO: {jugador.Resources.Gold.ToString()}\n MADERA: {jugador.Resources.Wood.ToString()}\n PIEDRA: {jugador.Resources.Stone.ToString()}\n COMIDA: {jugador.Resources.Food.ToString()}\n "
         );
     }
+
     // ----------------------------
     // Comando: Atacar unidades
     // ----------------------------
@@ -389,7 +401,8 @@ public class GeneralModule : ModuleBase<SocketCommandContext>
         for (int i = 0; i < jugador.Units.Count; i++)
         {
             var unidad = jugador.Units[i];
-            await ReplyAsync($"**{i}** - Unidad con vida: {unidad.Life}, posición: ({unidad.Position["x"]},{unidad.Position["y"]})");
+            await ReplyAsync(
+                $"**{i}** - Unidad con vida: {unidad.Life}, posición: ({unidad.Position["x"]},{unidad.Position["y"]})");
         }
 
         // Crea una tarea pendiente de respuesta y la guarda por ID de usuario
@@ -400,7 +413,8 @@ public class GeneralModule : ModuleBase<SocketCommandContext>
         _ = WaitIndiceAtacanteAsync(Context, jugador, tcs);
     }
 
-    private async Task WaitIndiceAtacanteAsync(SocketCommandContext context, Player jugador, TaskCompletionSource<string> tcs)
+    private async Task WaitIndiceAtacanteAsync(SocketCommandContext context, Player jugador,
+        TaskCompletionSource<string> tcs)
     {
         string userId = context.User.Id.ToString();
 
@@ -435,8 +449,10 @@ public class GeneralModule : ModuleBase<SocketCommandContext>
         for (int i = 0; i < enemigos.Count; i++)
         {
             var u = enemigos[i];
-            await context.Channel.SendMessageAsync($"**{i}** - Enemigo con vida: {u.Life}, posición: ({u.Position["x"]},{u.Position["y"]})");
-            Resume += $"{DateTime.Now.ToString()}: El jugador {context.User.Username} ha seleccionado la unidad atacante con vida: {atacante.Life} y posición: ({atacante.Position["x"]},{atacante.Position["y"]}).\n";
+            await context.Channel.SendMessageAsync(
+                $"**{i}** - Enemigo con vida: {u.Life}, posición: ({u.Position["x"]},{u.Position["y"]})");
+            Resume +=
+                $"{DateTime.Now.ToString()}: El jugador {context.User.Username} ha seleccionado la unidad atacante con vida: {atacante.Life} y posición: ({atacante.Position["x"]},{atacante.Position["y"]}).\n";
         }
 
         // Crea otra tarea pendiente para que el jugador elija al objetivo
@@ -447,7 +463,8 @@ public class GeneralModule : ModuleBase<SocketCommandContext>
         _ = WaitIndiceObjetivoAsync(context, jugador, atacante, enemigos, tcsObjetivo);
     }
 
-    private async Task WaitIndiceObjetivoAsync(SocketCommandContext context, Player jugador, IUnit atacante, List<IUnit> enemigos, TaskCompletionSource<string> tcs)
+    private async Task WaitIndiceObjetivoAsync(SocketCommandContext context, Player jugador, IUnit atacante,
+        List<IUnit> enemigos, TaskCompletionSource<string> tcs)
     {
         string userId = context.User.Id.ToString();
 
@@ -468,7 +485,8 @@ public class GeneralModule : ModuleBase<SocketCommandContext>
         fachada.AtacarUnidades(new List<IUnit> { atacante }, new List<IUnit> { objetivo });
 
         // Muestra el resultado del ataque
-        await context.Channel.SendMessageAsync($" ¡Ataque realizado! La unidad enemiga ahora tiene {objetivo.Life} de vida.");
+        await context.Channel.SendMessageAsync(
+            $" ¡Ataque realizado! La unidad enemiga ahora tiene {objetivo.Life} de vida.");
 
         // Si la vida del objetivo llegó a 0 o menos, se eliminó
         if (objetivo.Life <= 0)
@@ -480,7 +498,7 @@ public class GeneralModule : ModuleBase<SocketCommandContext>
         selections.Remove(userId);
     }
 
-    
+
     // ----------------------------
     // Comando: VerUnidades
     // ----------------------------
@@ -504,10 +522,12 @@ public class GeneralModule : ModuleBase<SocketCommandContext>
         for (int i = 0; i < jugador.Units.Count; i++)
         {
             var unidad = jugador.Units[i];
-            mensaje += $"[{i}] {unidad.GetType().Name} - Vida: {unidad.Life}, Ataque: {unidad.Attack}, Defensa: {unidad.Defense}\n";
+            mensaje +=
+                $"[{i}] {unidad.GetType().Name} - Vida: {unidad.Life}, Ataque: {unidad.Attack}, Defensa: {unidad.Defense}\n";
         }
-        
-        Resume += $"{DateTime.Now.ToString()}: El jugador {Context.User.Username} ha consultado sus unidades disponibles.\n";
+
+        Resume +=
+            $"{DateTime.Now.ToString()}: El jugador {Context.User.Username} ha consultado sus unidades disponibles.\n";
 
         await ReplyAsync(mensaje);
     }
@@ -529,6 +549,7 @@ public class GeneralModule : ModuleBase<SocketCommandContext>
             await ReplyAsync("Faltan las coordenadas. Usá !Construir x,y (ej: !Construir 4,6).");
             return;
         }
+
         var parts = coords.Split(',');
         if (parts.Length != 2 || !int.TryParse(parts[0], out var x) || !int.TryParse(parts[1], out var y))
         {
@@ -557,16 +578,17 @@ public class GeneralModule : ModuleBase<SocketCommandContext>
         _ = WaitTipoAlmacenAsync(Context, tcs, x, y);
     }
 
-    private async Task WaitTipoAlmacenAsync(SocketCommandContext context, TaskCompletionSource<string> tcs, int x, int y)
+    private async Task WaitTipoAlmacenAsync(SocketCommandContext context, TaskCompletionSource<string> tcs, int x,
+        int y)
     {
         string selection = await tcs.Task;
         string userId = context.User.Id.ToString();
 
         Dictionary<string, string> tipoAlmacen = new()
         {
-            {"1", "Madera"},
-            {"2", "Piedra"},
-            {"3", "Oro"}
+            { "1", "Madera" },
+            { "2", "Piedra" },
+            { "3", "Oro" }
         };
 
         if (!tipoAlmacen.ContainsKey(selection))
@@ -585,17 +607,20 @@ public class GeneralModule : ModuleBase<SocketCommandContext>
             switch (tipoAlmacen[selection])
             {
                 case "Madera":
-                    fachada.ConstruirAlmacenMadera(x, y, jugador);  
-                    Resume += $"{DateTime.Now.ToString()}: El jugador {context.User.Username} ha construido un almacén de Madera en ({x},{y}).\n";
+                    fachada.ConstruirAlmacenMadera(x, y, jugador);
+                    Resume +=
+                        $"{DateTime.Now.ToString()}: El jugador {context.User.Username} ha construido un almacén de Madera en ({x},{y}).\n";
                     break;
                 case "Piedra":
-                    fachada.ConstruirAlmacenPiedra(x,y, jugador);
-                    
-                    Resume += $"{DateTime.Now.ToString()}: El jugador {context.User.Username} ha construido un almacén de Piedra en ({x},{y}).\n";
+                    fachada.ConstruirAlmacenPiedra(x, y, jugador);
+
+                    Resume +=
+                        $"{DateTime.Now.ToString()}: El jugador {context.User.Username} ha construido un almacén de Piedra en ({x},{y}).\n";
                     break;
                 case "Oro":
                     fachada.ConstruirAlmacenOro(x, y, jugador);
-                    Resume += $"{DateTime.Now.ToString()}: El jugador {context.User.Username} ha construido un almacén de Oro en ({x},{y}).\n";
+                    Resume +=
+                        $"{DateTime.Now.ToString()}: El jugador {context.User.Username} ha construido un almacén de Oro en ({x},{y}).\n";
                     break;
             }
         }
@@ -611,112 +636,114 @@ public class GeneralModule : ModuleBase<SocketCommandContext>
             selections.Remove(userId);
             return;
         }
-        
+
         fachada.ActualizarMapa(); // Actualiza el mapa después de construir
         await ReplyAsync($"🏗 Almacén de {tipoAlmacen[selection]} construyéndose en ({x},{y}).");
         selections.Remove(userId);
     }
+
     // ----------------------------
     // Comando: Entrenar
     // ----------------------------
     [Command("Entrenar")]
-public async Task EntrenarAsync([Remainder] string args = null)
-{
-    if (phase != 2)
+    public async Task EntrenarAsync([Remainder] string args = null)
     {
-        await ReplyAsync("Todavía no podés entrenar unidades, usá *!iniciar* para comenzar la partida.");
-        return;
-    }
-
-    if (string.IsNullOrWhiteSpace(args))
-    {
-        await ReplyAsync("Faltan argumentos. Usá: !Entrenar cantidad tipo (ej: !Entrenar 3 Cavalry).");
-        return;
-    }
-
-    var parts = args.Split(' ', 2, StringSplitOptions.RemoveEmptyEntries);
-    if (parts.Length != 2 || !int.TryParse(parts[0], out var cantidad))
-    {
-        await ReplyAsync("Formato inválido. Usá: !Entrenar cantidad tipo (ej: !Entrenar 3 Cavalry).");
-        return;
-    }
-
-    var tipoUnidad = parts[1];
-
-    try
-    {
-        await RespuestaPendiente(Context);
-    }
-    catch (SeleccionPendienteException e)
-    {
-        await ReplyAsync(e.Message);
-        return;
-    }
-
-    string userId = Context.User.Id.ToString();
-
-    // Confirmación del tipo de unidad
-    await ReplyAsync($"¿Querés entrenar {cantidad} unidad(es) de tipo {tipoUnidad}? Respondé con 'sí' o 'no'.");
-
-    var tcs = new TaskCompletionSource<string>();
-    selections[userId] = tcs;
-
-    _ = WaitConfirmacionEntrenarAsync(Context, tcs, cantidad, tipoUnidad);
-}
-
-private async Task WaitConfirmacionEntrenarAsync(SocketCommandContext context, TaskCompletionSource<string> tcs, int cantidad, string tipoUnidad)
-{
-    string respuesta = await tcs.Task;
-    string userId = context.User.Id.ToString();
-
-    if (respuesta.ToLower() == "sí" || respuesta.ToLower() == "si")
-    {
-        var jugador = jugadores.FirstOrDefault(j => j.Id == userId);
-        if (jugador == null)
+        if (phase != 2)
         {
-            await ReplyAsync("No se encontró tu jugador en la partida.");
-            selections.Remove(userId);
+            await ReplyAsync("Todavía no podés entrenar unidades, usá *!iniciar* para comenzar la partida.");
             return;
         }
-        var barrack = jugador.Buildings.Keys.OfType<Barrack>().FirstOrDefault();
-        if (barrack == null)
+
+        if (string.IsNullOrWhiteSpace(args))
         {
-            await ReplyAsync("No tenés ningún cuartel (Barrack) construido para entrenar unidades.");
-            selections.Remove(userId);
+            await ReplyAsync("Faltan argumentos. Usá: !Entrenar cantidad tipo (ej: !Entrenar 3 Cavalry).");
             return;
         }
-    
+
+        var parts = args.Split(' ', 2, StringSplitOptions.RemoveEmptyEntries);
+        if (parts.Length != 2 || !int.TryParse(parts[0], out var cantidad))
+        {
+            await ReplyAsync("Formato inválido. Usá: !Entrenar cantidad tipo (ej: !Entrenar 3 Cavalry).");
+            return;
+        }
+
+        var tipoUnidad = parts[1];
+
         try
         {
-            fachada.EntrenarUnidad(jugador, tipoUnidad, cantidad);
-            await ReplyAsync($"Se están entrenando {cantidad} unidad(es) de tipo {tipoUnidad}.");
+            await RespuestaPendiente(Context);
         }
-        catch (RecursosInsuficientesException e)
+        catch (SeleccionPendienteException e)
         {
             await ReplyAsync(e.Message);
+            return;
         }
-        catch (ArgumentException e)
-        {
-            await ReplyAsync(e.Message);
-        }
-        catch (Exception e)
-        {
-            await ReplyAsync("Error inesperado: " + e.Message);
-        }
-    }
-    else
-    {
-        await ReplyAsync("Entrenamiento cancelado.");
+
+        string userId = Context.User.Id.ToString();
+
+        // Confirmación del tipo de unidad
+        await ReplyAsync($"¿Querés entrenar {cantidad} unidad(es) de tipo {tipoUnidad}? Respondé con 'sí' o 'no'.");
+
+        var tcs = new TaskCompletionSource<string>();
+        selections[userId] = tcs;
+
+        _ = WaitConfirmacionEntrenarAsync(Context, tcs, cantidad, tipoUnidad);
     }
 
-    selections.Remove(userId);
-    
-}
+    private async Task WaitConfirmacionEntrenarAsync(SocketCommandContext context, TaskCompletionSource<string> tcs,
+        int cantidad, string tipoUnidad)
+    {
+        string respuesta = await tcs.Task;
+        string userId = context.User.Id.ToString();
+
+        if (respuesta.ToLower() == "sí" || respuesta.ToLower() == "si")
+        {
+            var jugador = jugadores.FirstOrDefault(j => j.Id == userId);
+            if (jugador == null)
+            {
+                await ReplyAsync("No se encontró tu jugador en la partida.");
+                selections.Remove(userId);
+                return;
+            }
+
+            var barrack = jugador.Buildings.Keys.OfType<Barrack>().FirstOrDefault();
+            if (barrack == null)
+            {
+                await ReplyAsync("No tenés ningún cuartel (Barrack) construido para entrenar unidades.");
+                selections.Remove(userId);
+                return;
+            }
+
+            try
+            {
+                fachada.EntrenarUnidad(jugador, tipoUnidad, cantidad);
+                await ReplyAsync($"Se están entrenando {cantidad} unidad(es) de tipo {tipoUnidad}.");
+            }
+            catch (RecursosInsuficientesException e)
+            {
+                await ReplyAsync(e.Message);
+            }
+            catch (ArgumentException e)
+            {
+                await ReplyAsync(e.Message);
+            }
+            catch (Exception e)
+            {
+                await ReplyAsync("Error inesperado: " + e.Message);
+            }
+        }
+        else
+        {
+            await ReplyAsync("Entrenamiento cancelado.");
+        }
+
+        selections.Remove(userId);
+    }
 
     //////////////////////////////////////////////////////////////
     ////////////////// Manejadores de selección //////////////////
     //////////////////////////////////////////////////////////////
-    
+
     // ----------------------------
     // Comandos de selección: 1, 2, 3
     // ----------------------------
@@ -728,7 +755,7 @@ private async Task WaitConfirmacionEntrenarAsync(SocketCommandContext context, T
 
     [Command("3")]
     public async Task Selection3() => await Selection("3");
-    
+
     [Command("4")]
     public async Task Selection4() => await Selection("4");
 
