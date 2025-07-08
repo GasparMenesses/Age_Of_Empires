@@ -8,7 +8,7 @@ namespace Library.Units;
 
 public class Thor : Unit
 {
-    public Thor(Player player,Building building) : base(player,building)
+    public Thor(Player player,(int x,int y) position) : base(player,position)
     {
         Speed = 1;
         Attack = 11;

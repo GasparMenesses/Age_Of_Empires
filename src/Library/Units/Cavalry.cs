@@ -8,7 +8,7 @@ namespace Library.Units
     public class Cavalry : Unit
     {
 
-        public Cavalry(Player player,Building building) : base(player,building)
+        public Cavalry(Player player,(int x,int y) position) : base(player,position)
         {
             Speed = 3;
             Attack = 8;

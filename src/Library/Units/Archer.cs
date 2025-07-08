@@ -13,7 +13,7 @@ public class Archer : Unit
     public int Defense { get; set; }
     public int TimeTraining { get; set; }
 
-    public Archer(Player player,Building building) : base(player,building)
+    public Archer(Player player,(int x,int y) position) : base(player,position)
     {
         Speed = 1;
         Attack = 3;

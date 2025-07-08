@@ -96,7 +96,7 @@ public class Engine
             // Cada jugador comienza con 3 aldeanos
             for (int i = 0; i < 3; i++)
             {
-                jugador.Units.Add(new Villager(jugador,jugador.Buildings.Keys.First())); // Asigna un aldeano al centro cívico del jugador
+                jugador.Units.Add(new Villager(jugador,(jugador.Buildings.Values.First().x,jugador.Buildings.Values.First().y))); // Asigna un aldeano al centro cívico del jugador
             }
         }
  

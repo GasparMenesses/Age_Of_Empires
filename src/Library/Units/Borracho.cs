@@ -8,7 +8,7 @@ namespace Library.Units;
 
 public class Borracho : Unit
 {
-    public Borracho(Player player,Building building) : base(player,building)
+    public Borracho(Player player,(int x,int y) position) : base(player,position)
     {
         Speed = 5;
         Attack = 5;

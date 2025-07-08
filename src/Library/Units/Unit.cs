@@ -16,12 +16,12 @@ public class Unit : IUnit
     public int Defense { get; set; }
     public int Life { get; set; }
 
-    public Unit(Player player,Building building)
+    public Unit(Player player,(int x,int y) position)
     {
         Position = new Dictionary<string, int>
         {
-            { "x", player.Buildings[building].x },
-            { "y", player.Buildings[building].y },
+            { "x", position.x },
+            { "y", position.y },
         };
     }
 }

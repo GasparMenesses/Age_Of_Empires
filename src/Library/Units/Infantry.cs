@@ -6,7 +6,7 @@ namespace Library.Units;
 // Infantería tiene propiedades específicas como velocidad, ataque, defensa, tiempo de entrenamiento y costo.
 public class Infantry : Unit
 {
-    public Infantry(Player player,Building building) : base(player,building)
+    public Infantry(Player player,(int x,int y) position) : base(player,position)
     {
         Speed = 1;
         Attack = 3;

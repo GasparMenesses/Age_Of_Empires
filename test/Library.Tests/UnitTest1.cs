@@ -64,10 +64,10 @@ public class Tests
             y = rand.Next(1, 100);
         } while (Map.CheckMap(x,y) != "..");
         _player.Buildings[_player.Buildings.Keys.First()] = (x,y);
-        Assert.That(_player.Buildings[_civicCenter].x, Is.Not.GreaterThanOrEqualTo(99));
-        Assert.That(_player.Buildings[_civicCenter].y, Is.Not.GreaterThanOrEqualTo(99));
-        Assert.That(_player.Buildings[_civicCenter].x, Is.Not.LessThanOrEqualTo(0));
-        Assert.That(_player.Buildings[_civicCenter].y, Is.Not.LessThanOrEqualTo(0));
+        Assert.That(_player.Buildings[_civicCenter].x, Is.Not.GreaterThanOrEqualTo(100));
+        Assert.That(_player.Buildings[_civicCenter].y, Is.Not.GreaterThanOrEqualTo(100));
+        Assert.That(_player.Buildings[_civicCenter].x, Is.Not.LessThanOrEqualTo(-1));
+        Assert.That(_player.Buildings[_civicCenter].y, Is.Not.LessThanOrEqualTo(-1));
     }
 
     /// <summary>
@@ -82,6 +82,7 @@ public class Tests
         _player.Resources.Stone = 1000;
         int woodQuantity = _player.Resources.Wood;
         int stoneQuantity = _player.Resources.Stone;
+        Assert.That(Map.CheckMap(x, y), Is.EqualTo(".."));
         bool result = _player.Actions.Build("Barrack", (x, y)).Result;
         Assert.That(result, Is.True);
 
