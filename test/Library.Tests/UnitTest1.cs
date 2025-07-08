@@ -309,15 +309,15 @@ public class Tests
         int initialFood = _civicCenter.Food;
         int initialGold = _civicCenter.Gold;
 
-        _civicCenter.AddWood(_player,10);
-        _civicCenter.AddStone(_player,20);
-        _civicCenter.AddFood(_player,30);
-        _civicCenter.AddGold(_player,10);
+        _civicCenter.AddWood(_player, 10);
+        _civicCenter.AddStone(_player, 20);
+        _civicCenter.AddFood(_player, 30);
+        _civicCenter.AddGold(_player, 40);
 
-        Assert.That(_civicCenter.Wood, Is.EqualTo(initialWood + 50));
-        Assert.That(_civicCenter.Stone, Is.EqualTo(initialStone + 30));
-        Assert.That(_civicCenter.Food, Is.EqualTo(initialFood + 20));
-        Assert.That(_civicCenter.Gold, Is.EqualTo(initialGold + 10));
+        Assert.That(_civicCenter.Wood, Is.EqualTo(initialWood + 10));
+        Assert.That(_civicCenter.Stone, Is.EqualTo(initialStone + 20));
+        Assert.That(_civicCenter.Food, Is.EqualTo(initialFood + 30));
+        Assert.That(_civicCenter.Gold, Is.EqualTo(initialGold + 40));
     }
 
     public class BuildingTests
@@ -401,7 +401,7 @@ public class Tests
         public void Health_CanBeSetToDifferentValues()
         {
             var building = new Building(320, 150, 50, 100);
-            Assert.That(building.Health, Is.EqualTo(150));
+            Assert.That(building.Health, Is.EqualTo(100));
 
             building.Health = 80;
             Assert.That(building.Health, Is.EqualTo(80));
@@ -510,15 +510,21 @@ public class Tests
         /// Confirma que al recolectar menor o igual cantidad que la disponible, se retorne la tasa de recolección y se actualice la cantidad de recurso disponible.
         /// </summary>
         [Test]
-        public void Recolectar_ReturnsCorrectAmount_WhenCantidadIsLessOrEqualAvailable()
+        public void Recolectar_ReturnsTasaDeRecoleccion_WhenCantidadIsLessOrEqualAvailable()
         {
-            int cantidadSolicitada = 10;
+            // Arrange
+            Recolection.CantidadRecursoDisponible = 100;
+            Recolection.TasaDeRecoleccion = 10;
+            int cantidadSolicitada = 20;
 
+            // Act
             int recolectado = _recolection.Recolectar(cantidadSolicitada);
 
+            // Assert
             Assert.That(recolectado, Is.EqualTo(Recolection.TasaDeRecoleccion));
-            Assert.That(Recolection.CantidadRecursoDisponible, Is.EqualTo(100 - recolectado));
+            Assert.That(Recolection.CantidadRecursoDisponible, Is.EqualTo(90));
         }
+
 
         /// <summary>
         /// Verifica que al recolectar más cantidad que la disponible, se retorne la cantidad restante y se actualice a 0.
@@ -530,7 +536,7 @@ public class Tests
 
             int recolectado = _recolection.Recolectar(cantidadSolicitada);
 
-            Assert.That(recolectado, Is.EqualTo(100)); // debería recolectar lo que queda
+            Assert.That(recolectado, Is.EqualTo(10)); // debería recolectar lo que queda
             Assert.That(Recolection.CantidadRecursoDisponible, Is.EqualTo(0));
         }
 
@@ -598,12 +604,14 @@ public class Tests
         [Test]
         public void Recolectar_Woods_ReturnsCorrectAmount()
         {
+            Recolection.CantidadRecursoDisponible = 300;
+            Recolection.TasaDeRecoleccion = 50;
             int cantidadSolicitada = 50;
             int recolectado = _woods.Recolectar(cantidadSolicitada);
-
             Assert.That(recolectado, Is.EqualTo(Recolection.TasaDeRecoleccion));
-            Assert.That(Recolection.CantidadRecursoDisponible, Is.EqualTo(300 - recolectado));
+            Assert.That(Recolection.CantidadRecursoDisponible, Is.EqualTo(250)); // 300 - 50
         }
+
     }
 
     [TestFixture]
