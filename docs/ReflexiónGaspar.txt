@@ -1,0 +1,13 @@
+Fue un reto bastante complicado, un lenguaje nuevo 
+y un modo de programar totalmente distinto al que estaba 
+acostumbrado. Sin embargo, me abrió la mente al mundo de la programación orientada a objetos. Sin duda me parece super útil y estoy seguro de que a partir de ahora la voy a implementar día a día en mi vida laboral.
+
+Con el equipo me sentí mas que cómodo, aprendiendo también     la importancia del trabajo en equipo
+
+Hoy miro este proyecto y me doy cuenta de cuánto crecí: en diseño, en lógica, en paciencia. La parte del diseño también abrió mi mente a la realidad de ingeniería y me encantó.
+
+Lo más interesante fue cómo pasé de una idea (hacer un juego) a una experiencia jugable por múltiples usuarios.
+
+No fue fácil. Tuve que pensar no solo como desarrollador, sino también como diseñador de juegos, arquitecto de sistemas, y hasta narrador, porque cada comando forma parte de una historia que se cuenta entre turnos y líneas de texto.
+
+Un éxito :)
