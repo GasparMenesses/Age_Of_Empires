@@ -141,7 +141,7 @@ public class CivicCenter : Building
         {
             for (int i = 0; i < quantity; i++)
             {
-                _player.Units.Add(new Villager(_player, this));
+                _player.Units.Add(new Villager(_player,(_player.Buildings[this].x,_player.Buildings[this].y)));
             }
             _player.Resources.Food -= totalCost;
         }

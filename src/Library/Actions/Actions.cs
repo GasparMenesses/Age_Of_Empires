@@ -37,33 +37,47 @@ public class Actions
     /// <param name="_building">Nombre del edificio a construir.</param>
     /// <param name="position">Posición (x, y) donde se construirá.</param>
     /// <returns>True si se construyó con éxito, False en caso contrario.</returns>
-    public async Task<bool> Build(string _building, (int x, int y) position)
+    public async Task<bool> Build(string buildingName, (int x, int y) position)
     {
         if (position.x >= 100 || position.x < 0 || position.y >= 100 || position.y < 0 || Map.CheckMap(position.x, position.y) != "..")
             return false;
-        if (_building == "Barrack")
-            Building = new Barrack(Player, position);
-        else if (_building == "GoldStorage")
-            Building = new GoldStorage(Player, position);
-        else if (_building == "Mill")
-            Building = new Mill(Player, position);
-        else if (_building == "StoneStorage")
-            Building = new StoneStorage(Player, position);
-        else if (_building == "WoodStorage")
-            Building = new WoodStorage(Player, position);
-        else
-            return false;
 
-        if (Player.Resources.Wood >= Building.WoodCost && Player.Resources.Stone >= Building.StoneCost)
+        Building building;
+
+        // Crear instancia según tipo
+        switch (buildingName)
         {
-            Player.Resources.RemoveResources(wood: Building.WoodCost, stone: Building.StoneCost);
-            Player.Buildings.Add(Building, position);
-            Map.ChangeMap(position, Building.Symbol);
-            return true;
+
+            case "Barrack":
+                building = new Barrack(Player, position);
+                break;
+            case "GoldStorage":
+                building = new GoldStorage(Player, position);
+                break;
+            case "Mill":
+                building = new Mill(Player, position);
+                break;
+            case "StoneStorage":
+                building = new StoneStorage(Player, position);
+                break;
+            case "WoodStorage":
+                building = new WoodStorage(Player, position);
+                break;
+            default:
+                return false;
+
         }
 
-        return false;
+        // Verificar recursos
+        if (Player.Resources.Wood < building.WoodCost || Player.Resources.Stone < building.StoneCost)
+            return false;
+
+        Player.Resources.RemoveResources(wood: building.WoodCost, stone: building.StoneCost);
+        Player.Buildings.Add(building, position);
+        Map.ChangeMap(position, building.Symbol);
+        return true;
     }
+
 
     /// <summary>
     /// Mueve una lista de unidades a una nueva posición.

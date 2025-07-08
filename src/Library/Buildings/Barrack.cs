@@ -36,12 +36,12 @@ public class Barrack : Building
         _player = player;
         Unit = new Dictionary<string, Unit>
         {
-            { "Archer", new Archer(_player,this) },
-            { "Cavalry", new Cavalry(_player,this) },
-            { "Infantry", new Infantry(_player,this) },
-            {"Thor",  new Thor(_player,this)},
-            {"Borracho", new Borracho(_player,this)},
-            {"JulioCesar", new JulioCesar(_player,this)}
+            { "Archer", new Archer(_player,((position.x),position.y))},
+            { "Cavalry", new Cavalry(_player,((position.x),position.y))},
+            { "Infantry", new Infantry(_player,((position.x),position.y))},
+            {"Thor",  new Thor(_player,((position.x),position.y))},
+            {"Borracho", new Borracho(_player,((position.x),position.y))},
+            {"JulioCesar", new JulioCesar(_player,((position.x),position.y))}
         };
         player.Buildings.Add(this, position); // Agrega el cuartel al jugador
         Map.ChangeMap(position, Symbol); // Actualiza el mapa con el símbolo del cuartel
@@ -62,12 +62,12 @@ public class Barrack : Building
             {
                 Unit newUnit = unit switch
                 {
-                    "Archer" => new Archer(_player,this),
-                    "Cavalry" => new Cavalry(_player,this),
-                    "Infantry" => new Infantry(_player,this),
-                    "Thor" => new Thor(_player,this),
-                    "Borracho" => new Borracho(_player,this),
-                    "JulioCesar" => new JulioCesar(_player,this),
+                    "Archer" => new Archer(_player,(_player.Buildings[this].x,_player.Buildings[this].y)),
+                    "Cavalry" => new Cavalry(_player,(_player.Buildings[this].x,_player.Buildings[this].y)),
+                    "Infantry" => new Infantry(_player,(_player.Buildings[this].x,_player.Buildings[this].y)),
+                    "Thor" => new Thor(_player,(_player.Buildings[this].x,_player.Buildings[this].y)),
+                    "Borracho" => new Borracho(_player,(_player.Buildings[this].x,_player.Buildings[this].y)),
+                    "JulioCesar" => new JulioCesar(_player,(_player.Buildings[this].x,_player.Buildings[this].y))
                 };
                 _player.Units.Add(newUnit);
             }

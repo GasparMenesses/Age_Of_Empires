@@ -8,7 +8,7 @@ namespace Library.Units
 {
     public class Villager : Unit
     {
-        public Villager(Player player,Building building) : base(player,building)
+        public Villager(Player player,(int x,int y) position) : base(player,position)
         {
             Speed = 1;
             Attack = 1;

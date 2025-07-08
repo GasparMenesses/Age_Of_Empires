@@ -11,7 +11,7 @@ public class GoldStorage : Building //hereda de la clase Building
     /// <summary>
     /// Símbolo del almacén de oro en el mapa.
     /// </summary>
-    public override string Symbol => "\ud83d\udcb0";
+    public override string Symbol => "🏚️🪙";
 
     /// <summary>
     /// Cantidad actual de oro almacenado.
