@@ -70,10 +70,15 @@ public class Actions
 
         // Verificar recursos
         if (Player.Resources.Wood < building.WoodCost || Player.Resources.Stone < building.StoneCost)
+        {
+            Player.Buildings.Remove(building);
             return false;
-
+        }
         Player.Resources.RemoveResources(wood: building.WoodCost, stone: building.StoneCost);
-        Player.Buildings.Add(building, position);
+        if (!Player.Buildings.ContainsKey(building))
+        {
+            Player.Buildings.Add(building, position);
+        }
         Map.ChangeMap(position, building.Symbol);
         return true;
     }
