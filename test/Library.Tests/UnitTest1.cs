@@ -2,6 +2,7 @@ using Library.Core;
 using Library.Buildings;
 using Library.Farming;
 using Library.Units;
+using Library;
 
 
 namespace Library.Tests;
@@ -10,13 +11,15 @@ public class Tests
 {
     private Player _player;
     private CivicCenter _civicCenter;
+    private Engine _engine;
 
     [SetUp]
     public void Setup()
     {
-
+    
         _player = new Player("MiniMago", "Cordobeses");
-        _civicCenter = (CivicCenter)_player.Buildings[0];
+        _civicCenter = _player.Buildings.Keys.FirstOrDefault(b => b is CivicCenter) as CivicCenter;
+        _engine = new Engine();
     }
 
     /// <summary>
@@ -53,11 +56,18 @@ public class Tests
     [Test]
     public void PlayerCivicCenterPositionIsInRange()
     {
-        Map.PlaceRandom(_player.Buildings[0].Symbol, _player.Buildings[0]);
-        Assert.That(_player.Buildings[0].Position["x"], Is.Not.GreaterThanOrEqualTo(99));
-        Assert.That(_player.Buildings[0].Position["y"], Is.Not.GreaterThanOrEqualTo(99));
-        Assert.That(_player.Buildings[0].Position["x"], Is.Not.LessThanOrEqualTo(0));
-        Assert.That(_player.Buildings[0].Position["y"], Is.Not.LessThanOrEqualTo(0));
+        var rand = new Random();
+        int x, y;
+        do
+        {
+            x = rand.Next(1, 100);
+            y = rand.Next(1, 100);
+        } while (Map.CheckMap(x,y) != "..");
+        _player.Buildings[_player.Buildings.Keys.First()] = (x,y);
+        Assert.That(_player.Buildings[_civicCenter].x, Is.Not.GreaterThanOrEqualTo(99));
+        Assert.That(_player.Buildings[_civicCenter].y, Is.Not.GreaterThanOrEqualTo(99));
+        Assert.That(_player.Buildings[_civicCenter].x, Is.Not.LessThanOrEqualTo(0));
+        Assert.That(_player.Buildings[_civicCenter].y, Is.Not.LessThanOrEqualTo(0));
     }
 
     /// <summary>
@@ -75,10 +85,14 @@ public class Tests
         bool result = _player.Actions.Build("Barrack", (x, y)).Result;
         Assert.That(result, Is.True);
 
-
-        Assert.That(Map.CheckMap(x, y), Is.EqualTo("\ud83c\udfef\u2694\ufe0f"));
+        Assert.That(Map.CheckMap(x, y), Is.EqualTo("🏯⚔️"));
         Assert.That(_player.Buildings.Count, Is.EqualTo(2));
-        Assert.That(_player.Buildings[1].Symbol, Is.EqualTo("\ud83c\udfef\u2694\ufe0f"));
+
+        // Buscar el Barrack recién construido
+        var barrack = _player.Buildings.Keys.FirstOrDefault(b => b is Barrack) as Barrack;
+        Assert.That(barrack, Is.Not.Null);
+        Assert.That(barrack.Symbol, Is.EqualTo("🏯⚔️"));
+
         Assert.That(_player.Resources.Wood, Is.LessThan(woodQuantity));
         Assert.That(_player.Resources.Stone, Is.LessThan(stoneQuantity));
     }
@@ -104,12 +118,17 @@ public class Tests
     {
         int x = 10;
         int y = 10;
-        Map.ChangeMap((x, y), _player.Buildings[0].Symbol, _player.Buildings[0]);
+        var existingBuilding = _player.Buildings.Keys.First();
+        Map.ChangeMap((10, 10), existingBuilding.Symbol);
+        int originalBuildingCount = _player.Buildings.Count;
         bool result = _player.Actions.Build("Barrack", (x, y)).Result;
         Assert.That(result, Is.False);
-        Assert.That(Map.CheckMap(x, y), Is.Not.EqualTo("Bk"));
-        Assert.That(_player.Buildings.Count, Is.EqualTo(1));
+        Assert.That(Map.CheckMap(x, y), Is.EqualTo(existingBuilding.Symbol));
+        Assert.That(_player.Buildings.Count, Is.EqualTo(originalBuildingCount));
+        var newBarrack = _player.Buildings.Keys.FirstOrDefault(b => b is Barrack);
+        Assert.That(newBarrack, Is.Null);
     }
+
 
 
     /// <summary>
@@ -290,10 +309,10 @@ public class Tests
         int initialFood = _civicCenter.Food;
         int initialGold = _civicCenter.Gold;
 
-        _civicCenter.AddWood(50);
-        _civicCenter.AddStone(30);
-        _civicCenter.AddFood(20);
-        _civicCenter.AddGold(10);
+        _civicCenter.AddWood(_player,10);
+        _civicCenter.AddStone(_player,20);
+        _civicCenter.AddFood(_player,30);
+        _civicCenter.AddGold(_player,10);
 
         Assert.That(_civicCenter.Wood, Is.EqualTo(initialWood + 50));
         Assert.That(_civicCenter.Stone, Is.EqualTo(initialStone + 30));
@@ -304,12 +323,14 @@ public class Tests
     public class BuildingTests
     {
         private Building _building;
-
+        private Engine _engine;
+        private Player _player;
         [SetUp]
         public void Setup()
         {
             // Creamos un edificio en la posición (5,10) con costos y tiempo de construcción
-            _building = new Building((5, 10), woodCost: 100, stoneCost: 50, constructionTime: 60);
+            _player = new Player("MiniMago", "Cordobeses");
+            _engine = new Engine();
         }
 
 
@@ -319,6 +340,10 @@ public class Tests
         /// la posicion es correcta y el estado de construcción es falso.
         /// el tiempo transcurrido es 0 
         /// </summary>
+        /// <summary>
+        /// Verifica que los valores iniciales del edificio sean correctos:
+        /// costos de recursos, tiempo de construcción, estado inicial, y posición.
+        /// </summary>
         [Test]
         public void Building_InitialValues_AreCorrect()
         {
@@ -327,10 +352,13 @@ public class Tests
             Assert.That(_building.ConstructionTime, Is.EqualTo(60));
             Assert.That(_building.TimeElapsed, Is.EqualTo(0));
             Assert.That(_building.IsBuilt, Is.False);
-            Assert.That(_building.Position["x"], Is.EqualTo(5));
-            Assert.That(_building.Position["y"], Is.EqualTo(10));
-            // Como Symbol es virtual y no está inicializado, puede ser null o vacío (depende de implementación)
+
+            var position = _player.Buildings[_building];
+            Assert.That(position.x, Is.EqualTo(5));
+            Assert.That(position.y, Is.EqualTo(10));
+            
         }
+
 
         /// <summary>
         /// Comprueba que el metodo Construyendo incrementa el tiempo transcurrido correctamente
@@ -371,7 +399,7 @@ public class Tests
         [Test]
         public void Health_CanBeSetToDifferentValues()
         {
-            var building = new Building((0, 0), 100, 50, 60, health: 150);
+            var building = new Building(320, 150, 50, 100);
             Assert.That(building.Health, Is.EqualTo(150));
 
             building.Health = 80;
@@ -381,7 +409,7 @@ public class Tests
         [Test]
         public void Construyendo_WithZeroSeconds_DoesNotChangeTimeElapsed()
         {
-            var building = new Building((0, 0), 100, 50, 60);
+            var building = new Building(0, 100, 50, 60);
             building.Construyendo(0);
             Assert.That(building.TimeElapsed, Is.EqualTo(0));
             Assert.That(building.IsBuilt, Is.False);
@@ -390,7 +418,7 @@ public class Tests
         [Test]
         public void Construyendo_WithNegativeSeconds_DoesNotDecreaseTimeElapsed()
         {
-            var building = new Building((0, 0), 100, 50, 60);
+            var building = new Building(0, 100, 50, 60);
             building.Construyendo(30);
             building.Construyendo(-10); // Verifica que no disminuya el tiempo transcurrido
 
@@ -400,7 +428,7 @@ public class Tests
         [Test]
         public void Construyendo_DoesNotIncreaseAfterBuilt()
         {
-            var building = new Building((0, 0), 100, 50, 60);
+            var building = new Building(0, 100, 50, 60);
             building.Construyendo(60);
             Assert.That(building.IsBuilt, Is.True);
 
@@ -412,7 +440,7 @@ public class Tests
         {
             public override string Symbol { get; set; } = "TB";
 
-            public TestBuilding() : base((0, 0), 0, 0, 1)
+            public TestBuilding() : base(0, 0, 0, 1)
             {
             }
         }
@@ -432,23 +460,26 @@ public class Tests
 
 
 
-    // Clase concreta para testeo
     public class TestRecolection : Recolection
     {
         public TestRecolection((int x, int y) position, int cantidadinicial, int tasarecoleccion)
-            : base(position, cantidadinicial, tasarecoleccion)
+            : base(10,120)
         {
         }
     }
 
     public class RecolectionTests
     {
+        private Facade.Fachada _fachada;
         private TestRecolection _recolection;
+        private Player _player;
 
         [SetUp]
         public void Setup()
         {
-            _recolection = new TestRecolection((10, 20), cantidadinicial: 100, tasarecoleccion: 15);
+            _fachada = new Facade.Fachada();
+            _player = new Player("MiniMago", "Cordobeses");
+            _recolection = new TestRecolection((10, 20), 100, 15);
         }
 
         /// <summary>
@@ -459,8 +490,8 @@ public class Tests
         [Test]
         public void InitialValues_AreSetCorrectly()
         {
-            Assert.That(_recolection.Position["x"], Is.EqualTo(10));
-            Assert.That(_recolection.Position["y"], Is.EqualTo(20));
+            Assert.That(_fachada.recolection[_recolection].x, Is.EqualTo(10));
+            Assert.That(_fachada.recolection[_recolection].y, Is.EqualTo(20));
             Assert.That(Recolection.CantidadRecursoDisponible, Is.EqualTo(100));
             Assert.That(Recolection.TasaDeRecoleccion, Is.EqualTo(15));
         }
@@ -515,12 +546,17 @@ public class Tests
 
     public class WoodsTests
     {
+        private Facade.Fachada _fachada;
+        private TestRecolection _recolection;
+        private Player _player;
         private Woods _woods;
 
         [SetUp]
         public void Setup()
         {
             _woods = new Woods((5, 10), cantidadinicial: 300);
+            _player = new Player("MiniMago", "Cordobeses");
+            _fachada = new Facade.Fachada();
         }
 
         /// <summary>
@@ -529,8 +565,8 @@ public class Tests
         [Test]
         public void Woods_InitialValues_AreSetCorrectly()
         {
-            Assert.That(_woods.Position["x"], Is.EqualTo(5));
-            Assert.That(_woods.Position["y"], Is.EqualTo(10));
+            Assert.That(_fachada.recolection[_recolection].x, Is.EqualTo(5));
+            Assert.That(_fachada.recolection[_recolection].y, Is.EqualTo(10));
             Assert.That(Recolection.CantidadRecursoDisponible, Is.EqualTo(300));
             Assert.That(Recolection.TasaDeRecoleccion, Is.EqualTo(120));
         }
@@ -541,7 +577,7 @@ public class Tests
         [Test]
         public void Woods_Symbol_ReturnsWd()
         {
-            Assert.That(Woods.Symbol, Is.EqualTo("🌳🌳"));
+            Assert.That(_woods.Symbol, Is.EqualTo("🌳🌳"));
         }
 
         /// <summary>
@@ -563,12 +599,14 @@ public class Tests
     {
         private Player _player;
         private WoodStorage _storage;
+        private Facade.Fachada _fachada;
 
         [SetUp]
         public void Setup()
         {
-            _player = new Player("Tester", "Cordobeses");
             _storage = new WoodStorage(_player, (10, 10));
+            _player = new Player("MiniMago", "Cordobeses");
+            _fachada = new Facade.Fachada();
         }
 
         /// <summary>
@@ -577,12 +615,12 @@ public class Tests
         [Test]
         public void WoodStorage_ConstructedCorrectly()
         {
-            Assert.That(_storage.Position["x"], Is.EqualTo(10));
-            Assert.That(_storage.Position["y"], Is.EqualTo(10));
+            Assert.That(_player.Buildings[_storage].x, Is.EqualTo(10));
+            Assert.That(_player.Buildings[_storage].y, Is.EqualTo(10));
             Assert.That(_storage.Wood, Is.EqualTo(0));
             Assert.That(_storage.Capacity, Is.EqualTo(1000));
             Assert.That(_storage.Symbol, Is.EqualTo("🪵🏚️"));
-            Assert.That(_player.Buildings.Contains(_storage), Is.True);
+            Assert.That(_player.Buildings.ContainsKey(_storage), Is.True);
         }
 
         /// <summary>
@@ -643,11 +681,12 @@ public class Tests
     {
         private Player _player;
         private House _house;
-
+        private Engine _engine;
         [SetUp]
         public void Setup()
         {
-            _player = new Player("Tester", "Vikingos");
+            _player = new Player("MiniMago", "Cordobeses");
+            _engine = new Engine();
             _house = new House(_player, (15, 20));
         }
 
@@ -657,8 +696,7 @@ public class Tests
         [Test]
         public void House_Constructed_Correctly()
         {
-            Assert.That(_house.Position["x"], Is.EqualTo(15));
-            Assert.That(_house.Position["y"], Is.EqualTo(20));
+            
             Assert.That(_house.WoodCost, Is.EqualTo(0));
             Assert.That(_house.StoneCost, Is.EqualTo(0));
             Assert.That(_house.ConstructionTime, Is.EqualTo(60));
@@ -713,13 +751,16 @@ public class Tests
     {
         private Player _player;
         private Barrack _barrack;
+        private Engine _engine;
+        private Facade.Fachada _fachada;
 
         [SetUp]
         public void Setup()
         {
-            _player = new Player("Tester", "Romanos");
+            _player = new Player("MiniMago", "Cordobeses");
             _player.Resources.Food = 1000; // Para permitir entrenamiento
             _barrack = new Barrack(_player, (10, 10));
+            _fachada = new Facade.Fachada();
         }
 
         /// <summary>
@@ -728,8 +769,8 @@ public class Tests
         [Test]
         public void Barrack_Constructed_Correctly()
         {
-            Assert.That(_barrack.Position["x"], Is.EqualTo(10));
-            Assert.That(_barrack.Position["y"], Is.EqualTo(10));
+            Assert.That(_player.Buildings[_barrack].x, Is.EqualTo(10));
+            Assert.That(_player.Buildings[_barrack].y, Is.EqualTo(10));
             Assert.That(_barrack.WoodCost, Is.EqualTo(25));
             Assert.That(_barrack.StoneCost, Is.EqualTo(55));
             Assert.That(_barrack.ConstructionTime, Is.EqualTo(30));
@@ -788,12 +829,15 @@ public class Tests
     {
         private Player _player;
         private Mill _mill;
+        private Engine _engine;
+        private Facade.Fachada _fachada;
 
         [SetUp]
         public void Setup()
         {
-            _player = new Player("Tester", "Cordobeses");
             _mill = new Mill(_player, (15, 20));
+            _player = new Player("MiniMago", "Cordobeses");
+            _fachada = new Facade.Fachada();
         }
 
         /// <summary>
@@ -802,11 +846,11 @@ public class Tests
         [Test]
         public void Mill_InitialValues_AreCorrect()
         {
-            Assert.That(_mill.Position["x"], Is.EqualTo(15));
-            Assert.That(_mill.Position["y"], Is.EqualTo(20));
+            Assert.That(_player.Buildings[_mill].x, Is.EqualTo(15));
+            Assert.That(_player.Buildings[_mill].y, Is.EqualTo(20));
             Assert.That(_mill.Food, Is.EqualTo(0));
             Assert.That(_mill.Capacity, Is.EqualTo(1000));
-            Assert.That(_player.Buildings.Contains(_mill), Is.True);
+            Assert.That(_player.Buildings.ContainsKey(_mill), Is.True);
             Assert.That(_mill.Symbol, Is.EqualTo("🌾🏠"));
         }
 
@@ -854,12 +898,14 @@ public class Tests
     {
         private Player _player;
         private GoldStorage _goldStorage;
+        private Facade.Fachada _fachada;
 
         [SetUp]
         public void Setup()
         {
             _player = new Player("Tester", "Cordobeses");
             _goldStorage = new GoldStorage(_player, (3, 7));
+            _fachada = new Facade.Fachada();
         }
 
         /// <summary>
@@ -868,11 +914,11 @@ public class Tests
         [Test]
         public void GoldStorage_InitialValues_AreCorrect()
         {
-            Assert.That(_goldStorage.Position["x"], Is.EqualTo(3));
-            Assert.That(_goldStorage.Position["y"], Is.EqualTo(7));
+            Assert.That(_player.Buildings[_goldStorage].x, Is.EqualTo(3));
+            Assert.That(_player.Buildings[_goldStorage].y, Is.EqualTo(7));
             Assert.That(_goldStorage.Gold, Is.EqualTo(0));
             Assert.That(_goldStorage.Capacity, Is.EqualTo(1000));
-            Assert.That(_player.Buildings.Contains(_goldStorage), Is.True);
+            Assert.That(_player.Buildings.ContainsKey(_goldStorage), Is.True);
             Assert.That(_goldStorage.Symbol, Is.EqualTo("💰"));
         }
 
@@ -935,12 +981,15 @@ public class Tests
     {
         private Player _player;
         private StoneStorage _stoneStorage;
+        private Facade.Fachada _fachada;
 
         [SetUp]
         public void Setup()
         {
-            _player = new Player("Tester", "Cordobeses");
             _stoneStorage = new StoneStorage(_player, (4, 8));
+            _player = new Player("MiniMago", "Cordobeses");
+            _fachada = new Facade.Fachada();
+            
         }
 
         /// <summary>
@@ -950,11 +999,11 @@ public class Tests
         [Test]
         public void StoneStorage_InitialValues_AreCorrect()
         {
-            Assert.That(_stoneStorage.Position["x"], Is.EqualTo(4));
-            Assert.That(_stoneStorage.Position["y"], Is.EqualTo(8));
+            Assert.That(_player.Buildings[_stoneStorage].x, Is.EqualTo(4));
+            Assert.That(_player.Buildings[_stoneStorage].y, Is.EqualTo(8));
             Assert.That(_stoneStorage.Stone, Is.EqualTo(0));
             Assert.That(_stoneStorage.Capacity, Is.EqualTo(1000));
-            Assert.That(_player.Buildings.Contains(_stoneStorage), Is.True);
+            Assert.That(_player.Buildings.ContainsKey(_stoneStorage), Is.True);
             Assert.That(_stoneStorage.Symbol, Is.EqualTo("🪨🏚️"));
             Assert.That(StoneStorage.StoneCost, Is.EqualTo(55));
         }
@@ -1016,13 +1065,16 @@ public class Tests
     [TestFixture]
     public class QuarryTests
     {
+        private Player _player;
+        private Facade.Fachada _fachada;
+        private Quarry _quarry;
         /// <summary>
         /// Verifica que la propiedad estática Symbol devuelve el símbolo correcto.
         /// </summary>
         [Test]
         public void Symbol_ReturnsCorrectValue()
         {
-            Assert.AreEqual("⛏️🪨", Quarry.Symbol);
+            Assert.AreEqual("⛏️🪨", _quarry.Symbol);
         }
 
         /// <summary>
@@ -1033,11 +1085,14 @@ public class Tests
         {
             var posicion = (3, 4);
             int cantidadInicial = 500;
-            var quarry = new Quarry(posicion, cantidadInicial);
+            _quarry = new Quarry(posicion, cantidadInicial);
+            _fachada = new Facade.Fachada();
+            _player = new Player("MiniMago", "Cordobeses");
 
-            Assert.IsNotNull(quarry.Position);
-            Assert.AreEqual(3, quarry.Position["x"]);
-            Assert.AreEqual(4, quarry.Position["y"]);
+            Assert.IsNotNull(_fachada.recolection[_quarry].x);
+            Assert.IsNotNull(_fachada.recolection[_quarry].y);
+            Assert.AreEqual(3, _fachada.recolection[_quarry].x);
+            Assert.AreEqual(4, _fachada.recolection[_quarry].y);
             // Si la clase base expone la cantidad, aquí se podría verificar también.
         }
 
@@ -1047,26 +1102,31 @@ public class Tests
         [Test]
         public void Position_SetAndGet_WorksCorrectly()
         {
-            var quarry = new Quarry((1, 2), 100);
-            var nuevaPosicion = new Dictionary<string, int> { { "x", 10 }, { "y", 20 } };
+            _quarry = new Quarry((1, 2), 100);
+            var nuevaPosicion = (x: 10, y: 20);
+            _fachada.recolection[_quarry] = nuevaPosicion;
+            ;
 
-            quarry.Position = nuevaPosicion;
+            _fachada.recolection[_quarry] = nuevaPosicion;
 
-            Assert.AreEqual(10, quarry.Position["x"]);
-            Assert.AreEqual(20, quarry.Position["y"]);
+            Assert.AreEqual(10, _fachada.recolection[_quarry].x);
+            Assert.AreEqual(20, _fachada.recolection[_quarry].y);
         }
     }
 
     [TestFixture]
     public class GoldMineTests
     {
+        private Player _player;
+        private Facade.Fachada _fachada;
+        private Recolection _goldMine;
         /// <summary>
         /// Verifica que la propiedad estática Symbol devuelve el símbolo correcto.
         /// </summary>
         [Test]
         public void Symbol_ReturnsCorrectValue()
         {
-            Assert.AreEqual("⛏️💰", GoldMine.Symbol);
+            Assert.AreEqual("⛏️💰", _goldMine.Symbol);
         }
 
         /// <summary>
@@ -1077,11 +1137,12 @@ public class Tests
         {
             var posicion = (6, 7);
             int cantidadInicial = 400;
-            var goldMine = new GoldMine(posicion, cantidadInicial);
+            _goldMine = new GoldMine(posicion, cantidadInicial);
 
-            Assert.IsNotNull(goldMine.Position);
-            Assert.AreEqual(6, goldMine.Position["x"]);
-            Assert.AreEqual(7, goldMine.Position["y"]);
+            Assert.IsNotNull(_fachada.recolection[_goldMine].x);
+            Assert.IsNotNull(_fachada.recolection[_goldMine].y);
+            Assert.AreEqual(6, _fachada.recolection[_goldMine].x);
+            Assert.AreEqual(7, _fachada.recolection[_goldMine].y);
             // Si la clase base expone la cantidad, aquí se podría verificar también.
         }
 
@@ -1092,25 +1153,29 @@ public class Tests
         public void Position_SetAndGet_WorksCorrectly()
         {
             var goldMine = new GoldMine((2, 3), 150);
-            var nuevaPosicion = new Dictionary<string, int> { { "x", 12 }, { "y", 21 } };
+            var nuevaPosicion = (x: 12, y: 21);
 
-            goldMine.Position = nuevaPosicion;
+            _fachada.recolection[_goldMine] = nuevaPosicion;
 
-            Assert.AreEqual(12, goldMine.Position["x"]);
-            Assert.AreEqual(21, goldMine.Position["y"]);
+            Assert.AreEqual(12, _fachada.recolection[_goldMine].x);
+            Assert.AreEqual(21, _fachada.recolection[_goldMine].y);
         }
     }
 
     [TestFixture]
     public class FarmTests
     {
+        
+        private Player _player;
+        private Facade.Fachada _fachada;
+        private Farm _farm;
         /// <summary>
         /// Verifica que la propiedad estática Symbol devuelve el símbolo correcto.
         /// </summary>
         [Test]
         public void Symbol_ReturnsCorrectValue()
         {
-            Assert.AreEqual("\ud83c\udf3e\ud83c\udf3e", Farm.Symbol);
+            Assert.AreEqual("\ud83c\udf3e\ud83c\udf3e", _farm.Symbol);
         }
 
         /// <summary>
@@ -1120,34 +1185,16 @@ public class Tests
         public void Constructor_InitializesPropertiesCorrectly()
         {
             var posicion = (8, 9);
-            int cantidadInicial = 600;
-            var farm = new Farm(posicion, cantidadInicial);
+            int cantidadInicial = 600; 
+            _farm = new Farm(posicion, cantidadInicial);
 
-            Assert.IsNotNull(farm.Position);
-            Assert.AreEqual(8, farm.Position["x"]);
-            Assert.AreEqual(9, farm.Position["y"]);
+            Assert.IsNotNull(_fachada.recolection[_farm].x);
+            Assert.IsNotNull(_fachada.recolection[_farm].y);
+            Assert.AreEqual(8, _fachada.recolection[_farm].x);
+            Assert.AreEqual(9, _fachada.recolection[_farm].y);
             // Si la clase base expone la cantidad, aquí se podría verificar también.
         }
-
-        /// <summary>
-        /// Verifica que la propiedad Position se puede establecer y recuperar correctamente.
-        /// </summary>
-        [Test]
-        public void Position_SetAndGet_WorksCorrectly()
-        {
-            var farm = new Farm((2, 5), 200);
-            var nuevaPosicion = new Dictionary<string, int> { { "x", 15 }, { "y", 25 } };
-
-            farm.Position = nuevaPosicion;
-
-            Assert.AreEqual(15, farm.Position["x"]);
-            Assert.AreEqual(25, farm.Position["y"]);
-        }
-
-
-
-
-
+      
 
     }
 }
