@@ -125,7 +125,47 @@ public class Fachada
             actions.AtacarUnidades(atacantes, atacados);
         }
     }
-    
+    public void EntrenarUnidad(Player jugador, string tipoUnidad, int cantidad)
+    {
+        // Buscar un barrack construido por el jugador
+        var barrack = jugador.Buildings.Keys.OfType<Barrack>().FirstOrDefault();
+        if (barrack == null)
+            throw new Exception("No tenés ningún cuartel construido para entrenar unidades.");
+
+        // Validar que la unidad existe en el barrack
+        if (!barrack.Unit.ContainsKey(tipoUnidad))
+            throw new ArgumentException($"La unidad '{tipoUnidad}' no está disponible en este cuartel.");
+
+        // Obtener la unidad base para conocer el costo
+        Unit unidadBase = barrack.Unit[tipoUnidad];
+
+        int costoTotal = unidadBase.Cost * cantidad;
+
+        // Validar recursos (oro)
+        if (jugador.Resources.Gold < costoTotal)
+            throw new RecursosInsuficientesException($"No tenés suficiente oro para entrenar {cantidad} {tipoUnidad}. Te faltan {costoTotal - jugador.Resources.Gold}.");
+
+        // Entrenar (crear) las unidades y agregarlas al jugador
+        for (int i = 0; i < cantidad; i++)
+        {
+            Unit nuevaUnidad = tipoUnidad switch
+            {
+                "Archer" => new Archer(jugador, jugador.Buildings[barrack]),
+                "Cavalry" => new Cavalry(jugador, jugador.Buildings[barrack]),
+                "Infantry" => new Infantry(jugador, jugador.Buildings[barrack]),
+                "Thor" => new Thor(jugador, jugador.Buildings[barrack]),
+                "Borracho" => new Borracho(jugador, jugador.Buildings[barrack]),
+                "JulioCesar" => new JulioCesar(jugador, jugador.Buildings[barrack]),
+                _ => throw new ArgumentException($"Unidad '{tipoUnidad}' inválida.")
+            };
+
+            jugador.Units.Add(nuevaUnidad);
+        }
+
+        // Restar el costo total del oro del jugador
+        jugador.Resources.Wood -= costoTotal;
+    }
+
     
 }
 
