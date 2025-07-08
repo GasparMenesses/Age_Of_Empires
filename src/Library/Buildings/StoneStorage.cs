@@ -51,6 +51,7 @@ public class StoneStorage : Building // hereda de la clase Building
         Capacity = 1000; // capacidad máxima del almacén
         player.Resources.AddLimitResources(stone: true); // aumenta el límite de almacenamiento de piedra
         player.Buildings.Add(this, position); // registra el edificio en el jugador
+        Map.ChangeMap(position, Symbol); // actualiza el mapa con el símbolo del almacén
     }
 
     /// <summary>

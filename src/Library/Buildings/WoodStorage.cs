@@ -51,6 +51,7 @@ public class WoodStorage : Building
         Capacity = 1000; // define la capacidad del almacén
         player.Resources.AddLimitResources(wood: true); // aumenta el límite de madera
         player.Buildings.Add(this, position); // agrega el edificio al jugador
+        Map.ChangeMap(position, Symbol); // actualiza el mapa con el símbolo del almacén
     }
 
     /// <summary>

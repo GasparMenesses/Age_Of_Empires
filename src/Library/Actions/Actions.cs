@@ -56,7 +56,6 @@ public class Actions
 
         if (Player.Resources.Wood >= Building.WoodCost && Player.Resources.Stone >= Building.StoneCost)
         {
-            await Task.Delay(10000);
             Player.Resources.RemoveResources(wood: Building.WoodCost, stone: Building.StoneCost);
             Player.Buildings.Add(Building, position);
             Map.ChangeMap(position, Building.Symbol);

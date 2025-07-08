@@ -43,6 +43,8 @@ public class Barrack : Building
             {"Borracho", new Borracho(_player,this)},
             {"JulioCesar", new JulioCesar(_player,this)}
         };
+        player.Buildings.Add(this, position); // Agrega el cuartel al jugador
+        Map.ChangeMap(position, Symbol); // Actualiza el mapa con el símbolo del cuartel
     }
 
     /// <summary>

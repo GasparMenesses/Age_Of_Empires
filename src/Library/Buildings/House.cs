@@ -21,6 +21,8 @@ public class House : Building
     public House(Player player, (int x, int y) position)
         : base(0, 0, 60)
     {
+        player.Buildings.Add(this, position); // registra el edificio en el jugador
+        Map.ChangeMap(position, Symbol); // actualiza el mapa con el símbolo del molino
     }
 
     /// <summary>
@@ -30,5 +32,6 @@ public class House : Building
     public void AumentarPoblacionLimite(Player player)
     {
         player.PoblacionLimite += 4;
+        
     }
 }

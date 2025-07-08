@@ -145,5 +145,6 @@ public class CivicCenter : Building
             }
             _player.Resources.Food -= totalCost;
         }
+        
     }
 }

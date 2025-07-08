@@ -1,0 +1,21 @@
+var searchData=
+[
+  ['recolectar_0',['Recolectar',['../class_engine.html#adbedf768e570332291d944927b0309b3',1,'Engine.Recolectar()'],['../class_facade_1_1_fachada.html#af6c33021f9f7f1f79e6e985317c7c71d',1,'Facade.Fachada.Recolectar()'],['../class_library_1_1_farming_1_1_recolection.html#af8332c58c565c9502ceb793bbee56cb7',1,'Library.Farming.Recolection.Recolectar()'],['../interface_library_1_1_interfaces_1_1_i_recolection.html#ad236a43002c12f71bc18eb959b687480',1,'Library.Interfaces.IRecolection.Recolectar()']]],
+  ['recolectarrecursosasync_1',['RecolectarRecursosAsync',['../class_general_module_1_1_general_module.html#a5a1b9d95540cfcec08f0fe356d270090',1,'GeneralModule::GeneralModule']]],
+  ['recolection_2',['Recolection',['../class_library_1_1_farming_1_1_recolection.html',1,'Library.Farming.Recolection'],['../class_library_1_1_farming_1_1_recolection.html#a291945636baaf913271da6588143aa32',1,'Library.Farming.Recolection.Recolection()']]],
+  ['recolection_3',['recolection',['../class_facade_1_1_fachada.html#a89fe550af00bc1de7730aba359fba61e',1,'Facade::Fachada']]],
+  ['recolection_2ecs_4',['Recolection.cs',['../_recolection_8cs.html',1,'']]],
+  ['recursosinsuficientesexception_5',['RecursosInsuficientesException',['../class_library_1_1_exceptions_1_1_recursos_insuficientes_exception.html',1,'Library.Exceptions.RecursosInsuficientesException'],['../class_library_1_1_exceptions_1_1_recursos_insuficientes_exception.html#a8b44621a4ad05db89f2fd89c1271d134',1,'Library.Exceptions.RecursosInsuficientesException.RecursosInsuficientesException()']]],
+  ['recursosinsuficientesexception_2ecs_6',['RecursosInsuficientesException.cs',['../_recursos_insuficientes_exception_8cs.html',1,'']]],
+  ['refreshmap_7',['RefreshMap',['../class_engine.html#a4b44330c3cbb9d9e7fcac0c940ed5818',1,'Engine']]],
+  ['removeresources_8',['RemoveResources',['../class_library_1_1_resources.html#a60296d4b312655cabb94b72910cf2d69',1,'Library::Resources']]],
+  ['resources_9',['Resources',['../class_library_1_1_resources.html',1,'Library.Resources'],['../class_library_1_1_core_1_1_player.html#a648b5f342e99685e73a27e4047bf5594',1,'Library.Core.Player.Resources'],['../class_library_1_1_resources.html#a201f36232ae2138e1b9f5ddec836243a',1,'Library.Resources.Resources()']]],
+  ['resources_2ecs_10',['Resources.cs',['../_resources_8cs.html',1,'']]],
+  ['resume_11',['Resume',['../class_library_1_1_resume.html',1,'Library']]],
+  ['resume_2ecs_12',['Resume.cs',['../_resume_8cs.html',1,'']]],
+  ['returnboard_13',['ReturnBoard',['../class_library_1_1_core_1_1_map.html#a071f9af92253e4e573a810a985a874a7',1,'Library::Core::Map']]],
+  ['returnlength0_14',['ReturnLength0',['../class_library_1_1_core_1_1_map.html#ab06e1f6daf2faae7971fa563a1bee7fc',1,'Library::Core::Map']]],
+  ['returnlength1_15',['ReturnLength1',['../class_library_1_1_core_1_1_map.html#ad9f42182d7d984dd9225eb70b185c2ee',1,'Library::Core::Map']]],
+  ['romanos_16',['Romanos',['../class_library_1_1_romanos.html',1,'Library.Romanos'],['../class_library_1_1_romanos.html#acc85e602226fb3a931d27c6dc974579c',1,'Library.Romanos.Romanos()']]],
+  ['romanos_2ecs_17',['Romanos.cs',['../_romanos_8cs.html',1,'']]]
+];

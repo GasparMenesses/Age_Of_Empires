@@ -41,6 +41,7 @@ public class Mill : Building // hereda de la clase Building
         Capacity = 1000; // define la capacidad máxima
         player.Resources.AddLimitResources(food: true); // aumenta el límite de comida
         player.Buildings.Add(this, position); // registra el edificio en el jugador
+        Map.ChangeMap(position, Symbol); // actualiza el mapa con el símbolo del molino
     }
 
     /// <summary>

@@ -51,6 +51,7 @@ public class GoldStorage : Building //hereda de la clase Building
         Capacity = 1000; //define la capacidad del almacén
         player.Resources.AddLimitResources(gold: true); //aumenta el límite de oro en 1000
         player.Buildings.Add(this, position); //agrega el edificio al jugador
+        Map.ChangeMap(position, Symbol); // actualiza el mapa con el símbolo del almacén
     }
 
     /// <summary>

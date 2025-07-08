@@ -1177,8 +1177,8 @@ public class Tests
 
             _fachada.recolection[_goldMine] = nuevaPosicion;
 
-            Assert.AreEqual(12, _fachada.recolection[_goldMine].x);
-            Assert.AreEqual(21, _fachada.recolection[_goldMine].y);
+            Assert.That(_fachada.recolection[_goldMine].x, Is.EqualTo(12));
+            Assert.That(_fachada.recolection[_goldMine].y, Is.EqualTo(21));
         }
     }
 
@@ -1195,7 +1195,7 @@ public class Tests
         [Test]
         public void Symbol_ReturnsCorrectValue()
         {
-            Assert.AreEqual("\ud83c\udf3e\ud83c\udf3e", _farm.Symbol);
+            Assert.That(_farm.Symbol, Is.EqualTo("🌾🌾"));
         }
 
         /// <summary>
@@ -1205,8 +1205,8 @@ public class Tests
         public void Constructor_InitializesPropertiesCorrectly()
         {
             Assert.IsNotNull(_fachada.recolection[_farm]);
-            Assert.AreEqual(8, _fachada.recolection[_farm].x);
-            Assert.AreEqual(9, _fachada.recolection[_farm].y);
+            Assert.That(_fachada.recolection[_farm].x, Is.EqualTo(8));
+            Assert.That(_fachada.recolection[_farm].y, Is.EqualTo(9));
         }
 
       

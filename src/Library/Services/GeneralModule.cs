@@ -25,15 +25,26 @@ public class GeneralModule : ModuleBase<SocketCommandContext>
     // Comandos disponibles por fase
     static Dictionary<int, List<string>> commands = new Dictionary<int, List<string>>()
     {
-        {0, new List<string>{"!CrearPartida"}},
-        {1, new List<string>{"!Unirse", "!Iniciar"}},
-        {2, new List<string>{"!Mapa", ""}},
-        {3, new List<string>{"!Resumen"}}
+        {0, new List<string>{ "!CrearPartida" }},
+        {1, new List<string>{ "!Unirse", "!Iniciar" }},
+        {2, new List<string>{
+            "!Mapa",
+            "!RecolectarRecursos",
+            "!RecursosDisponibles",
+            "!Atacar",
+            "!MisUnidades",
+            "!Construir",
+            "!Resumen"
+        }},
+        {3, new List<string>{ "!Resumen" }}
     };
 
     // Ruta del archivo HTML del mapa
     private static string RelativeMapURL = "../../../../../MapaHtml/mapa_generado.html";
     private static string AbstoluteMapURL = Path.GetFullPath(RelativeMapURL).Replace("\\", "/");
+    
+    // Resumen de la partida
+    private static string Resume = "";
     
     //////////////////////////////////////////////////////////////
     //////////////////// Comandos universales ////////////////////
@@ -74,6 +85,24 @@ public class GeneralModule : ModuleBase<SocketCommandContext>
     //////////////////// Configuarción incial ////////////////////
     //////////////////////////////////////////////////////////////
     
+    [Command("Resumen")]
+    public async Task ResumenAsync()
+    {
+        if (phase == 0)
+        {
+            await ReplyAsync("Todavía no hay una partida creada, usá **!crearpartida**.");
+            return;
+        }
+        
+        await ReplyAsync($"**Resumen de partida:**\n{Resume}\n" +
+                         $"Jugadores:\n{string.Join("\n", jugadores.Select(j => $"{j.Nombre} - Civilización: {j.Civilization.NombreCivilizacion}"))}\n" +
+                         $"Fase actual: {phase}\n" +
+                         $"URL del mapa: {AbstoluteMapURL}");
+        
+        
+    }
+
+    
     // ----------------------------
     // Comando: CrearPartida
     // ----------------------------
@@ -87,6 +116,7 @@ public class GeneralModule : ModuleBase<SocketCommandContext>
         }
 
         phase += 1;
+        Resume += $"{DateTime.Now.ToString()}:  Partida creada por: " + Context.User.Username + "\n";
         await ReplyAsync(
             $"Bienvenidos a **⚔️AGE OF EMPIRES⚔️**\n🎮 Es hora de preparar el juego...\n");
         ComandosAsync();
@@ -133,6 +163,7 @@ public class GeneralModule : ModuleBase<SocketCommandContext>
         }
         // Si todo está bien, arrancamos
         phase += 1;
+        Resume += $"{DateTime.Now.ToString()}:  Partida iniciada por: " + Context.User.Username + "\n";
         await ReplyAsync("Cargando entorno de juego...");
         Thread.Sleep(1000); 
         
@@ -192,6 +223,7 @@ public class GeneralModule : ModuleBase<SocketCommandContext>
         {
             if (player.Id == userId)
             {
+                Resume += $"{DateTime.Now.ToString()}: El jugador {Context.User.Username} se ha unido a la partida.\n";
                 await ReplyAsync($"El jugador {Context.User.Username} ya está en la partida.");
                 return;
             }
@@ -240,7 +272,8 @@ public class GeneralModule : ModuleBase<SocketCommandContext>
             $"El jugador {context.User.Username} se ha unido con la civilización " +
             $"{jugadores[jugadores.Count - 1].Civilization.NombreCivilizacion}."
         );
-
+        Resume += $"{DateTime.Now.ToString()}: El jugador {context.User.Username} se ha unido con la civilización " +
+                  $"{jugadores[jugadores.Count - 1].Civilization.NombreCivilizacion}.\n";
         selections.Remove(context.User.Id.ToString());
     }
     
@@ -280,7 +313,7 @@ public class GeneralModule : ModuleBase<SocketCommandContext>
 
         // Espera la selección del usuario
         _ = WaitRecolectarAsync(Context, tcs);
-        
+        Resume += $"{DateTime.Now.ToString()}:  {Context.User.Username} ha iniciado la recolección de recursos.\n";
     }
     
     private async Task WaitRecolectarAsync(SocketCommandContext context, TaskCompletionSource<string> tcs )
@@ -315,6 +348,7 @@ public class GeneralModule : ModuleBase<SocketCommandContext>
     public async Task MostrarRecursosAsync()
     {
         Player jugador = jugadores.FirstOrDefault(j => j.Id == Context.User.Id.ToString());
+        Resume += $"{DateTime.Now.ToString()}: El jugador {Context.User.Username} ha consultado sus recursos disponibles.\n";
         await ReplyAsync( 
             $"El jugador {Context.User.Username} dispone de los recursos:\n " +
             $"ORO: {jugador.Resources.Gold.ToString()}\n MADERA: {jugador.Resources.Wood.ToString()}\n PIEDRA: {jugador.Resources.Stone.ToString()}\n COMIDA: {jugador.Resources.Food.ToString()}\n "
@@ -402,6 +436,7 @@ public class GeneralModule : ModuleBase<SocketCommandContext>
         {
             var u = enemigos[i];
             await context.Channel.SendMessageAsync($"**{i}** - Enemigo con vida: {u.Life}, posición: ({u.Position["x"]},{u.Position["y"]})");
+            Resume += $"{DateTime.Now.ToString()}: El jugador {context.User.Username} ha seleccionado la unidad atacante con vida: {atacante.Life} y posición: ({atacante.Position["x"]},{atacante.Position["y"]}).\n";
         }
 
         // Crea otra tarea pendiente para que el jugador elija al objetivo
@@ -471,6 +506,8 @@ public class GeneralModule : ModuleBase<SocketCommandContext>
             var unidad = jugador.Units[i];
             mensaje += $"[{i}] {unidad.GetType().Name} - Vida: {unidad.Life}, Ataque: {unidad.Attack}, Defensa: {unidad.Defense}\n";
         }
+        
+        Resume += $"{DateTime.Now.ToString()}: El jugador {Context.User.Username} ha consultado sus unidades disponibles.\n";
 
         await ReplyAsync(mensaje);
     }
@@ -549,12 +586,16 @@ public class GeneralModule : ModuleBase<SocketCommandContext>
             {
                 case "Madera":
                     fachada.ConstruirAlmacenMadera(x, y, jugador);  
+                    Resume += $"{DateTime.Now.ToString()}: El jugador {context.User.Username} ha construido un almacén de Madera en ({x},{y}).\n";
                     break;
                 case "Piedra":
                     fachada.ConstruirAlmacenPiedra(x,y, jugador);
+                    
+                    Resume += $"{DateTime.Now.ToString()}: El jugador {context.User.Username} ha construido un almacén de Piedra en ({x},{y}).\n";
                     break;
                 case "Oro":
                     fachada.ConstruirAlmacenOro(x, y, jugador);
+                    Resume += $"{DateTime.Now.ToString()}: El jugador {context.User.Username} ha construido un almacén de Oro en ({x},{y}).\n";
                     break;
             }
         }
@@ -570,12 +611,11 @@ public class GeneralModule : ModuleBase<SocketCommandContext>
             selections.Remove(userId);
             return;
         }
-
+        
+        fachada.ActualizarMapa(); // Actualiza el mapa después de construir
         await ReplyAsync($"🏗 Almacén de {tipoAlmacen[selection]} construyéndose en ({x},{y}).");
-        await ReplyAsync(Map.CheckMap(x, y));
         var key = jugador.Buildings.Keys.Last(b => b.GetType().Name == tipoAlmacen[selection]);
         await ReplyAsync(jugador.Buildings.ToString());
-        fachada.ActualizarMapa(); // Actualiza el mapa después de construir
         selections.Remove(userId);
     }
     
