@@ -85,6 +85,31 @@ public class Fachada
         }
     }
     
+    public void ConstruirAlmacenMadera( int x, int y, Player _player) // Método para construir un almacén de piedra
+    {
+        if (_player.Resources.Stone >= WoodStorage.StoneCost && _player.Resources.Wood >= WoodStorage.WoodCost) // Verifica si el jugador tiene suficientes recursos para construir un almacén de piedra
+        {
+            _player.Actions.Build("WoodStorage", (x, y)); // Construye un almacén de piedra en la posición especificada
+        }
+        else
+        {
+            throw new RecursosInsuficientesException("No tienes suficientes recursos para construir un almacén de madera. Cuesta 55 de piedra y 50 de madera.");
+        }
+    }
+    
+    public void ConstruirAlmacenOro( int x, int y, Player _player) // Método para construir un almacén de piedra
+    {
+        if (_player.Resources.Stone >= GoldStorage.StoneCost && _player.Resources.Wood >= GoldStorage.WoodCost) // Verifica si el jugador tiene suficientes recursos para construir un almacén de piedra
+        {
+            _player.Actions.Build("GoldStorage", (x, y)); // Construye un almacén de oro en la posición especificada
+        }
+        else
+        {
+            throw new RecursosInsuficientesException("No tienes suficientes recursos para construir un almacén de oro. Cuesta 55 de piedra y 50 de madera.");
+        }
+    }
+
+    
 
     public void ActualizarMapa()
     {

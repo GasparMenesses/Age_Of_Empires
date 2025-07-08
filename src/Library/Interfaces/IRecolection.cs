@@ -1,11 +1,25 @@
-namespace Library.Interfaces;
-
-// Esta interfaz define las operaciones básicas para recolectar recursos en el juego.
-
-public interface IRecolection
+namespace Library.Interfaces
 {
-    static int CantidadRecursoDisponible { get; }  // cantidad de recurso disponible para recolectar
-    static int TasaDeRecoleccion { get; } // cantidad de recurso que se recolecta 
-    
-    int Recolectar(int cantidad); // recolecta la cantidad de recurso indicada, retorna la cantidad recolectada
+    /// <summary>
+    /// Define las operaciones básicas para recolectar recursos en el juego.
+    /// </summary>
+    public interface IRecolection
+    {
+        /// <summary>
+        /// Cantidad de recurso disponible para recolectar.
+        /// </summary>
+        static int CantidadRecursoDisponible { get; }
+
+        /// <summary>
+        /// Cantidad máxima de recurso que se puede recolectar por acción.
+        /// </summary>
+        static int TasaDeRecoleccion { get; }
+
+        /// <summary>
+        /// Recolecta la cantidad indicada de recurso.
+        /// </summary>
+        /// <param name="cantidad">Cantidad que se desea recolectar.</param>
+        /// <returns>Cantidad realmente recolectada.</returns>
+        int Recolectar(int cantidad);
+    }
 }

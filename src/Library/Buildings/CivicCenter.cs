@@ -3,24 +3,52 @@ using Library.Units;
 
 namespace Library.Buildings;
 
-// Representa el centro cívico del jugador, encargado de almacenar y gestionar recursos principales
-// Cumple con SRP ya que se encarga exclusivamente de la lógica relacionada con el centro cívico y la gestión de recursos
+/// <summary>
+/// Representa el centro cívico del jugador, encargado de almacenar y gestionar recursos principales.
+/// Cumple con SRP ya que se encarga exclusivamente de la lógica relacionada con el centro cívico y la gestión de recursos.
+/// </summary>
 public class CivicCenter : Building
 {
-    // Símbolo identificador del centro cívico en el mapa
+    /// <summary>
+    /// Símbolo identificador del centro cívico en el mapa.
+    /// </summary>
     public override string Symbol => "🏰🏰";
-    // Recursos almacenados en el centro cívico
+
+    /// <summary>
+    /// Cantidad de oro almacenado en el centro cívico.
+    /// </summary>
     public int Gold { get; set; }
+
+    /// <summary>
+    /// Cantidad de madera almacenada en el centro cívico.
+    /// </summary>
     public int Wood { get; set; }
+
+    /// <summary>
+    /// Cantidad de comida almacenada en el centro cívico.
+    /// </summary>
     public int Food { get; set; }
+
+    /// <summary>
+    /// Cantidad de piedra almacenada en el centro cívico.
+    /// </summary>
     public int Stone { get; set; }
-    // Capacidad máxima de almacenamiento de recursos
+
+    /// <summary>
+    /// Capacidad máxima de almacenamiento de recursos.
+    /// </summary>
     public int Capacity { get; set; }
-    // Capacidad máxima de aldeanos
+
+    /// <summary>
+    /// Capacidad máxima de aldeanos.
+    /// </summary>
     public int MaxCapacityAldeano { get; set; }
 
     private Villager _villager;
-    // Constructor: inicializa recursos, capacidad y asocia los recursos del jugador
+
+    /// <summary>
+    /// Constructor del centro cívico. Inicializa recursos, capacidad y configuración base.
+    /// </summary>
     public CivicCenter()
         : base(0, 0, 0) // Ajusta los valores según tu lógica
     {
@@ -32,7 +60,11 @@ public class CivicCenter : Building
         MaxCapacityAldeano = 10;
     }
 
-    // Agrega piedra al centro cívico, sin exceder la capacidad máxima
+    /// <summary>
+    /// Agrega piedra al centro cívico, sin exceder la capacidad máxima.
+    /// </summary>
+    /// <param name="_player">Jugador asociado.</param>
+    /// <param name="stone">Cantidad de piedra a agregar.</param>
     public void AddStone(Player _player, int stone)
     {
         if ((Stone + stone) > Capacity)
@@ -45,8 +77,12 @@ public class CivicCenter : Building
         _player.Resources.AddResources(stone: stone);
     }
 
-    // Agrega oro al centro cívico, sin exceder la capacidad máxima
-    public void AddGold(Player _player,int gold)
+    /// <summary>
+    /// Agrega oro al centro cívico, sin exceder la capacidad máxima.
+    /// </summary>
+    /// <param name="_player">Jugador asociado.</param>
+    /// <param name="gold">Cantidad de oro a agregar.</param>
+    public void AddGold(Player _player, int gold)
     {
         if ((Gold + gold) > Capacity)
         {
@@ -58,8 +94,12 @@ public class CivicCenter : Building
         _player.Resources.AddResources(gold: gold);
     }
 
-    // Agrega madera al centro cívico, sin exceder la capacidad máxima
-    public void AddWood(Player _player,int wood)
+    /// <summary>
+    /// Agrega madera al centro cívico, sin exceder la capacidad máxima.
+    /// </summary>
+    /// <param name="_player">Jugador asociado.</param>
+    /// <param name="wood">Cantidad de madera a agregar.</param>
+    public void AddWood(Player _player, int wood)
     {
         if ((Wood + wood) > Capacity)
         {
@@ -71,8 +111,12 @@ public class CivicCenter : Building
         _player.Resources.AddResources(wood: wood);
     }
 
-    // Agrega comida al centro cívico, sin exceder la capacidad máxima
-    public void AddFood(Player _player,int food)
+    /// <summary>
+    /// Agrega comida al centro cívico, sin exceder la capacidad máxima.
+    /// </summary>
+    /// <param name="_player">Jugador asociado.</param>
+    /// <param name="food">Cantidad de comida a agregar.</param>
+    public void AddFood(Player _player, int food)
     {
         if ((Food + food) > Capacity)
         {
@@ -84,7 +128,12 @@ public class CivicCenter : Building
         _player.Resources.AddResources(food: food);
     }
 
-    public void TrainingUnit(Player _player,int quantity)
+    /// <summary>
+    /// Entrena aldeanos si hay suficiente comida disponible.
+    /// </summary>
+    /// <param name="_player">Jugador que entrena las unidades.</param>
+    /// <param name="quantity">Cantidad de aldeanos a entrenar.</param>
+    public void TrainingUnit(Player _player, int quantity)
     {
         // Lógica para generar villagers en el CivicCenter
         int totalCost = _villager.Cost * quantity;
@@ -92,7 +141,7 @@ public class CivicCenter : Building
         {
             for (int i = 0; i < quantity; i++)
             {
-                _player.Units.Add(new Villager(_player,this));
+                _player.Units.Add(new Villager(_player, this));
             }
             _player.Resources.Food -= totalCost;
         }

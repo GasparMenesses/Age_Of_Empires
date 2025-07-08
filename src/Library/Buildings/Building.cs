@@ -1,21 +1,55 @@
 using Library.Interfaces;
 
 namespace Library.Buildings;
-//clase base abstracta utilizada para definir los costos y tiempos de construccion de los edificios de almacenamientos
+
+/// <summary>
+/// Clase base utilizada para definir los costos y tiempos de construcción de los edificios de almacenamiento.
+/// Cumple con SRP porque solo se encarga de la lógica de los edificios de almacenamiento.
+/// </summary>
 public class Building : IConstructionInfo, IBuildable
 {
-    //cumple con srp porque solo se encarga de la lógica de los edificios de almacenamiento
+    /// <summary>
+    /// Costo en madera del edificio.
+    /// </summary>
     public int WoodCost { get; set; }
-    public   int StoneCost { get; set; }
-    public int ConstructionTime { get; }
-    public int TimeElapsed { get; private set; }
-    public int Health { get; set; } // Vida del edificio, por defecto 100
 
-    // Indica si el edificio ya está completamente cdonstruido
+    /// <summary>
+    /// Costo en piedra del edificio.
+    /// </summary>
+    public int StoneCost { get; set; }
+
+    /// <summary>
+    /// Tiempo total de construcción del edificio, en segundos.
+    /// </summary>
+    public int ConstructionTime { get; }
+
+    /// <summary>
+    /// Tiempo transcurrido desde que comenzó la construcción.
+    /// </summary>
+    public int TimeElapsed { get; private set; }
+
+    /// <summary>
+    /// Vida del edificio. Por defecto es 100.
+    /// </summary>
+    public int Health { get; set; }
+
+    /// <summary>
+    /// Indica si el edificio ya está completamente construido.
+    /// </summary>
     public bool IsBuilt => TimeElapsed >= ConstructionTime;
+
+    /// <summary>
+    /// Símbolo que representa gráficamente al edificio en el mapa.
+    /// </summary>
     public virtual string Symbol { get; set; }
 
-    // Constructor protegido que inicializa los valores principales del edificio
+    /// <summary>
+    /// Constructor protegido que inicializa los valores principales del edificio.
+    /// </summary>
+    /// <param name="woodCost">Costo en madera.</param>
+    /// <param name="stoneCost">Costo en piedra.</param>
+    /// <param name="constructionTime">Tiempo de construcción en segundos.</param>
+    /// <param name="health">Vida inicial del edificio (por defecto 100).</param>
     public Building(int woodCost, int stoneCost, int constructionTime, int health = 100)
     {
         WoodCost = woodCost;
@@ -25,7 +59,10 @@ public class Building : IConstructionInfo, IBuildable
         Health = health; 
     }
 
-    // Avanza la construcción del edificio sumando segundos al tiempo transcurrido
+    /// <summary>
+    /// Avanza la construcción del edificio sumando segundos al tiempo transcurrido.
+    /// </summary>
+    /// <param name="segundos">Cantidad de segundos a sumar al progreso de construcción.</param>
     public void Construyendo(int segundos)
     {
         if (IsBuilt || segundos <= 0)
@@ -35,7 +72,6 @@ public class Building : IConstructionInfo, IBuildable
         if (TimeElapsed >= ConstructionTime)
         {
             TimeElapsed = ConstructionTime;
-       
         }
     }
 }

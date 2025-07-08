@@ -6,17 +6,37 @@ using Library.Buildings;
 
 namespace Library.Actions;
 
-// Esta clase maneja las acciones que un jugador puede realizar en el juego, como construir edificios, mover unidades y recolectar recursos.
-// Cumple con SRP porque se encarga exclusivamente de las acciones del jugador, separando la lógica de negocio de otras responsabilidades como la gestión de recursos o el mapa.
+/// <summary>
+/// Esta clase maneja las acciones que un jugador puede realizar en el juego, como construir edificios, mover unidades y recolectar recursos.
+/// Cumple con SRP porque se encarga exclusivamente de las acciones del jugador, separando la lógica de negocio de otras responsabilidades como la gestión de recursos o el mapa.
+/// </summary>
 public class Actions
 {
+    /// <summary>
+    /// Referencia al jugador que realiza las acciones.
+    /// </summary>
     private Player Player { get; set; }
+
+    /// <summary>
+    /// Referencia al edificio en construcción.
+    /// </summary>
     private Building Building { get; set; }
+
+    /// <summary>
+    /// Constructor de la clase Actions.
+    /// </summary>
+    /// <param name="player">Jugador que realizará las acciones.</param>
     public Actions(Player player)
     {
         Player = player;
     }
 
+    /// <summary>
+    /// Intenta construir un edificio en una posición dada.
+    /// </summary>
+    /// <param name="_building">Nombre del edificio a construir.</param>
+    /// <param name="position">Posición (x, y) donde se construirá.</param>
+    /// <returns>True si se construyó con éxito, False en caso contrario.</returns>
     public async Task<bool> Build(string _building, (int x, int y) position)
     {
         if (position.x >= 100 || position.x < 0 || position.y >= 100 || position.y < 0 || Map.CheckMap(position.x, position.y) != "..")
@@ -31,13 +51,11 @@ public class Actions
             Building = new StoneStorage(Player, position);
         else if (_building == "WoodStorage")
             Building = new WoodStorage(Player, position);
-
         else
             return false;
 
         if (Player.Resources.Wood >= Building.WoodCost && Player.Resources.Stone >= Building.StoneCost)
         {
-
             await Task.Delay(10000);
             Player.Resources.RemoveResources(wood: Building.WoodCost, stone: Building.StoneCost);
             Player.Buildings.Add(Building, position);
@@ -48,8 +66,11 @@ public class Actions
         return false;
     }
 
-
-
+    /// <summary>
+    /// Mueve una lista de unidades a una nueva posición.
+    /// </summary>
+    /// <param name="units">Lista de unidades a mover.</param>
+    /// <param name="position">Nueva posición (x, y).</param>
     public void Move(List<IUnit> units, (int x, int y) position)
     {
         foreach (IUnit unit in units)
@@ -72,6 +93,11 @@ public class Actions
         }
     }
 
+    /// <summary>
+    /// Realiza una acción de recolección de recursos con un aldeano.
+    /// </summary>
+    /// <param name="villager">Aldeano que recolecta.</param>
+    /// <param name="resource">Tipo de recurso a recolectar (madera, piedra, oro, comida).</param>
     public async Task Farmear(Villager villager, string resource)
     {
         await Task.Delay(5000); // Simula el tiempo de recolección
@@ -93,6 +119,11 @@ public class Actions
         }
     }
 
+    /// <summary>
+    /// Ataca unidades enemigas en la misma posición que los atacantes.
+    /// </summary>
+    /// <param name="atacantes">Lista de unidades que atacan.</param>
+    /// <param name="atacados">Lista de unidades objetivo.</param>
     public void AtacarUnidades(List<IUnit> atacantes, List<IUnit> atacados)
     {
         foreach (var atacante in atacantes)
@@ -111,6 +142,12 @@ public class Actions
             }
         }
     }
+
+    /// <summary>
+    /// Ataca edificios enemigos en la misma posición que los atacantes.
+    /// </summary>
+    /// <param name="atacantes">Lista de unidades atacantes.</param>
+    /// <param name="edificios">Lista de edificios objetivo.</param>
     public void AtacarEdificios(List<IUnit> atacantes, List<Building> edificios)
     {
         foreach (var atacante in atacantes)
@@ -129,5 +166,4 @@ public class Actions
             }
         }
     }
-    
 }

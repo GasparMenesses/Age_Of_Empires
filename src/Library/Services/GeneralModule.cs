@@ -1,6 +1,7 @@
 ﻿using Discord.Commands;
 using Library.Core;
 using Facade;
+using Library.Buildings;
 using Library.Exceptions;
 using Library.Units;
 using Library.Interfaces;
@@ -540,20 +541,20 @@ public class GeneralModule : ModuleBase<SocketCommandContext>
             return;
         }
 
-        var jugador = jugadores.FirstOrDefault(j => j.Id == userId);
+        var jugador = jugadores.FirstOrDefault(j => j.Id == context.User.Id.ToString());
 
         try
         {
             switch (tipoAlmacen[selection])
             {
                 case "Madera":
-                    jugador.Actions.Build("WoodStorage", (x, y));
+                    fachada.ConstruirAlmacenMadera(x, y, jugador);  
                     break;
                 case "Piedra":
-                    jugador.Actions.Build("StoneStorage", (x, y));
+                    fachada.ConstruirAlmacenPiedra(x,y, jugador);
                     break;
                 case "Oro":
-                    jugador.Actions.Build("GoldStorage", (x, y));
+                    fachada.ConstruirAlmacenOro(x, y, jugador);
                     break;
             }
         }

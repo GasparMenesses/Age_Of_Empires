@@ -1,10 +1,19 @@
-namespace Library.Interfaces;
+namespace Library.Interfaces
+{
+    /// <summary>
+    /// Define las operaciones básicas para un edificio en el juego, como la construcción y el estado de construcción.
+    /// </summary>
+    public interface IBuildable
+    {
+        /// <summary>
+        /// Indica si el edificio está construido.
+        /// </summary>
+        bool IsBuilt { get; }
 
-// Esta interfaz define las operaciones básicas para un edificio en el juego, como la construcción y el estado de construcción.
-
-public interface IBuildable
-{ 
-        bool IsBuilt { get; } // Indica si el edificio está construido 
-        void Construyendo(int time); // Inicia el proceso de construcción del edificio, recibe el tiempo que se tarda en construirlo
-      
+        /// <summary>
+        /// Inicia o avanza el proceso de construcción del edificio.
+        /// </summary>
+        /// <param name="time">Tiempo que se suma al progreso de construcción (en segundos).</param>
+        void Construyendo(int time);
+    }
 }
