@@ -27,7 +27,7 @@ public class GeneralModule : ModuleBase<SocketCommandContext>
     {
         {0, new List<string>{"!CrearPartida"}},
         {1, new List<string>{"!Unirse", "!Iniciar"}},
-        {2, new List<string>{"!Mapa", ""}},
+        {2, new List<string>{"!Mapa", "!RecolectarRecursos","RecursosDisponibles", "!Atacar", "!MisUnidades", "!Construir"}},
         {3, new List<string>{"!Resumen"}}
     };
 
