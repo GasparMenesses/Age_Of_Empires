@@ -331,6 +331,7 @@ public class Tests
             // Creamos un edificio en la posición (5,10) con costos y tiempo de construcción
             _player = new Player("MiniMago", "Cordobeses");
             _engine = new Engine();
+            _building = new Building(100, 50, 60, 100);
         }
 
 
@@ -424,17 +425,26 @@ public class Tests
 
             Assert.That(building.TimeElapsed, Is.EqualTo(30));
         }
-
         [Test]
         public void Construyendo_DoesNotIncreaseAfterBuilt()
         {
-            var building = new Building(0, 100, 50, 60);
+            var building = new Building(0, 100, 60, 100);
+
+
+            Assert.That(building.IsBuilt, Is.False);
+
             building.Construyendo(60);
+
             Assert.That(building.IsBuilt, Is.True);
+            Assert.That(building.TimeElapsed, Is.EqualTo(60));
 
             building.Construyendo(10);
+
             Assert.That(building.TimeElapsed, Is.EqualTo(60));
         }
+
+
+
 
         private class TestBuilding : Building
         {
@@ -557,6 +567,8 @@ public class Tests
             _woods = new Woods((5, 10), cantidadinicial: 300);
             _player = new Player("MiniMago", "Cordobeses");
             _fachada = new Facade.Fachada();
+            _recolection = new TestRecolection((5, 10), cantidadinicial: 300, tasarecoleccion: 120);
+            
         }
 
         /// <summary>
@@ -1184,16 +1196,11 @@ public class Tests
         [Test]
         public void Constructor_InitializesPropertiesCorrectly()
         {
-            var posicion = (8, 9);
-            int cantidadInicial = 600; 
-            _farm = new Farm(posicion, cantidadInicial);
-
-            Assert.IsNotNull(_fachada.recolection[_farm].x);
-            Assert.IsNotNull(_fachada.recolection[_farm].y);
+            Assert.IsNotNull(_fachada.recolection[_farm]);
             Assert.AreEqual(8, _fachada.recolection[_farm].x);
             Assert.AreEqual(9, _fachada.recolection[_farm].y);
-            // Si la clase base expone la cantidad, aquí se podría verificar también.
         }
+
       
 
     }
