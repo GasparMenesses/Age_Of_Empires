@@ -3,9 +3,9 @@
 /// <summary>
 /// Esta clase representa una civilización en el juego, con su nombre, tipo de unidad única y bonificaciones específicas.
 /// </summary>
-public class Civilization
+public abstract class Civilization
 {
-    /// <summary>
+    /// <summary>S
     /// Nombre de la civilización.
     /// </summary>
     public string NombreCivilizacion { get; set; }
