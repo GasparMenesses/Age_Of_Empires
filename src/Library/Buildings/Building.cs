@@ -2,7 +2,7 @@ using Library.Interfaces;
 
 namespace Library.Buildings;
 //clase base abstracta utilizada para definir los costos y tiempos de construccion de los edificios de almacenamientos
-public abstract class Building : IConstructionInfo, IBuildable
+public class Building : IConstructionInfo, IBuildable
 {
     //cumple con srp porque solo se encarga de la lógica de los edificios de almacenamiento
     public int WoodCost { get; set; }

@@ -36,8 +36,6 @@ public class GeneralModule : ModuleBase<SocketCommandContext>
                 "!Atacar",
                 "!MisUnidades",
                 "!Construir",
-                "!ConstruirAlmacenPiedra",
-                "!ConstruirAlmacenOro",
                 "!Entrenar",
                 "!Resumen"
             }
