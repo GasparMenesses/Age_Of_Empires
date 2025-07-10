@@ -144,7 +144,7 @@ public class Tests
         _player.Resources.Stone = 0;
         bool result = _player.Actions.Build("Barrack", (x, y)).Result;
         Assert.That(result, Is.False);
-        Assert.That(Map.CheckMap(x, y), Is.Not.EqualTo("Bk"));
+        Assert.That(Map.CheckMap(x, y), Is.Not.EqualTo("🏯⚔️"));
         Assert.That(_player.Buildings.Count, Is.EqualTo(1));
     }
 

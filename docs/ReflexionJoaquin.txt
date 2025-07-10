@@ -1,0 +1,9 @@
+Durante el desarrollo del proyecto de Programación 2, uno de los mayores desafíos fue la coordinación entre los distintos integrantes del equipo para integrar funcionalidades complejas, la recolección de recursos y el funcionamiento del bot. Dividir las responsabilidades fue fundamental, pero también nos enfrentamos a dificultades a la hora de unificar criterios y mantener la consistencia del código en un proyecto colaborativo.
+
+Uno de los aprendizajes más valiosos fue la importancia del control de versiones con Git. Aunque en clase vimos su uso básico, enfrentarnos a conflictos de merge reales, ramas desactualizadas o sincronización de trabajo nos obligó a profundizar más en su manejo y a establecer reglas claras de colaboración.
+
+Además, aprendimos sobre testing automatizado, algo que no habíamos explorado en profundidad en clase. Nos dimos cuenta de que diseñar buenos tests de unidad y de escenarios no solo mejora la calidad del código, sino que también nos da más confianza al integrar nuevas funcionalidades sin romper lo anterior.
+
+Para resolver los distintos obstáculos que surgieron, utilizamos recursos como documentación oficial de C#, foros de Stack Overflow, que fueron clave para desbloquearnos rápidamente sin depender siempre del docente.
+
+En general, este proyecto no solo nos permitió aplicar conocimientos técnicos, sino que también reforzó habilidades blandas como la comunicación, la organización y la resolución de conflictos. Fue una experiencia enriquecedora que nos preparó mejor para proyectos de desarrollo reales en equipo.

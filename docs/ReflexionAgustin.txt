@@ -1,0 +1,4 @@
+Con este proyecto final me entretuve bastante, fue tan complicado como esperaba y un reto que, a pesar de ser dificil, disfrute bastante.
+Aprendi con mucho sufrimiento sobre las dependencias ciclicas que son problemas que rider no muestra, Tambien aprendi a encontrar errores de formas muy creativas y aprendi sobre las tareas y el async que tuve que manejar para discord.
+La verdad es que creo tengo una relacion amor/odio con este proyecto, pero me siento satisfecho con los resultados.
+Respecto a las fuentes que use sin duda las que mas me ayudaron fueron Stack Overflow junto a Reddit.
